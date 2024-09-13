@@ -614,6 +614,20 @@ function decorateBlocks(main) {
 }
 
 /**
+ * Decorates linked pictures in a given block.
+ * @param {HTMLElement} block - The block element containing the pictures.
+ */
+function decorateLinkedPictures(block) {
+  block.querySelectorAll('picture + br + a').forEach((a) => {
+    // remove br
+    a.previousElementSibling.remove();
+    const picture = a.previousElementSibling;
+    a.textContent = '';
+    a.append(picture);
+  });
+}
+
+/**
  * Loads a block named 'header' into header
  * @param {Element} header header element
  * @returns {Promise}
@@ -696,6 +710,7 @@ export {
   decorateBlocks,
   decorateButtons,
   decorateIcons,
+  decorateLinkedPictures,
   decorateSections,
   decorateTemplateAndTheme,
   fetchPlaceholders,
