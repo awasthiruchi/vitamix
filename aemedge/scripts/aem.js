@@ -131,6 +131,9 @@ function setup() {
       console.log(error);
     }
   }
+
+  // custom nav/footer path
+  window.hlx.nfp = `/aemedge${new URLSearchParams(window.location.search).get('nfp') || ''}`;
 }
 
 /**
