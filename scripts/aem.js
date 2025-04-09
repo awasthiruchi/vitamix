@@ -133,7 +133,7 @@ function setup() {
   }
 
   // custom nav/footer path
-  window.hlx.nfp = `/aemedge${new URLSearchParams(window.location.search).get('nfp') || ''}`;
+  window.hlx.nfp = `${new URLSearchParams(window.location.search).get('nfp') || ''}`;
 }
 
 /**
