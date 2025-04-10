@@ -41,6 +41,11 @@ function toggleHamburger(hamburger, nav) {
   else document.body.removeAttribute('data-scroll');
 }
 
+function buildLanguageSelector(tool) {
+  const ul = tool.querySelector('ul');
+  ul.style.display = 'none';
+}
+
 /**
  * loads and decorates the header
  * @param {Element} block The header block element
@@ -57,13 +62,20 @@ export default async function decorate(block) {
   nav.id = 'nav';
   while (fragment.firstElementChild) nav.append(fragment.firstElementChild);
 
-  const classes = ['title', 'sections', 'tools'];
+  const classes = ['title', 'sections', 'tools', 'cart'];
   classes.forEach((c, i) => {
     const section = nav.children[i];
     if (section) {
       section.id = `nav-${c}`;
       section.classList.add(`nav-${c}`);
     }
+  });
+
+  // decorate icons
+  const icons = nav.querySelectorAll('li .icon');
+  icons.forEach((i) => {
+    const parent = i.parentElement;
+    parent.className = 'icon-wrapper';
   });
 
   // decorate title
@@ -79,6 +91,9 @@ export default async function decorate(block) {
         link.innerHTML = content.innerHTML;
         content.innerHTML = link.outerHTML;
       }
+    } else {
+      a.classList.remove('button');
+      a.parentElement.classList.remove('button-wrapper');
     }
   }
 
@@ -117,6 +132,26 @@ export default async function decorate(block) {
       }
     });
     ul.replaceWith(wrapper);
+  }
+
+  // decorate tools
+  const tools = nav.querySelector('.nav-tools');
+  if (tools) {
+    // const configured = ['search', 'flag', 'email', 'account'];
+    tools.querySelectorAll('div > ul > li').forEach((t) => {
+      const tool = t.querySelector('.icon');
+      const type = [...tool.classList].filter((c) => c !== 'icon')[0].replace('icon-', '');
+      if (type === 'search') {
+        // enable search slider
+      } else if (type === 'email') {
+        // enable sign up modal
+      } else if (type === 'account') {
+        // this is just a link
+      } else if (type.includes('flag')) {
+        // enable language selector
+        buildLanguageSelector(t);
+      }
+    });
   }
 
   // build mobile hamburger

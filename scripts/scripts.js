@@ -1,5 +1,5 @@
 import {
-  // buildBlock,
+  buildBlock,
   loadHeader,
   loadFooter,
   decorateIcon,
@@ -68,18 +68,38 @@ export function buildIcon(name, modifier) {
   return icon;
 }
 
+function buildForms(main) {
+  // find form links
+  main.querySelectorAll('p a[href*="/forms/"]').forEach((a) => {
+    const wrapper = a.closest('p');
+    try {
+      const url = new URL(a.href);
+      const { pathname } = url;
+      if (pathname.includes('.json')) {
+        const form = buildBlock('form', [[pathname]]);
+        wrapper.replaceWith(form);
+      } else throw new Error(`Unrecognized form source: ${pathname}`);
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Could not build form from', a.href, error);
+      wrapper.remove();
+    }
+  });
+}
+
 /**
  * Builds all synthetic blocks in a container element.
  * @param {Element} main The container element
  */
-// function buildAutoBlocks(main) {
-//   try {
-//     // build auto blocks
-//   } catch (error) {
-//     // eslint-disable-next-line no-console
-//     console.error('Auto Blocking failed', error);
-//   }
-// }
+function buildAutoBlocks(main) {
+  try {
+    // build auto blocks
+    buildForms(main);
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Auto Blocking failed', error);
+  }
+}
 
 /**
  * Decorates links with appropriate classes to style them as buttons
@@ -89,16 +109,23 @@ function decorateButtons(main) {
   main.querySelectorAll('p a[href]').forEach((a) => {
     a.title = a.title || a.textContent;
     const p = a.closest('p');
+    const text = a.textContent.trim();
     // identify standalone links
-    if (a.href !== a.textContent && p.textContent.trim() === a.textContent.trim()) {
+    if (a.href !== text && p.textContent.trim() === text) {
       a.className = 'button';
       const strong = a.closest('strong');
       const em = a.closest('em');
-      const double = !!strong && !!em;
-      if (double) a.classList.add('accent');
-      else if (strong) a.classList.add('emphasis');
-      else if (em) a.classList.add('outline');
-      p.replaceChild(a, p.firstChild);
+      if (strong && em) {
+        a.classList.add('accent');
+        const outer = strong.contains(em) ? strong : em;
+        outer.replaceWith(a);
+      } else if (strong) {
+        a.classList.add('emphasis');
+        strong.replaceWith(a);
+      } else if (em) {
+        a.classList.add('link');
+        em.replaceWith(a);
+      }
       p.className = 'button-wrapper';
     }
   });
@@ -130,7 +157,7 @@ function decorateImages(main) {
 export function decorateMain(main) {
   decorateIcons(main);
   decorateImages(main);
-  // buildAutoBlocks(main);
+  buildAutoBlocks(main);
   decorateSections(main);
   decorateBlocks(main);
   decorateButtons(main);
