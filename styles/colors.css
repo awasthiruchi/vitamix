@@ -8,10 +8,9 @@
   --color-gray-500: #cbcbcb;
   --color-gray-600: #c5d5c8;
   --color-gray-700: #a2b2bd;
-  --color-gray-800: #a2aaad;
-  --color-gray-900: #666;
+  --color-gray-800: #8d8d8d;
+  --color-gray-1000: #666;
   --color-black: black;
-  --color-shadow: rgba(0 0 0 / 50%);
 
   /* defaults */
   --color-red: #c8102e;
@@ -26,4 +25,10 @@
   --color-lapis: #3865a3;
   --color-gray: #40596b;
   --color-charcoal: #333f48;
+
+  /* shadows */
+  --shadow-100: rgba(0 0 0 / 7%);
+  --shadow-200: rgba(0 0 0 / 33.3%);
+  --shadow-300: rgba(0 0 0 / 50%);
+
 }
