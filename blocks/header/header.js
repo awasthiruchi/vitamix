@@ -3,7 +3,7 @@ import { swapIcons } from '../../scripts/scripts.js';
 import { loadFragment } from '../fragment/fragment.js';
 
 // media query match that indicates desktop width
-const isDesktop = window.matchMedia('(width >= 900px)');
+const isDesktop = window.matchMedia('(width >= 1000px)');
 
 function toggleHeader(desktop, nav, hamburger) {
   const hamburgerWrapper = hamburger.closest('div');
@@ -44,6 +44,22 @@ function toggleHamburger(hamburger, nav) {
 function buildLanguageSelector(tool) {
   const ul = tool.querySelector('ul');
   ul.style.display = 'none';
+}
+
+async function fetchNavFragments(a) {
+  try {
+    const { pathname } = new URL(a, window.location);
+    const resp = await fetch(pathname);
+    const temp = document.createElement('div');
+    temp.innerHTML = await resp.text();
+    const sections = temp.querySelectorAll('div > ul');
+    temp.remove();
+    return sections;
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching nav fragment:', error);
+  }
+  return null;
 }
 
 /**
@@ -105,6 +121,20 @@ export default async function decorate(block) {
     const clone = ul.cloneNode(true);
     wrapper.append(clone);
     [...clone.children].forEach((li, i) => {
+      const navA = li.querySelector('a[href*="/nav/"]');
+      if (navA) {
+        // navA.addEventListener('mouseover', async (e) => {
+        //   e.preventDefault();
+        //   const navSectionFragments = await fetchNavFragments(navA);
+        //   if (navSectionFragments) {
+        //     // Replace the link with the nav fragments
+        //     li.innerHTML = '';
+        //     navSectionFragments.forEach((section) => {
+        //       li.append(section);
+        //     });
+        //   }
+        // });
+      }
       const subsection = li.querySelector('ul');
       if (subsection) {
         li.className = 'subsection';
@@ -142,12 +172,16 @@ export default async function decorate(block) {
       const tool = t.querySelector('.icon');
       const type = [...tool.classList].filter((c) => c !== 'icon')[0].replace('icon-', '');
       if (type === 'search') {
+        t.classList.add(`nav-tools-${type}`);
         // enable search slider
       } else if (type === 'email') {
+        t.classList.add(`nav-tools-${type}`);
         // enable sign up modal
       } else if (type === 'account') {
+        t.classList.add(`nav-tools-${type}`);
         // this is just a link
       } else if (type.includes('flag')) {
+        t.classList.add('nav-tools-language');
         // enable language selector
         buildLanguageSelector(t);
       }
