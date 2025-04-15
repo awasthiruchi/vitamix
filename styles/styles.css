@@ -115,6 +115,7 @@ header {
 
 main {
   max-width: var(--site-width);
+  /* stylelint-disable-next-line comment-empty-line-before */
   /* margin: 0 var(--horizontal-spacing); */
 }
 
