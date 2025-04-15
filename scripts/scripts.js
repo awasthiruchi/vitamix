@@ -149,6 +149,23 @@ function decorateImages(main) {
   });
 }
 
+function decorateEyebrows(main) {
+  main.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((h) => {
+    const prev = h.previousElementSibling;
+    if (prev && prev.tagName === 'P') {
+      prev.classList.add('eyebrow');
+      h.dataset.eyebrow = prev.textContent;
+    }
+  });
+}
+
+function decorateDisclaimers(main) {
+  main.querySelectorAll('sub').forEach((sub) => {
+    const p = sub.closest('p');
+    if (p) p.classList.add('disclaimer');
+  });
+}
+
 /**
  * Decorates the main element.
  * @param {Element} main The main element
@@ -161,6 +178,8 @@ export function decorateMain(main) {
   decorateSections(main);
   decorateBlocks(main);
   decorateButtons(main);
+  decorateEyebrows(main);
+  decorateDisclaimers(main);
 }
 
 /**

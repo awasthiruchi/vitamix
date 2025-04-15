@@ -96,6 +96,7 @@ body {
   color: var(--color-text);
   font-family: var(--body-font-family);
   font-size: var(--body-size-m);
+  font-weight: 300;
   line-height: var(--line-height-m);
 }
 
@@ -114,7 +115,7 @@ header {
 
 main {
   max-width: var(--site-width);
-  margin: 0 var(--horizontal-spacing);
+  /* margin: 0 var(--horizontal-spacing); */
 }
 
 @media (width >= 900px) {
@@ -134,6 +135,10 @@ main {
 main > .section {
   max-width: var(--site-width);
   margin: var(--spacing-500) 0;
+}
+
+main > .section.hero-container {
+  margin-top: 0;
 }
 
 main > .section > div {
@@ -205,14 +210,13 @@ h6 {
   margin-bottom: 0.25em;
   scroll-margin: 1em;
   font-family: var(--heading-font-family);
-  font-weight: var(--weight-bold);
-  line-height: var(--line-height-l);
+  font-weight: 300;
+  line-height: var(--line-height-s);
   word-break: break-word;
 }
 
 h1 {
-  font-size: var(--heading-size-xxl);
-  font-weight: var(--weight-extrabold);
+  font-size: var(--heading-size-xxxxl);
 }
 
 h2 {
@@ -236,9 +240,15 @@ h6 {
 }
 
 .eyebrow {
-  margin-top: 1.125em;
-  margin-bottom: 0.25em;
-  line-height: var(--line-height-m);
+  margin-bottom: var(--spacing-60);
+  color: var(--color-red);
+  font-size: var(--detail-size-s);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+[data-eyebrow] {
+  margin-top: 0;
 }
 
 h2.eyebrow {
@@ -259,6 +269,10 @@ h5.eyebrow {
 
 h6.eyebrow {
   font-size: var(--detail-size-xs);
+}
+
+.disclaimer {
+  /* font-size: var(--detail-size-xs); */
 }
 
 p,
@@ -330,9 +344,9 @@ a:focus {
 
 /* buttons */
 .button-wrapper {
-  display: flex;
+  /* display: flex;
   flex-wrap: wrap;
-  gap: var(--spacing-s);
+  gap: var(--spacing-s); */
 }
 
 a.button,
