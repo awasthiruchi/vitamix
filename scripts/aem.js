@@ -297,7 +297,7 @@ function createOptimizedPicture(
 ) {
   const url = !src.startsWith('http') ? new URL(src, window.location.href) : new URL(src);
   const picture = document.createElement('picture');
-  const { pathname } = url;
+  const { pathname, origin } = url;
   const ext = pathname.substring(pathname.lastIndexOf('.') + 1);
 
   // webp
