@@ -4,6 +4,10 @@
   }
 }
 
+.banner.aligned > div, .banner.inset > div {
+    gap: var(--spacing-m);
+}
+
 .banner.compact {
   position: relative;
   display: flex;
