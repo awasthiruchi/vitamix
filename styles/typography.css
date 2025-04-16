@@ -28,44 +28,44 @@
   --line-height-xs: 1;
 
   /* heading sizes */
-    --heading-size-xxxxl: var(--font-size-800);
-    --heading-size-xxxl: var(--font-size-700);
-    --heading-size-xxl: var(--font-size-600);
-    --heading-size-xl: var(--font-size-500);
-    --heading-size-l: var(--font-size-400);
-    --heading-size-m: var(--font-size-300);
-    --heading-size-s: var(--font-size-200);
-    --heading-size-xs: var(--font-size-100);
-  
-    /* title sizes */
-    --title-size-xxxl: var(--font-size-700);
-    --title-size-xxl: var(--font-size-600);
-    --title-size-xl: var(--font-size-500);
-    --title-size-l: var(--font-size-400);
-    --title-size-m: var(--font-size-300);
-    --title-size-s: var(--font-size-200);
-    --title-size-xs: var(--font-size-100);
-  
-    /* body sizes */
-    --body-size-xxxl: var(--font-size-500);
-    --body-size-xxl: var(--font-size-400);
-    --body-size-xl: var(--font-size-300);
-    --body-size-l: var(--font-size-200);
-    --body-size-m: var(--font-size-100);
-    --body-size-s: var(--font-size-80);
-    --body-size-xs: var(--font-size-60);
-  
-    /* detail sizes */
-    --detail-size-xl: var(--font-size-100);
-    --detail-size-l: var(--font-size-80);
-    --detail-size-m: var(--font-size-60);
-    --detail-size-s: var(--font-size-40);
-    --detail-size-xs: var(--font-size-20);
+  --heading-size-xxxxl: var(--font-size-800);
+  --heading-size-xxxl: var(--font-size-700);
+  --heading-size-xxl: var(--font-size-600); /* h1 */
+  --heading-size-xl: var(--font-size-500);  /* h2 */
+  --heading-size-l: var(--font-size-400);   /* h3 */
+  --heading-size-m: var(--font-size-300);   /* h4 */
+  --heading-size-s: var(--font-size-200);   /* h5 */
+  --heading-size-xs: var(--font-size-100);  /* h6 */
+
+  /* title sizes */
+  --title-size-xxxl: var(--font-size-700);
+  --title-size-xxl: var(--font-size-600);
+  --title-size-xl: var(--font-size-500);
+  --title-size-l: var(--font-size-400);
+  --title-size-m: var(--font-size-300);
+  --title-size-s: var(--font-size-200);
+  --title-size-xs: var(--font-size-100);
+
+  /* body sizes */
+  --body-size-xxxl: var(--font-size-500);
+  --body-size-xxl: var(--font-size-400);
+  --body-size-xl: var(--font-size-300);
+  --body-size-l: var(--font-size-200);
+  --body-size-m: var(--font-size-100);
+  --body-size-s: var(--font-size-80);
+  --body-size-xs: var(--font-size-60);
+
+  /* detail sizes */
+  --detail-size-xl: var(--font-size-100);
+  --detail-size-l: var(--font-size-80);
+  --detail-size-m: var(--font-size-60);
+  --detail-size-s: var(--font-size-40);
+  --detail-size-xs: var(--font-size-20);
 }
 
-@media (width >=900px) {
+@media (width >= 800px) {
   :root {
-    /* font sizes */
-    --font-size-800: 36px;
+    /* heading sizes */
+    --heading-size-xl: var(--font-size-800);  /* h2 */
   }
 }

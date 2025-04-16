@@ -1,38 +1,94 @@
 @media (width >= 900px) {
   .banner > div {
-    display: flex;
+    /* display: flex; */
   }
 }
 
 .banner.aligned > div, .banner.inset > div {
-    gap: var(--spacing-m);
+  /* gap: var(--spacing-m); */
 }
 
 .banner.compact {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #0006;
-  padding: 40px 24px;
+  /* position: relative; */
+  /* display: flex; */
+  /* align-items: center; */
+  /* justify-content: center; */
+  /* background-color: #0006; */
+  /* padding: 40px 24px; */
 }
 
 .banner.compact > div > div {
-  max-width: 400px;
-  text-align: center;
-  color: var(--color-background);
+  /* max-width: 400px; */
+  /* text-align: center; */
+  /* color: var(--color-background); */
 }
 
 .banner.compact picture {
-    position: absolute;
-    z-index: -1;
-    inset: 0;
-    object-fit: cover;
-    box-sizing: border-box;
-  }
+  /* position: absolute; */
+  /* z-index: -1; */
+  /* inset: 0; */
+  /* object-fit: cover; */
+  /* box-sizing: border-box; */
+}
   
 .banner.compact img {
-    object-fit: cover;
-    width: 100%;
-    height: 100%;
+  /* object-fit: cover; */
+  /* width: 100%; */
+  /* height: 100%; */
+}
+
+.banner .img-wrapper {
+  text-align: center;
+  line-height: 0;
+}
+
+/* image variant */
+.banner.image {
+  line-height: var(--line-height-xl);
+}
+
+.banner.image > div .img-wrapper:last-child {
+  display: none;
+}
+
+.banner.image > div {
+  display: grid;
+  gap: var(--spacing-400);
+}
+
+.banner.image img,
+.banner.image svg {
+  max-width: 200px;
+  max-height: 200px;
+}
+
+@media (width >= 800px) {
+  .banner.image > div {
+    grid-template-columns: 200px 1fr;
+    gap: var(--spacing-600);
+  }
+
+  .banner.image > div .img-wrapper {
+    align-self: center;
+  }
+
+  .banner.image > div .img-wrapper:last-child {
+    background-color: var(--color-red);
+  }
+}
+
+@media (width >= 1000px) {
+  .banner.image img,
+  .banner.image svg {
+    max-width: 250px;
+    max-height: 250px;
+}
+
+  .banner.image > div {
+    grid-template-columns: 250px 1fr 250px;
+  }
+
+  .banner.image > div .img-wrapper:last-child {
+    display: unset;
+  }
 }
