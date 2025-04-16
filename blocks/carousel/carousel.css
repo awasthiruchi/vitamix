@@ -4,10 +4,18 @@
 
 .carousel.expansion {
   display: flex;
-  gap: var(--spacing-s);
+  flex-direction: column;
+  padding: var(--spacing-m);
+  gap: var(--spacing-m);
 }
 
-.carousel.expansion picture {
+.carousel.expansion.dark {
+  color: var(--color-background);
+}
+
+.carousel.expansion > div { flex: 1; }
+
+.carousel.expansion .carousel-left picture {
   position: absolute;
   z-index: -1;
   inset: 0;
@@ -15,8 +23,36 @@
   box-sizing: border-box;
 }
 
-.carousel.expansion img {
+.carousel.expansion .carousel-left img {
   object-fit: cover;
   width: 100%;
   height: 100%;
+}
+
+.carousel.expansion .carousel-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.carousel.expansion .carousel-center img, .carousel.expansion .carousel-center video {
+  border-radius: 50%;
+  width: 100%;
+  aspect-ratio: 1;
+}
+
+.carousel.expansion .carousel-right p {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-in-out;
+}
+
+.carousel.expansion .carousel-right [aria-selected="true"] p {
+  max-height: 100px;
+}
+
+@media (width >= 900px) {
+  .carousel.expansion {
+    flex-direction: row;
+  }
 }
