@@ -31,7 +31,7 @@
   --heading-size-xxxxl: var(--font-size-800);
   --heading-size-xxxl: var(--font-size-700);
   --heading-size-xxl: var(--font-size-600); /* h1 */
-  --heading-size-xl: var(--font-size-500);  /* h2 */
+  --heading-size-xl: var(--font-size-700);  /* h2 */
   --heading-size-l: var(--font-size-400);   /* h3 */
   --heading-size-m: var(--font-size-300);   /* h4 */
   --heading-size-s: var(--font-size-200);   /* h5 */
@@ -66,6 +66,6 @@
 @media (width >= 800px) {
   :root {
     /* heading sizes */
-    --heading-size-xl: var(--font-size-800);  /* h2 */
+    --heading-size-xl: var(--font-size-900);  /* h2 */
   }
 }

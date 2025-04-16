@@ -5,13 +5,20 @@ export default function decorate(block) {
   // setup image columns
   [...block.children].forEach((row) => {
     [...row.children].forEach((col) => {
-      const pic = col.querySelector('picture');
+      // setup image columns
+      const pic = col.querySelector('div picture');
       if (pic) {
         const picWrapper = pic.closest('div');
-        if (picWrapper && picWrapper.children.length === 1) {
+        if (picWrapper.children.length === 1) {
           // picture is only content in column
-          picWrapper.classList.add('columns-img-col');
+          picWrapper.classList.add('column-img');
         }
+      }
+
+      // setup button columns
+      const button = col.querySelector('div .button');
+      if (button && button.textContent === col.textContent) {
+        button.closest('div').classList.add('column-button');
       }
     });
   });
