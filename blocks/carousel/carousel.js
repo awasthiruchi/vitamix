@@ -37,7 +37,6 @@ export default function carousel(block) {
     left.append(block.firstElementChild);
 
     const selectSlide = (slide) => {
-      console.log(slide, slide.parentElement.children);
       const videoHref = slide.dataset.video;
       const imageSrc = slide.dataset.image;
 
