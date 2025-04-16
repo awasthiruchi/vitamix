@@ -59,14 +59,14 @@
 
   /* widths and heights */
   --header-height: 68px;
-  --horizontal-spacing: var(--spacing-m);
+  --horizontal-spacing: var(--spacing-400);
   --site-width: 1200px;
 }
 
 @media (width >= 900px) {
   :root {
     /* widths and heights */
-    --horizontal-spacing: var(--spacing-l);
+    --horizontal-spacing: var(--spacing-600);
   }
 }
 
@@ -161,7 +161,9 @@ main > .section.banner > div {
 /* section metadata */
 main .section.light,
 main .section.dark {
-  padding: var(--horizontal-spacing) 0;
+  margin: 0;
+  /* padding: var(--horizontal-spacing) 0; */
+  /* background-color: tomato */
 }
 
 main .section.light {
@@ -169,8 +171,8 @@ main .section.light {
 }
 
 main .section.dark {
-  background-color: var(--color-gray-600);
-  color: var(--color-white);
+  /* background-color: var(--color-gray-600); */
+  /* color: var(--color-white); */
 }
 
 /* images and icons */
@@ -254,7 +256,7 @@ h6 {
 .eyebrow {
   margin-bottom: var(--spacing-60);
   color: var(--color-red);
-  font-size: var(--detail-size-s);
+  font-size: var(--detail-size-xs);
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
@@ -367,7 +369,7 @@ button.button {
   border: 1px solid var(--color-link);
   border-radius: var(--rounding-s);
   padding: var(--spacing-100) var(--spacing-300);
-  background: var(--color-white);
+  background-color: var(--color-white);
   color: var(--color-link);
   font: inherit;
   font-size: 0.875rem;
@@ -376,14 +378,16 @@ button.button {
   text-align: center;
   text-decoration: none;
   text-transform: uppercase;
-  transition: box-shadow 0.2s, border-color 0.2s, background-color 0.2s, color 0.2s;
+  transition: box-shadow 0.4s, border-color 0.4s, background-color 0.4s, color 0.4s;
   cursor: pointer;
 }
 
 a.button:hover,
 button.button:hover,
 button.button:focus {
-  box-shadow: var(--shadow-200) 0 0 5px;
+  /* box-shadow: var(--shadow-200) 0 0 5px; */
+  border-color: var(--color-red);
+  background-color: var(--color-gray-100);
 }
 
 button.button:disabled,
@@ -518,4 +522,125 @@ select[readonly]:focus {
 input[type='checkbox'],
 input[type='radio'] {
   width: unset;
+}
+
+/* shared carousel functionality */
+.carousel {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+}
+
+.carousel > ul {
+  list-style: none;
+  display: flex;
+  margin: 0;
+  padding: 0;
+  overflow: scroll clip;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+}
+
+.carousel > ul::-webkit-scrollbar {
+  display: none;
+}
+
+.carousel ul > li {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  scroll-snap-align: start;
+  position: relative;
+}
+
+.carousel > ul > li picture {
+  /* position: absolute; */
+  /* inset: 0; */
+}
+
+.carousel > ul > li picture > img {
+  /* height: 100%; */
+  /* width: 100%; */
+  /* object-fit: contain; */
+}
+
+/* stylelint-disable-next-line no-descending-specificity */
+.carousel nav button {
+  appearance: none;
+  margin: 0;
+  border: 0;
+  padding: 0;
+  background-color: transparent;
+}
+
+.carousel nav button.nav-arrow {
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  outline: 2px solid transparent;
+  color: var(--color-gray);
+  /* font-family: var(--icons-font-family); */
+  overflow: hidden;
+}
+
+.carousel nav button.nav-arrow:disabled {
+  display: none;
+}
+
+.carousel nav button.nav-arrow:first-of-type {
+  /* left: 2px; */
+}
+
+.carousel nav button.nav-arrow:last-of-type {
+  /* right: 2px; */
+}
+
+.carousel nav ul {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-20);
+  margin: 0;
+  padding: 0;
+}
+
+.carousel nav ul > li {
+  line-height: 0;
+}
+
+/* stylelint-disable-next-line no-descending-specificity */
+.carousel nav ul > li button {
+  /* position: relative; */
+  /* height: 44px; */
+  /* width: 16px; */
+  /* color: currentcolor; */
+  /* transition: color 0.3s; */
+}
+
+.carousel nav ul > li button[aria-selected="true"] {
+  /* color: var(--color-white); */
+}
+
+.carousel nav ul > li button::before {
+  /* content: ''; */
+  /* display: block; */
+  /* position: absolute; */
+  /* top: 50%; */
+  /* left: 50%; */
+  /* transform: translate(-50%, -50%); */
+  /* height: 8px; */
+  /* width: 8px; */
+  /* border-radius: 50%; */
+  /* background-color: currentcolor; */
+  /* transition: width 0.3s, height 0.3s; */
+}
+
+.carousel nav ul > li button[aria-selected="true"]::before,
+.carousel nav ul > li button:hover::before,
+.carousel nav ul > li button:focus::before {
+  /* width: 12px; */
+  /* height: 12px; */
+  /* border: 1px solid var(--color-gray); */
 }
