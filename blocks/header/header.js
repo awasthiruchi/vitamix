@@ -121,25 +121,37 @@ export default async function decorate(block) {
     const clone = ul.cloneNode(true);
     wrapper.append(clone);
     [...clone.children].forEach((li, i) => {
-      const navA = li.querySelector('a[href*="/nav/"]');
-      if (navA) {
-        // navA.addEventListener('mouseover', async (e) => {
-        //   e.preventDefault();
-        //   const navSectionFragments = await fetchNavFragments(navA);
-        //   if (navSectionFragments) {
-        //     // Replace the link with the nav fragments
-        //     li.innerHTML = '';
-        //     navSectionFragments.forEach((section) => {
-        //       li.append(section);
-        //     });
-        //   }
-        // });
-      }
+      // clear buttons
+      const as = li.querySelectorAll('a[href]');
+      as.forEach((a) => {
+        a.classList.remove('button');
+        a.parentElement.classList.remove('button-wrapper');
+      });
+
       const subsection = li.querySelector('ul');
       if (subsection) {
         li.className = 'subsection';
         subsection.id = `subsection-${i + 1}`;
         subsection.setAttribute('role', 'menu');
+
+        // populate nav fragments
+        const navA = li.querySelector('a[href*="/nav"]');
+        if (navA) {
+          const populateNavFragments = async (e) => {
+            e.preventDefault();
+            const navFragmentSections = await fetchNavFragments(navA);
+            const menu = navA.parentElement.parentElement;
+            menu.innerHTML = '';
+            navFragmentSections.forEach((s) => {
+              const menuItem = document.createElement('li');
+              menuItem.setAttribute('role', 'menuitem');
+              menuItem.append(s);
+              menu.append(menuItem);
+            });
+          };
+          li.addEventListener('mouseover', populateNavFragments, { once: true });
+        }
+
         [...subsection.children].forEach((subli) => subli.setAttribute('role', 'menuitem'));
         const label = li.textContent.replace(subsection.textContent, '').trim();
         const button = document.createElement('button');
@@ -156,7 +168,7 @@ export default async function decorate(block) {
         });
         const chevron = document.createElement('i');
         chevron.className = 'symbol symbol-chevron';
-        button.append(chevron);
+        button.prepend(chevron);
         li.innerHTML = '';
         li.prepend(button, subsection);
       }

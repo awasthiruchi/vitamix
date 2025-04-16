@@ -57,6 +57,7 @@ header section > [aria-hidden='true'] {
     grid-template:
       'title sections tools cart' var(--header-height) / auto 1fr auto auto;
     height: 0;
+    position: relative;
   }
 }
 
@@ -91,7 +92,6 @@ header .nav-sections nav ul {
 }
 
 header .nav-sections nav > ul > li {
-  position: relative;
   padding: var(--spacing-80) 0;
   font-weight: bold;
 }
@@ -107,11 +107,15 @@ header .nav-sections nav > ul > li::after {
   background-color: var(--color-gray-700);
 }
 
+header .nav-sections nav > ul > li li {
+  font-weight: normal;
+}
+
 header .nav-sections button,
 header .nav-sections nav > ul > li > a,
 header .nav-sections button + ul > li a {
-  /* display: block; */
-  /* width: 100%; */
+  display: block;
+  width: 100%;
   /* border-radius: 0.5em; */
   /* padding: 0.3em 0.75em; */
   /* background-color: transparent; */
@@ -125,13 +129,9 @@ header .nav-sections nav ul li a:hover,
 header .nav-sections nav ul li a:focus,
 header .nav-sections button:hover,
 header .nav-sections button:focus {
+  box-shadow: none;
   /* background-color: var(--gray-100); */
   /* text-decoration: none; */
-}
-
-header .nav-sections button[aria-expanded='true'] {
-  background-color: var(--color-text);
-  color: var(--color-background);
 }
 
 header .nav-sections button {
@@ -139,7 +139,6 @@ header .nav-sections button {
   align-items: center;
   justify-content: space-between;
   gap: 0.5ch;
-  padding-right: 0.5em;
   white-space: nowrap;
 }
 
@@ -154,8 +153,8 @@ header .nav-sections button + ul > li a {
 
 header .nav-sections i.symbol-chevron {
   display: inline-block;
-  width: 1em;
-  height: 1em;
+  width: 15px;
+  height: 15px;
   padding: 0.15em;
   background-color: transparent;
   transition: transform 0.2s;
@@ -170,11 +169,11 @@ header .nav-sections [aria-expanded='false'] + ul {
 }
 
 header .nav-sections i.symbol-chevron::after {
-  top: 4px;
-  left: 5.25px;
+  top: 2px;
+  left: 4px;
   width: calc(100% - (4 * 0.15em));
   height: calc(100% - (4 * 0.15em));
-  border: 2px solid currentcolor;
+  border: 1.5px solid currentcolor;
   border-left: 0;
   border-bottom: 0;
   transform: rotate(135deg);
@@ -192,43 +191,64 @@ header .nav-sections i.symbol-chevron::after {
     gap: var(--spacing-80);
   }
 
-  header .nav-sections .subsection {
-    position: relative;
-  }
-
   header .nav-sections nav > ul > li::after {
     content: none;
   }
   
   header .nav-sections .subsection button + ul {
-    flex-direction: column;
-    gap: 0;
     position: absolute;
-    top: 100%;
-    min-width: calc(100% + var(--horizontal-spacing));
-    border-radius: 0.5em;
-    padding: 0.5em 0;
+    top: var(--header-height);
+    left: 0;
+    right: 0;
+    margin-top: 0;
+    border: 1px solid var(--color-gray-700);
+    padding: var(--spacing-200);
     background-color: var(--color-background);
-    box-shadow: var(--shadow-default);
+    z-index: 1;
   }
 
-  header .nav-sections .subsection button + ul::before {
-    content: '';
-    position: absolute;
-    top: -8px;
-    right: calc(var(--horizontal-spacing) + 0.3em);
-    width: 0;
-    height: 0;
-    border-left: 9px solid transparent;
-    border-right: 9px solid transparent;
-    border-bottom: 9px solid var(--color-background);
-    z-index: 2;
+  header .nav-sections button + ul > li a {
+    padding: 0;
   }
 
-  header .nav-sections .subsection button + ul > li a {
-    display: block;
-    border-radius: 0;
-    padding-left: 0.75em;
+  header .nav-sections .subsection button + ul > li[role="menuitem"] > ul > li > p {
+    border-bottom: 1px dashed var(--color-gray-400);
+    padding: var(--spacing-80);
+    font-size: var(--detail-size-xl);
+    line-height: var(--line-height-xl);
+  }
+
+  header .nav-sections .subsection button + ul > li[role="menuitem"] ul {
+    flex-direction: column;
+  }
+
+  header .nav-sections .subsection button + ul > li[role="menuitem"] p {
+    margin: 0;
+  }
+
+  header .nav-sections .subsection button + ul > li[role="menuitem"] img {
+    width: 50px;
+  }
+
+  header .nav-sections .subsection button + ul > li[role="menuitem"] ul > li > ul {
+    padding: var(--spacing-100) 0;
+  }
+
+  header .nav-sections .subsection button + ul > li[role="menuitem"] ul > li > ul > li {
+    display: grid;
+    grid-template-columns: 50px 1fr;
+    align-items: center;
+    gap: var(--spacing-60);
+    line-height: 1;
+  }
+
+  header .nav-sections .subsection button + ul > li[role="menuitem"] ul > li > ul > li a:first-child {
+    font-size: var(--detail-size-xl);
+  }
+  
+  header .nav-sections .subsection button + ul > li[role="menuitem"] ul > li > ul > li a:last-child {
+    color: var(--color-gray-900);
+    line-height: 0;
   }
 }
 
@@ -272,11 +292,6 @@ header .nav-tools .nav-tools-language {
 }
 
 @media (width >= 1000px) {
-  header .nav-tools {
-    /* background-color: red; */
-    /* align-self: center; */
-  }
-
   header .nav-tools::before {
     content: none;
   }
@@ -287,10 +302,6 @@ header .nav-tools .nav-tools-language {
 
   header .nav-tools ul > li {
     max-width: 60px;
-  }
-  
-  header .nav-tools p.button-wrapper {
-    /* margin: 0; */
   }
 }
 
