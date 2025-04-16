@@ -42,8 +42,44 @@ function toggleHamburger(hamburger, nav) {
 }
 
 function buildLanguageSelector(tool) {
-  const ul = tool.querySelector('ul');
-  ul.style.display = 'none';
+  const label = tool.querySelector('p');
+  const options = tool.querySelector('ul');
+
+  const selected = [...options.children].find((option) => option.querySelector('strong'));
+  const selectedIcon = selected.querySelector('.icon');
+  const selectedText = [...selected.querySelectorAll('strong')].pop().textContent;
+
+  const button = document.createElement('button');
+  button.className = 'icon-wrapper';
+  button.setAttribute('aria-haspopup', true);
+  button.setAttribute('aria-expanded', false);
+  button.setAttribute('aria-controls', 'language-menu');
+  button.setAttribute('aria-label', label.textContent);
+  button.append(selectedIcon.cloneNode(true), selectedText);
+
+  options.setAttribute('role', 'menu');
+  options.id = 'language-menu';
+  [...options.children].forEach((option) => {
+    const optionLink = option.querySelector('a');
+    const optionIcon = option.querySelector('.icon');
+    const optionLabels = [...option.querySelectorAll('a')].map((a) => {
+      const span = document.createElement('span');
+      span.textContent = a.textContent;
+      return span;
+    });
+    const optionText = document.createElement('p');
+    optionText.append(...optionLabels);
+    option.innerHTML = '';
+    optionLink.replaceChildren(optionIcon.cloneNode(true), optionText);
+    option.append(optionLink);
+  });
+
+  label.replaceWith(button);
+
+  button.addEventListener('click', () => {
+    const expanded = button.getAttribute('aria-expanded') === 'true';
+    button.setAttribute('aria-expanded', !expanded);
+  });
 }
 
 async function fetchNavFragments(a) {
