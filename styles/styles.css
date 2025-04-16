@@ -154,6 +154,10 @@ main > .section > div {
   padding: 0 var(--horizontal-spacing);
 }
 
+main > .section.banner > div {
+  padding: 0;
+}
+
 /* section metadata */
 main .section.light,
 main .section.dark {
