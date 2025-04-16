@@ -236,6 +236,12 @@ export default async function decorate(block) {
     });
   }
 
+  // temp banner
+  const banner = document.createElement('div');
+  banner.className = 'nav-banner';
+  banner.innerHTML = '<p>Free Standard Shipping on Orders $99 or More.</p>';
+  nav.prepend(banner);
+
   // build mobile hamburger
   const hamburgerWrapper = document.createElement('div');
   hamburgerWrapper.className = 'nav-hamburger';

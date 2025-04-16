@@ -41,6 +41,7 @@ header section {
     'sections sections sections' 1fr / auto 1fr auto;
   place-items: center;
   gap: 0 var(--horizontal-spacing);
+  position: relative;
   max-width: var(--site-width);
   height: 0;
   margin: 0 auto;
@@ -62,7 +63,6 @@ header section > [aria-hidden='true'] {
     grid-template:
       'title sections tools cart' var(--header-height) / auto 1fr auto auto;
     height: 0;
-    position: relative;
   }
 }
 
@@ -469,4 +469,27 @@ header .nav-hamburger [aria-expanded='true'] i.symbol-hamburger::before {
 header .nav-hamburger [aria-expanded='true'] i.symbol-hamburger::after {
   transform: rotate(-45deg);
   bottom: 0;
+}
+
+/* banner */
+header .nav-banner {
+  position: absolute;
+  top: var(--header-height);
+  left: calc(-1 * var(--horizontal-spacing));
+  right: calc(-1 * var(--horizontal-spacing));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 2px solid var(--color-white);
+  padding: var(--spacing-40) var(--horizontal-spacing);
+  background-color: var(--color-rosewood);
+  color: var(--color-white);
+  text-align: center;
+}
+
+@media (width >= 1000px) {
+  header .nav-banner {
+    left: 0;
+    right: 0;
+  }
 }
