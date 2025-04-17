@@ -32,11 +32,11 @@ export default function decorate(block) {
 
   // decorate variant specifics
   const variants = [...block.classList].filter((c) => c !== 'block' && c !== 'cards');
-  if (variants.includes('knockout')) {
+  if (variants.includes('knockout') || variants.includes('articles')) {
     ul.querySelectorAll('li').forEach((li) => {
       const as = li.querySelectorAll('a');
-      // setup full card click
-      if (as.length === 1) {
+      // setup full card click if there's one link or all links have same href
+      if (as.length === 1 || (as.length > 1 && [...as].every((a) => a.href === as[0].href))) {
         li.classList.add('card-click');
         li.addEventListener('click', () => as[0].click());
       }
