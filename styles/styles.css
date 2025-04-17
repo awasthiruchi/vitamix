@@ -358,9 +358,17 @@ a:focus {
 
 /* buttons */
 .button-wrapper {
-  /* display: flex;
+  display: flex;
   flex-wrap: wrap;
-  gap: var(--spacing-s); */
+  gap: 1ch var(--spacing-400);
+}
+
+.button-wrapper > a {
+  width: max-content;
+}
+
+p + .button-wrapper {
+  margin-top: var(--spacing-200);
 }
 
 a.button,
@@ -408,10 +416,12 @@ button.button.emphasis {
 
 a.button.link,
 button.button.link {
+  padding-left: 0;
+  padding-right: 0;
   border-color: transparent;
   background-color: transparent;
   color: var(--color-link);
-  font-size: 1rem;
+  font-size: 0.875em;
   text-decoration: underline;
   text-underline-offset: var(--spacing-60);
   text-transform: none;
