@@ -30,12 +30,3 @@
   --icon-m: 22px;
   --icon-s: 16px;
 }
-
-@media (width >= 900px) {
-  :root {
-    /* icons */
-    --icon-l: 20px;
-    --icon-m: 16px;
-    --icon-s: 12px;
-  }
-}

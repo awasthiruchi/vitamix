@@ -22,7 +22,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background-color: var(--shadow-charcoal);
+  background-color: var(--overlay-charcoal);
   z-index: -1;
   pointer-events: none;
 }
@@ -44,6 +44,7 @@
 
 .hero .button-wrapper {
   margin-top: var(--spacing-600);
+  justify-content: center;
 }
 
 .hero .disclaimer {

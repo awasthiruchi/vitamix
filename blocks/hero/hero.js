@@ -1,4 +1,4 @@
-export default async function decorate(block) {
+export default function decorate(block) {
   // set background
   const vid = block.querySelector(
     'a[href$=".mp4"], a[href*=".mp4?"], a[href*=".mp4&"]',

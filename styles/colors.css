@@ -31,5 +31,9 @@
   --shadow-100: rgba(0 0 0 / 7%);
   --shadow-200: rgba(0 0 0 / 33.3%);
   --shadow-300: rgba(0 0 0 / 50%);
-  --shadow-charcoal: rgba(51 63 72 / 35%);
+  
+  /* overlays */;
+  --overlay-light: rgba(255 255 255 / 95%);
+  --overlay-charcoal: rgba(51 63 72 / 35%);
+  --overlay-charcoal-dark: rgba(51 63 72 / 60%);
 }

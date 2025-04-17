@@ -38,8 +38,9 @@ function swapIcon(icon) {
         // check if svg has inline styles
         let style = svg.querySelector('style');
         if (style) style = style.textContent.toLowerCase().includes('currentcolor');
-        let fill = svg.querySelector('[fill]');
-        if (fill) fill = fill.getAttribute('fill').toLowerCase().includes('currentcolor');
+        const fill = [...svg.querySelectorAll('[fill]')].some(
+          (el) => el.getAttribute('fill').toLowerCase().includes('currentcolor'),
+        );
         // replace image with SVG, ensuring color inheritance
         if ((style || fill) || (!style && !fill)) {
           icon.replaceWith(svg);
@@ -66,6 +67,99 @@ export function buildIcon(name, modifier) {
   if (modifier) icon.classList.add(modifier);
   decorateIcon(icon);
   return icon;
+}
+
+function buildCarouselIndices(carousel, indices, visibleSlides = 1) {
+  indices.innerHTML = '';
+  const slides = [...carousel.children];
+  slides.forEach((s, i) => {
+    const index = document.createElement('li');
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.setAttribute('aria-label', `Go to slide ${i + 1}`);
+    button.setAttribute('aria-selected', !i);
+    button.addEventListener('click', () => {
+      indices.querySelectorAll('button').forEach((b) => {
+        b.setAttribute('aria-selected', b === button);
+      });
+      carousel.scrollTo({
+        left: i * (carousel.clientWidth / visibleSlides),
+        behavior: 'smooth',
+      });
+    });
+    index.append(button);
+    indices.append(index);
+  });
+}
+
+/**
+ * Initializes and builds a scrollable carousel with navigation controls.
+ * @param {HTMLElement} container - Container element that wraps the carousel `<ul>`.
+ * @param {number} [visibleSlides=1] - Number of slides visible at a time.
+ * @param {boolean} [pagination=true] - Whether to display pagination indicators.
+ * @returns {HTMLElement} Carousel container.
+ */
+export function buildCarousel(container, visibleSlides = 1, pagination = true) {
+  const carousel = container.querySelector('ul');
+  if (!carousel) return null;
+  const slides = [...carousel.children];
+  if (!slides || slides.length <= 0) return null;
+  container.classList.add('carousel');
+
+  // build navigation
+  const navEl = document.createElement('nav');
+  navEl.setAttribute('aria-label', 'Carousel navigation');
+  container.append(navEl);
+
+  // build arrows
+  ['Previous', 'Next'].forEach((label, i) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.setAttribute('aria-label', `${label} frame`);
+    button.className = `nav-arrow nav-arrow-${label.toLowerCase()}`;
+    // button.innerHTML = label === 'Previous' ? '&#xE959;' : '&#xe958;';
+    button.addEventListener('click', () => {
+      const slideWidth = carousel.scrollWidth / slides.length;
+      carousel.scrollBy({
+        left: !i ? -slideWidth * visibleSlides : slideWidth * visibleSlides,
+        behavior: 'smooth',
+      });
+    });
+    navEl.append(button);
+  });
+
+  if (pagination) {
+    // build indices
+    const indices = document.createElement('ul');
+    navEl.append(indices);
+    buildCarouselIndices(carousel, indices, visibleSlides);
+
+    carousel.addEventListener('scroll', () => {
+      const { scrollLeft, clientWidth } = carousel;
+      const current = Math.round(scrollLeft / (clientWidth * visibleSlides));
+      [...indices.querySelectorAll('button')].forEach((btn, i) => {
+        btn.setAttribute('aria-selected', i === current);
+      });
+    });
+  }
+
+  // enable scroll
+  carousel.addEventListener('scroll', () => {
+    const { scrollLeft } = carousel;
+    const slideWidth = carousel.scrollWidth / slides.length;
+    const prev = container.querySelector('.nav-arrow-previous');
+    const next = container.querySelector('.nav-arrow-next');
+    [prev, next].forEach((b) => {
+      b.disabled = false;
+    });
+    const current = Math.round(scrollLeft / slideWidth);
+    if (current < 1) prev.disabled = true;
+    else if (current >= (slides.length - visibleSlides)) next.disabled = true;
+  });
+
+  // if only one frame, hide navigation
+  if (slides.length <= visibleSlides) navEl.style.visibility = 'hidden';
+  return container;
 }
 
 function buildForms(main) {
@@ -166,6 +260,22 @@ function decorateDisclaimers(main) {
   });
 }
 
+function decorateSectionBackgrounds(main) {
+  main.querySelectorAll('.section.banner[data-background]').forEach((section) => {
+    const { background } = section.dataset;
+    section.style.backgroundImage = `url(${background})`;
+    const text = section.textContent.trim();
+    if (text) section.classList.add('overlay');
+  });
+
+  main.querySelectorAll('.section.light, .section.dark').forEach((section) => {
+    const prev = section.previousElementSibling;
+    if (prev) prev.dataset.collapse = 'bottom';
+    const next = section.nextElementSibling;
+    if (next) next.dataset.collapse = 'top';
+  });
+}
+
 /**
  * Decorates the main element.
  * @param {Element} main The main element
@@ -176,6 +286,7 @@ export function decorateMain(main) {
   decorateImages(main);
   buildAutoBlocks(main);
   decorateSections(main);
+  decorateSectionBackgrounds(main);
   decorateBlocks(main);
   decorateButtons(main);
   decorateEyebrows(main);
