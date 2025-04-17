@@ -18,10 +18,6 @@
   overflow: hidden;
 }
 
-.hero .button-wrapper {
-  justify-content: center;
-}
-
 .hero::after {
   content: '';
   position: absolute;
@@ -48,6 +44,7 @@
 
 .hero .button-wrapper {
   margin-top: var(--spacing-600);
+  justify-content: center;
 }
 
 .hero .disclaimer {
