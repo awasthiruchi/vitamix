@@ -260,6 +260,22 @@ function decorateDisclaimers(main) {
   });
 }
 
+function decorateSectionBackgrounds(main) {
+  main.querySelectorAll('.section.banner[data-background]').forEach((section) => {
+    const { background } = section.dataset;
+    section.style.backgroundImage = `url(${background})`;
+    const text = section.textContent.trim();
+    if (text) section.classList.add('overlay');
+  });
+
+  main.querySelectorAll('.section.light, .section.dark').forEach((section) => {
+    const prev = section.previousElementSibling;
+    if (prev) prev.dataset.collapse = 'bottom';
+    const next = section.nextElementSibling;
+    if (next) next.dataset.collapse = 'top';
+  });
+}
+
 /**
  * Decorates the main element.
  * @param {Element} main The main element
@@ -270,6 +286,7 @@ export function decorateMain(main) {
   decorateImages(main);
   buildAutoBlocks(main);
   decorateSections(main);
+  decorateSectionBackgrounds(main);
   decorateBlocks(main);
   decorateButtons(main);
   decorateEyebrows(main);
