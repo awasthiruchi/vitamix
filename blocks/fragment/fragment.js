@@ -19,10 +19,13 @@ import {
  */
 export async function loadFragment(path) {
   if (path && path.startsWith('/')) {
-    const resp = await fetch(`${path}.plain.html`);
+    const type = path.endsWith('.json') ? 'json' : 'html';
+    const fetchPath = type === 'json' ? path : `${path}.plain.html`;
+    const resp = await fetch(`${fetchPath}`);
     if (resp.ok) {
       const main = document.createElement('main');
-      main.innerHTML = await resp.text();
+      const html = type === 'json' ? (await resp.json()).data[0].html : await resp.text();
+      main.innerHTML = html;
 
       // reset base path for media to fragment base
       const resetAttributeBase = (tag, attr) => {
