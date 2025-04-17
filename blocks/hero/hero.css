@@ -18,6 +18,10 @@
   overflow: hidden;
 }
 
+.hero .button-wrapper {
+  justify-content: center;
+}
+
 .hero::after {
   content: '';
   position: absolute;
