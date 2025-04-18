@@ -343,11 +343,11 @@ function enableSubmission(form, path) {
       try {
         const resp = await fetch(`https://www.vitamix.com/bin/vitamix/newslettersubscription?${params.toString()}`);
         if (!resp.ok) {
+          // eslint-disable-next-line no-console
           console.error('Failed to submit newsletter subscription', resp);
         }
-        const { data: { message } } = await resp.json();
-        console.log(message);
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.error('Failed to submit newsletter subscription', error);
       }
       const thankYou = document.createElement('div');
