@@ -39,7 +39,6 @@ export default function decorate(block) {
     left.append(block.firstElementChild);
 
     const selectSlide = (slide) => {
-      console.log(slide, slide.parentElement.children);
       const videoHref = slide.dataset.video;
       const imageSrc = slide.dataset.image;
 
@@ -105,5 +104,4 @@ export default function decorate(block) {
 
   if (carousel) block.replaceWith(carousel);
   else block.parentElement.remove();
-
 }
