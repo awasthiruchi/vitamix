@@ -1,4 +1,5 @@
 import { createOptimizedPicture } from '../../scripts/aem.js';
+import { buildCarousel } from '../../scripts/scripts.js';
 
 function getVideoElement(source, replacePlaceholder, autoplay) {
   const video = document.createElement('video');
@@ -26,7 +27,8 @@ function getVideoElement(source, replacePlaceholder, autoplay) {
   return video;
 }
 
-export default function carousel(block) {
+export default function decorate(block) {
+  /* expansion */
   if (block.classList.contains('expansion')) {
     const left = document.createElement('div');
     left.classList.add('carousel-left');
@@ -77,5 +79,31 @@ export default function carousel(block) {
     block.appendChild(right);
 
     selectSlide(right.firstElementChild);
+    return;
   }
+
+  const rows = [...block.children];
+  block.innerHTML = '';
+
+  // build wrapper
+  const wrapper = document.createElement('ul');
+  block.append(wrapper);
+
+  // extract slides
+  const slides = rows.map((s) => s.children);
+  slides.forEach((s) => {
+    const slide = document.createElement('li');
+    [...s].forEach((cell) => {
+      const img = cell.querySelector('div img, div svg');
+      if (img) cell.classList.add('img-wrapper');
+      slide.append(cell);
+    });
+    wrapper.append(slide);
+  });
+
+  const carousel = buildCarousel(block, 1, false);
+
+  if (carousel) block.replaceWith(carousel);
+  else block.parentElement.remove();
+
 }
