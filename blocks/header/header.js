@@ -282,7 +282,7 @@ export default async function decorate(block) {
   const cartItems = cookies.cart_items_count;
   if (customer) {
     const account = block.querySelector('.icon-account').parentElement;
-    account.lastChild.textContent = `${customer}'s Account`; 
+    account.lastChild.textContent = `${customer}'s Account`;
   }
   if (cartItems) {
     const cart = block.querySelector('.icon-cart').parentElement;
