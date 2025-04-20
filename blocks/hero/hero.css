@@ -59,8 +59,12 @@
   width: 100%;
   max-width: 600px;
   padding: var(--horizontal-spacing);
-  padding-top: 75px;
+  padding-top: 55px;
   color: var(--color-gray-100);
+}
+
+.hero > div > div h1 b {
+  font-weight: 900;
 }
 
 @media (width >= 800px) {

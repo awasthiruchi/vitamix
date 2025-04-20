@@ -1,7 +1,7 @@
 /* stylelint-disable comment-empty-line-before */
 /* stylelint-disable no-descending-specificity */
 header {
-  padding: 0 var(--horizontal-spacing);
+  padding: 0;
 }
 
 header a:any-link {
@@ -12,6 +12,10 @@ header a:any-link {
 header button:hover,
 header button:focus {
   box-shadow: none;
+}
+
+header #nav {
+  padding: 0 var(--spacing-200);
 }
 
 header ul {
@@ -58,7 +62,7 @@ header section > [aria-hidden='true'] {
   display: none;
 }
 
-@media (width >= 1000px) {
+@media (width >= 1150px) {
   header section[data-expanded='true'] {
     grid-template:
       'title sections tools cart' var(--header-height) / auto 1fr auto auto;
@@ -79,7 +83,7 @@ header .nav-title .title-content {
 
 header .nav-title svg,
 header .nav-title img {
-  width: 160px;
+  width: 140px;
   height: auto;
 }
 
@@ -174,7 +178,7 @@ header .nav-sections i.symbol-chevron::after {
   transform: rotate(135deg);
 }
 
-@media (width >= 1000px) {
+@media (width >= 1150px) {
   header .nav-sections {
     align-self: unset;
   }
@@ -182,12 +186,14 @@ header .nav-sections i.symbol-chevron::after {
   header .nav-sections nav ul {
     display: flex;
     flex-direction: row;
-    font-size: var(--detail-size-s);
-    gap: var(--spacing-80);
+    font-size: var(--font-size-90);
+    gap: var(--spacing-400);
+    letter-spacing: 0.03em;
   }
 
-  header .nav-sections nav > ul > li::after {
-    content: none;
+  header .nav-sections nav > ul > li p, header .nav-sections nav > ul > li button {
+    color: var(--color-charcoal);
+    font-weight: 500;
   }
 
   header .nav-sections .subsection {
@@ -369,7 +375,7 @@ header .nav-tools .nav-tools-language button + ul li p span:last-child {
   font-weight: bold;
 }
 
-@media (width >= 1000px) {
+@media (width >= 1150px) {
   header .nav-tools::before {
     content: none;
   }
@@ -393,7 +399,7 @@ header .nav-cart {
   text-align: center;
 }
 
-@media (width >= 1000px) {
+@media (width >= 1150px) {
   header .nav-cart {
     width: 60px;
     margin-left: var(--spacing-80);
@@ -482,12 +488,23 @@ header .nav-banner {
   justify-content: center;
   border-bottom: 2px solid var(--color-white);
   padding: var(--spacing-40) var(--horizontal-spacing);
-  background-color: var(--color-rosewood);
+  background-color: var(--color-lightsalmon);
   color: var(--color-white);
   text-align: center;
+  font-size: var(--detail-size-m);
+  min-height: var(--nav-banner-height);
+  letter-spacing: 0.03em;
 }
 
-@media (width >= 1000px) {
+header .nav-banner a:any-link {
+  text-decoration: underline;
+}
+
+header .nav-banner b {
+  font-weight: 700;
+}
+
+@media (width >= 1150px) {
   header .nav-banner {
     left: 0;
     right: 0;

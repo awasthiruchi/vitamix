@@ -59,6 +59,7 @@
 
   /* widths and heights */
   --header-height: 68px;
+  --nav-banner-height: 54px;
   --horizontal-spacing: var(--spacing-400);
   --site-width: 1440px;
 }
@@ -73,7 +74,7 @@
 @media (width >= 1000px) {
   :root {
     /* widths and heights */
-    --header-height: 83px;
+    --header-height: 84px;
   }
 }
 
@@ -130,6 +131,7 @@ main {
   main {
     /* max-width: calc(100% - (2 * var(--horizontal-spacing))); */
     margin: 0 auto;
+    margin-top: var(--nav-banner-height);
   }
 }
 

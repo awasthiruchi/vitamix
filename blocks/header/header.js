@@ -3,7 +3,7 @@ import { swapIcons } from '../../scripts/scripts.js';
 import { loadFragment } from '../fragment/fragment.js';
 
 // media query match that indicates desktop width
-const isDesktop = window.matchMedia('(width >= 1000px)');
+const isDesktop = window.matchMedia('(width >= 1150px)');
 
 function toggleHeader(desktop, nav, hamburger) {
   const hamburgerWrapper = hamburger.closest('div');
@@ -239,7 +239,7 @@ export default async function decorate(block) {
   // temp banner
   const banner = document.createElement('div');
   banner.className = 'nav-banner';
-  banner.innerHTML = '<p>Free Standard Shipping on Orders $99 or More.</p>';
+  banner.innerHTML = '<p>Mother’s Day Sale: <b>Up to $200 Off Select Vitamix Blenders!</b> Hurry, limited time only. <b><a href="https://www.vitamix.com/shop/sale">Shop the Sale.</a></b></p>';
   nav.prepend(banner);
 
   // build mobile hamburger
