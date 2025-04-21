@@ -69,7 +69,7 @@
 @media (width >= 900px) {
   :root {
     /* widths and heights */
-    --horizontal-spacing: var(--spacing-600);
+    --horizontal-spacing: var(--spacing-800);
   }
 }
 
