@@ -234,6 +234,7 @@
   border: 1px solid var(--color-gray-300);
   padding: var(--spacing-100);
   transition: border-color 0.2s;
+  z-index: 1;
 }
 
 .cards.knockout ul > li + li {
