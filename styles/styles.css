@@ -100,7 +100,7 @@
 body {
   display: none;
   margin: 0;
-  background-color: var(--layer-base);
+  background-color: var(--color-gray-400);
   color: var(--color-text);
   font-family: var(--body-font-family);
   font-size: var(--body-size-m);
@@ -123,6 +123,8 @@ header {
 
 main {
   max-width: var(--site-width);
+  background-color: var(--layer-base);
+  padding-bottom: var(--spacing-500);
   /* stylelint-disable-next-line comment-empty-line-before */
   /* margin: 0 var(--horizontal-spacing); */
 }

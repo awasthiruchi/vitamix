@@ -39,6 +39,7 @@
   width: 100%;
   aspect-ratio: 16 / 9;
   max-height: 400px;
+  z-index: 1;
 }
 
 .banner.inset .img-wrapper video,
@@ -106,7 +107,15 @@
   justify-content: center;
   min-height: 430px;
   padding: var(--spacing-400) 1ch;
+  z-index: 1;
+}
+
+.banner.compact::after {
+  content: '';
+  position: absolute;
+  inset: 0;
   background-color: var(--overlay-charcoal-dark);
+  z-index: -1;
 }
 
 .banner.compact .eyebrow {

@@ -156,6 +156,7 @@
   flex-direction: column;
   padding: var(--spacing-m);
   gap: var(--spacing-m);
+  z-index: 1;
 }
 
 .carousel.expansion.dark {

@@ -2,6 +2,9 @@
 /* stylelint-disable no-descending-specificity */
 header {
   padding: 0;
+  background-color: var(--layer-base);
+  max-width: var(--site-width);
+  margin: 0 auto;
 }
 
 header a:any-link {
