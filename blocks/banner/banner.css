@@ -37,18 +37,12 @@
   align-items: center;
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 9;
-  max-height: 400px;
 }
 
 .banner.inset .img-wrapper video,
 .banner.inset .img-wrapper img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
   border-radius: var(--rounding-m);
-  object-fit: cover;
+  width: 100%;
 }
 
 .banner.inset .img-wrapper img {
@@ -76,6 +70,8 @@
 
   .banner.inset > div {
     display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   .banner.inset > div div {

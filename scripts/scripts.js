@@ -11,6 +11,7 @@ import {
   loadSection,
   loadSections,
   loadCSS,
+  createOptimizedPicture,
   sampleRUM,
 } from './aem.js';
 
@@ -263,7 +264,9 @@ function decorateDisclaimers(main) {
 function decorateSectionBackgrounds(main) {
   main.querySelectorAll('.section.banner[data-background]').forEach((section) => {
     const { background } = section.dataset;
-    section.style.backgroundImage = `url(${background})`;
+    const backgroundPicture = createOptimizedPicture(background);
+    backgroundPicture.classList.add('section-background-image');
+    section.prepend(backgroundPicture);
     const text = section.textContent.trim();
     if (text) section.classList.add('overlay');
   });

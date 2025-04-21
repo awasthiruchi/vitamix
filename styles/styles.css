@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+ /* stylelint-disable comment-empty-line-before */
+
 @import url('colors.css');
 @import url('containers.css');
 @import url('typography.css');
@@ -59,6 +61,7 @@
 
   /* widths and heights */
   --header-height: 68px;
+  --nav-banner-height: 54px;
   --horizontal-spacing: var(--spacing-400);
   --site-width: 1440px;
 }
@@ -66,14 +69,14 @@
 @media (width >= 900px) {
   :root {
     /* widths and heights */
-    --horizontal-spacing: var(--spacing-600);
+    --horizontal-spacing: var(--spacing-800);
   }
 }
 
 @media (width >= 1000px) {
   :root {
     /* widths and heights */
-    --header-height: 83px;
+    --header-height: 84px;
   }
 }
 
@@ -122,7 +125,6 @@ header {
 
 main {
   max-width: var(--site-width);
-  /* stylelint-disable-next-line comment-empty-line-before */
   /* margin: 0 var(--horizontal-spacing); */
 }
 
@@ -130,6 +132,7 @@ main {
   main {
     /* max-width: calc(100% - (2 * var(--horizontal-spacing))); */
     margin: 0 auto;
+    margin-top: var(--nav-banner-height);
   }
 }
 
@@ -183,7 +186,7 @@ main .section.banner {
   align-items: center;
   justify-content: center;
   position: relative;
-  min-height: 250px;
+  min-height: 480px;
   padding: var(--spacing-400);
   background-position: center;
   background-repeat: no-repeat;
@@ -202,6 +205,7 @@ main .section.banner.overlay::before {
 main .section.banner > div {
   display: unset;
   z-index: 1;
+  max-width: 70vw;
 }
 
 @media (width >= 800px) {
@@ -210,8 +214,24 @@ main .section.banner > div {
   }
 
   main .section.banner > div {
-    max-width: 578px;
+    max-width: 500px;
   }
+}
+
+.section[data-background] {
+  position: relative;
+}
+
+.section[data-background] picture.section-background-image {
+  position: absolute;
+  inset: 0;
+}
+
+.section[data-background] picture.section-background-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
 }
 
 /* images and icons */
