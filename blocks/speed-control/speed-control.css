@@ -149,8 +149,6 @@
 
 .speed-control svg .stroke {
   stroke: var(--color-red);
-  transform: rotate(-180deg);
-  transform-origin: 206px 200px;
   transition: transform 0.6s ease-out;
 }
 
