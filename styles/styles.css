@@ -240,6 +240,7 @@ p.img-wrapper {
   line-height: 0;
 }
 
+/* stylelint-disable-next-line no-descending-specificity */
 img {
   display: inline-block;
   width: 100%;
@@ -250,8 +251,9 @@ img {
   line-height: 0;
 }
 
-.icon svg,
-.icon img {
+/* stylelint-disable-next-line no-descending-specificity */
+.icon img,
+.icon svg {
   width: 1em;
   height: 1em;
   fill: currentcolor;
