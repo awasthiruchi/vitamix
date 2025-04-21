@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+ /* stylelint-disable comment-empty-line-before */
+
 @import url('colors.css');
 @import url('containers.css');
 @import url('typography.css');
@@ -123,7 +125,6 @@ header {
 
 main {
   max-width: var(--site-width);
-  /* stylelint-disable-next-line comment-empty-line-before */
   /* margin: 0 var(--horizontal-spacing); */
 }
 
