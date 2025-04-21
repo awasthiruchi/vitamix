@@ -10,7 +10,7 @@ function getCookies() {
   const cookieMap = {};
   cookies.forEach((cookie) => {
     const [key, value] = cookie.split('=');
-    cookieMap[key.trim()] = value.trim();
+    if (key && value) cookieMap[key.trim()] = value.trim();
   });
   return cookieMap;
 }
