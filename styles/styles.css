@@ -99,6 +99,11 @@
   box-sizing: border-box;
 }
 
+
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   display: none;
   margin: 0;
@@ -148,6 +153,7 @@ main {
 main > .section {
   max-width: var(--site-width);
   margin: var(--spacing-500) 0;
+  scroll-margin: 100px 0;
 }
 
 main > .section.hero-container {

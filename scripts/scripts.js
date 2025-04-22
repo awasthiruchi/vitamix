@@ -279,6 +279,13 @@ function decorateSectionBackgrounds(main) {
   });
 }
 
+function decorateSectionAnchors(main) {
+  main.querySelectorAll('.section[data-anchor]').forEach((section) => {
+    const { anchor } = section.dataset;
+    section.id = anchor;
+  });
+}
+
 /**
  * Decorates the main element.
  * @param {Element} main The main element
@@ -289,6 +296,7 @@ export function decorateMain(main) {
   decorateImages(main);
   buildAutoBlocks(main);
   decorateSections(main);
+  decorateSectionAnchors(main);
   decorateSectionBackgrounds(main);
   decorateBlocks(main);
   decorateButtons(main);
