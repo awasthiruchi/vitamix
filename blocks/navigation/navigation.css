@@ -10,7 +10,37 @@
   align-items: center;
   background-color: var(--color-charcoal);
   color: var(--color-white);
-  padding: var(--spacing-s) var(--horizontal-spacing);
+  padding: 0 var(--horizontal-spacing);
+  height: 88px;
+}
+
+.navigation nav .navigation-list-wrapper {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+}
+
+.navigation nav .navigation-list-wrapper.navigation-left-scroll::before {
+    content: "";
+    position: absolute;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 40px;
+    height: 100%;
+    background: linear-gradient(to right, var(--color-charcoal), transparent);
+}
+
+.navigation nav .navigation-list-wrapper::after {
+    content: "";
+    position: absolute;
+    z-index: 1;
+    right: 0;
+    top: 0;
+    width: 40px;
+    height: 100%;
+    background: linear-gradient(to left, var(--color-charcoal), transparent);
 }
 
 .navigation nav ul {
@@ -20,8 +50,28 @@
     margin: 0;
     overflow-x: scroll;
     padding-left: 0;
+    padding-right: var(--spacing-xl);
     position: relative;
+    align-items: center;
+    height: 100%;
   }
+
+  .navigation nav ul li {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 100%;
+  }
+
+.navigation nav ul li[aria-selected="true"]::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: calc(50% - 13px);
+    width: 26px;
+    height: 5px;
+    background-color: var(--color-red);
+}
 
 .navigation nav ul::-webkit-scrollbar {
     display: none;
