@@ -3,7 +3,7 @@ import { swapIcons } from '../../scripts/scripts.js';
 import { loadFragment } from '../fragment/fragment.js';
 
 // media query match that indicates desktop width
-const isDesktop = window.matchMedia('(width >= 1150px)');
+const isDesktop = window.matchMedia('(width >= 1200px)');
 
 function getCookies() {
   const cookies = document.cookie.split(';');
