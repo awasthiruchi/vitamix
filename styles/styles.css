@@ -610,7 +610,7 @@ input[type='radio'] {
   margin: 0;
   padding: 0;
   overflow: scroll clip;
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
   scroll-snap-type: x mandatory;
 }
 
@@ -638,6 +638,11 @@ input[type='radio'] {
   /* object-fit: contain; */
 }
 
+.carousel nav {
+  position: absolute;
+  inset: 0;
+}
+
 /* stylelint-disable-next-line no-descending-specificity */
 .carousel nav button {
   appearance: none;
@@ -645,28 +650,59 @@ input[type='radio'] {
   border: 0;
   padding: 0;
   background-color: transparent;
+  box-shadow: none;
 }
 
 .carousel nav button.nav-arrow {
   position: absolute;
-  top: 2px;
-  bottom: 2px;
-  outline: 2px solid transparent;
-  color: var(--color-gray);
-  /* font-family: var(--icons-font-family); */
-  overflow: hidden;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 52px;
+  height: 52px;
+  border-radius: var(--rounding-s);
+  background-color: var(--color-charcoal);
+  color: var(--color-white);
+  text-align: center;
+  cursor: pointer;
+}
+
+.carousel nav button.nav-arrow::after {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transform-origin: 0 0;
+  width: 14px;
+  height: 14px;
+  border: 3px solid transparent;
+  border-top-color: currentcolor;
+  border-right-color: currentcolor;
+  border-radius: var(--rounding-s);
 }
 
 .carousel nav button.nav-arrow:disabled {
-  display: none;
+  opacity: 0.5;
+  cursor: unset;
 }
 
-.carousel nav button.nav-arrow:first-of-type {
-  /* left: 2px; */
+.carousel nav button.nav-arrow.nav-arrow-previous {
+  left: 0;
 }
 
-.carousel nav button.nav-arrow:last-of-type {
-  /* right: 2px; */
+.carousel nav button.nav-arrow.nav-arrow-previous::after {
+  left: calc(50% + 3.5px);
+  transform: rotate(-135deg) translate(-50%, -50%);
+}
+
+.carousel nav button.nav-arrow.nav-arrow-next {
+  right: 0;
+}
+
+.carousel nav button.nav-arrow.nav-arrow-next::after {
+  left: calc(50% - 3.5px);
+  transform: rotate(45deg) translate(-50%, -50%);
 }
 
 .carousel nav ul {
@@ -683,37 +719,3 @@ input[type='radio'] {
   line-height: 0;
 }
 
-/* stylelint-disable-next-line no-descending-specificity */
-.carousel nav ul > li button {
-  /* position: relative; */
-  /* height: 44px; */
-  /* width: 16px; */
-  /* color: currentcolor; */
-  /* transition: color 0.3s; */
-}
-
-.carousel nav ul > li button[aria-selected="true"] {
-  /* color: var(--color-white); */
-}
-
-.carousel nav ul > li button::before {
-  /* content: ''; */
-  /* display: block; */
-  /* position: absolute; */
-  /* top: 50%; */
-  /* left: 50%; */
-  /* transform: translate(-50%, -50%); */
-  /* height: 8px; */
-  /* width: 8px; */
-  /* border-radius: 50%; */
-  /* background-color: currentcolor; */
-  /* transition: width 0.3s, height 0.3s; */
-}
-
-.carousel nav ul > li button[aria-selected="true"]::before,
-.carousel nav ul > li button:hover::before,
-.carousel nav ul > li button:focus::before {
-  /* width: 12px; */
-  /* height: 12px; */
-  /* border: 1px solid var(--color-gray); */
-}
