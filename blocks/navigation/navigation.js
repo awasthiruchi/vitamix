@@ -60,6 +60,6 @@ export default function decorate(block) {
       window.jumpNavActiveLink.closest('li').setAttribute('aria-selected', 'true');
     }
   }, 200);
-  
+
   [window.jumpNavActiveLink] = links;
 }
