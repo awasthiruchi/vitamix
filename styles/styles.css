@@ -152,6 +152,7 @@ main > .section {
 
 main > .section.hero-container {
   margin-top: 0;
+  margin-bottom: 0;
 }
 
 main > .section > div {
@@ -162,6 +163,16 @@ main > .section > div {
 main > .section.banner > div {
   padding: 0;
 }
+
+main > .section.navigation-container {
+  margin-top: 0;
+}
+
+main > .section.navigation-container > div {
+  padding: 0;
+  margin: 0;
+}
+
 
 /* section metadata */
 main .section[data-collapse="top"] {
