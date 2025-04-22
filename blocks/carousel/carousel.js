@@ -55,6 +55,7 @@ export default function decorate(block) {
     const logo = document.createElement('img');
     logo.className = 'expansion-logo';
     logo.src = '/icons/mark.svg';
+    logo.alt = '';
     block.parentElement.prepend(logo);
 
     // extract first "slide" as caption
