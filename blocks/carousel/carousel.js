@@ -79,17 +79,31 @@ export default function decorate(block) {
     [...s].forEach((cell) => {
       const vid = cell.querySelector('a[href$=".mp4"]');
       if (vid) {
-        // load video
+        // build video
         const video = document.createElement('video');
-        video.autoplay = true;
         video.muted = true;
         video.loop = true;
         const source = document.createElement('source');
-        source.src = vid.href;
+        source.dataset.src = vid.href;
         source.type = 'video/mp4';
         video.append(source);
         vid.parentElement.replaceWith(video);
-        video.play();
+        // load video
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              if (source.dataset.loaded) return;
+              source.src = source.dataset.src;
+              video.autoplay = true;
+              video.load();
+              video.play();
+              source.dataset.loaded = true;
+              observer.disconnect();
+            }
+          });
+        }, { threshold: 0 });
+
+        observer.observe(video);
       }
       slide.append(cell);
     });
