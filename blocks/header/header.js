@@ -5,6 +5,17 @@ import { loadFragment } from '../fragment/fragment.js';
 // media query match that indicates desktop width
 const isDesktop = window.matchMedia('(width >= 1200px)');
 
+function rewriteLinks(element) {
+  if (window.location.hostname.endsWith('.vitamix.com')) {
+    const links = element.querySelectorAll('a[href^="https://www.vitamix.com"]');
+    links.forEach((link) => {
+      if (link.href.includes('vitamix.com')) {
+        link.href = link.href.replace('https://www.vitamix.com', window.location.origin);
+      }
+    });
+  }
+}
+
 function getCookies() {
   const cookies = document.cookie.split(';');
   const cookieMap = {};
@@ -117,6 +128,7 @@ export default async function decorate(block) {
   const navMeta = getMetadata('nav');
   const navPath = navMeta ? new URL(navMeta, window.location).pathname : '/nav';
   const fragment = await loadFragment(navPath);
+  rewriteLinks(fragment);
 
   // decorate nav DOM
   block.textContent = '';
@@ -193,6 +205,7 @@ export default async function decorate(block) {
               menuItem.setAttribute('role', 'menuitem');
               menuItem.append(s);
               menu.append(menuItem);
+              rewriteLinks(menuItem);
             });
           };
           li.addEventListener('mouseover', populateNavFragments, { once: true });
