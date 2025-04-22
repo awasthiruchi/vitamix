@@ -103,6 +103,14 @@ export default function decorate(block) {
       else slide.prepend(timer);
     }
 
+    if (variants.includes('testimonial')) {
+      const img = slide.querySelector('div img, div svg');
+      if (img) {
+        const wrap = img.closest('div');
+        wrap.className = 'img-wrapper';
+      }
+    }
+
     wrapper.append(slide);
   });
 
