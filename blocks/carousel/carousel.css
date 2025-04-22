@@ -141,7 +141,7 @@
 .carousel-wrapper.expansion-wrapper .carousel-caption {
   margin-bottom: var(--spacing-700);
   padding: 0 var(--horizontal-spacing);
-  z-index: 100;
+  z-index: 1;
 }
 
 .carousel-wrapper.expansion-wrapper .carousel-caption h2 {
