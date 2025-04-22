@@ -135,6 +135,7 @@
   background-color: var(--color-gray-100);
   padding: var(--spacing-600) 0;
   text-align: center;
+  overflow-x: hidden;
 }
 
 .carousel-wrapper.expansion-wrapper .carousel-caption {
