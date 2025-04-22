@@ -3,14 +3,14 @@ import { swapIcons } from '../../scripts/scripts.js';
 import { loadFragment } from '../fragment/fragment.js';
 
 // media query match that indicates desktop width
-const isDesktop = window.matchMedia('(width >= 1150px)');
+const isDesktop = window.matchMedia('(width >= 1200px)');
 
 function getCookies() {
   const cookies = document.cookie.split(';');
   const cookieMap = {};
   cookies.forEach((cookie) => {
     const [key, value] = cookie.split('=');
-    cookieMap[key.trim()] = value.trim();
+    if (key && value) cookieMap[key.trim()] = value.trim();
   });
   return cookieMap;
 }

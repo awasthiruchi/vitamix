@@ -65,7 +65,7 @@ header section > [aria-hidden='true'] {
   display: none;
 }
 
-@media (width >= 1150px) {
+@media (width >= 1200px) {
   header section[data-expanded='true'] {
     grid-template:
       'title sections tools cart' var(--header-height) / auto 1fr auto auto;
@@ -181,7 +181,7 @@ header .nav-sections i.symbol-chevron::after {
   transform: rotate(135deg);
 }
 
-@media (width >= 1150px) {
+@media (width >= 1200px) {
   header .nav-sections {
     align-self: unset;
   }
@@ -216,7 +216,7 @@ header .nav-sections i.symbol-chevron::after {
     border: 1px solid var(--color-gray-700);
     padding: var(--spacing-200);
     background-color: var(--color-background);
-    z-index: 1;
+    z-index: 2;
   }
 
   header .nav-sections button + ul > li a {
@@ -318,7 +318,7 @@ header .nav-tools .nav-tools-language button {
 header .nav-tools .nav-tools-language button[aria-expanded='true'] {
   border-color: var(--color-gray-700);
   border-bottom-color: var(--color-background);
-  z-index: 2;
+  z-index: 3;
 }
 
 header .nav-tools .nav-tools-language button + ul {
@@ -330,7 +330,7 @@ header .nav-tools .nav-tools-language button + ul {
   border: 1px solid var(--color-gray-700);
   padding: var(--spacing-80);
   background-color: var(--color-background);
-  z-index: 1;
+  z-index: 2;
 }
 
 header .nav-tools .nav-tools-language button[aria-expanded='true'] + ul {
@@ -378,7 +378,7 @@ header .nav-tools .nav-tools-language button + ul li p span:last-child {
   font-weight: bold;
 }
 
-@media (width >= 1150px) {
+@media (width >= 1200px) {
   header .nav-tools::before {
     content: none;
   }
@@ -423,7 +423,7 @@ header .nav-cart [data-cart-items]::after {
 }
 
 
-@media (width >= 1150px) {
+@media (width >= 1200px) {
   header .nav-cart {
     width: 60px;
     margin-left: var(--spacing-80);
@@ -505,8 +505,8 @@ header .nav-hamburger [aria-expanded='true'] i.symbol-hamburger::after {
 header .nav-banner {
   position: absolute;
   top: var(--header-height);
-  left: calc(-1 * var(--horizontal-spacing));
-  right: calc(-1 * var(--horizontal-spacing));
+  left: 0;
+  right: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -528,7 +528,7 @@ header .nav-banner b {
   font-weight: 700;
 }
 
-@media (width >= 1150px) {
+@media (width >= 1200px) {
   header .nav-banner {
     left: 0;
     right: 0;
