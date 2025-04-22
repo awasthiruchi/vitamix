@@ -248,6 +248,8 @@ function decorateEyebrows(main) {
   main.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((h) => {
     const prev = h.previousElementSibling;
     if (prev && prev.tagName === 'P') {
+      const disqualifiers = prev.querySelector('img, a[href]');
+      if (disqualifiers) return;
       prev.classList.add('eyebrow');
       h.dataset.eyebrow = prev.textContent;
     }
