@@ -284,8 +284,8 @@
 
 .banner.image img,
 .banner.image svg {
-  max-width: 200px;
-  max-height: 200px;
+  width: 200px;
+  height: 200px;
 }
 
 @media (width >= 800px) {
@@ -293,8 +293,14 @@
     font-size: var(--font-size-800);
   }
 
+  .banner.image img,
+  .banner.image svg {
+    width: clamp(200px, 26.5vw, 265px);
+    height: auto;
+  }
+
   .banner.image > div {
-    grid-template-columns: 200px 1fr;
+    grid-template-columns: clamp(200px, 26.5vw, 265px) 1fr;
     gap: var(--spacing-600);
   }
 
@@ -306,12 +312,11 @@
 @media (width >= 1000px) {
   .banner.image img,
   .banner.image svg {
-    max-width: 370px;
-    max-height: 370px;
+    width: clamp(265px, 26.5vw, 370px);
 }
 
   .banner.image > div {
-    grid-template-columns: 370px 1fr 370px;
+    grid-template-columns: clamp(265px, 26.5vw, 370px) 1fr clamp(265px, 26.5vw, 370px);
   }
 
   .banner.image .img-wrapper:last-child {
