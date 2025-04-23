@@ -301,10 +301,6 @@
   .banner.image .img-wrapper {
     align-self: center;
   }
-
-  .banner.image .img-wrapper:last-child {
-    background-color: var(--color-red);
-  }
 }
 
 @media (width >= 1000px) {
