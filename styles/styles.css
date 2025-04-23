@@ -345,30 +345,6 @@ h6 {
   margin-top: 0;
 }
 
-h2.eyebrow {
-  font-size: var(--detail-size-xl);
-}
-
-h3.eyebrow {
-  font-size: var(--detail-size-l);
-}
-
-h4.eyebrow {
-  font-size: var(--detail-size-m);
-}
-
-h5.eyebrow {
-  font-size: var(--detail-size-s);
-}
-
-h6.eyebrow {
-  font-size: var(--detail-size-xs);
-}
-
-.disclaimer {
-  /* font-size: var(--detail-size-xs); */
-}
-
 p,
 ol,
 ul,
