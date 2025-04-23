@@ -110,14 +110,14 @@
 }
 
 .cards.grid .card-body {
+  padding: 0 var(--spacing-100);
   color: var(--color-gray);
 }
 
 .cards.grid ul > li,
 .cards.knockout ul > li {
-  margin: 0 auto;
   max-width: 400px;
-  padding: 0 var(--spacing-100);
+  margin: 0 auto;
 }
 
 @media (width >= 800px) {
@@ -125,6 +125,11 @@
   .cards.knockout ul {
     margin: 0 auto;
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .cards.grid ul {
+    max-width: 600px;
+    gap: var(--spacing-200);
   }
 
   .cards.grid img,
@@ -153,6 +158,10 @@
     gap: 0;
   }
 
+  .cards.grid ul {
+    max-width: unset;
+  }
+
   .cards.grid ul > li,
   .cards.knockout ul > li {
     position: relative;
@@ -160,6 +169,10 @@
     padding: var(--spacing-600) var(--spacing-400);
     overflow: hidden;
     transition: border-color 0.2s;
+  }
+
+  .cards.grid ul > li {
+    max-width: unset;
   }
 
   .cards.grid ul > li + li,
