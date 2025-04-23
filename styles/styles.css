@@ -336,7 +336,7 @@ h6 {
 .eyebrow {
   margin-bottom: var(--spacing-60);
   color: var(--color-red);
-  font-size: var(--detail-size-xs);
+  font-size: 11px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
