@@ -260,6 +260,7 @@
 
 /* image variant */
 .banner.image {
+  align-items: center;
   text-align: left;
   line-height: var(--line-height-xl);
 }
@@ -309,12 +310,12 @@
 @media (width >= 1000px) {
   .banner.image img,
   .banner.image svg {
-    max-width: 250px;
-    max-height: 250px;
+    max-width: 370px;
+    max-height: 370px;
 }
 
   .banner.image > div {
-    grid-template-columns: 250px 1fr 250px;
+    grid-template-columns: 370px 1fr 370px;
   }
 
   .banner.image .img-wrapper:last-child {
