@@ -218,13 +218,13 @@
   }
 
   .banner.aligned.left-text .img-wrapper::before {
-    background: linear-gradient(to right, var(--overlay-charcoal), var(--color-charcoal));
-    opacity: 0.7;
+    background: linear-gradient(to right, transparent, var(--color-charcoal));
+    opacity: 0.8;
   }
 
   .banner.aligned.right-text .img-wrapper::before {
-    background: linear-gradient(to right, var(--color-charcoal), var(--overlay-charcoal));
-    opacity: 0.7;
+    background: linear-gradient(to right, var(--color-charcoal), transparent);
+    opacity: 0.8;
   }
 
   .banner.aligned .img-wrapper img {
