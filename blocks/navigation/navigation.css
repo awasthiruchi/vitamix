@@ -71,11 +71,14 @@
     align-items: center;
     height: 100%;
     display: none;
+    width: 100%;
+    padding-right: 40px;
   }
 
   @media (width >= 600px) {
     .navigation nav ul li {
       display: flex;
+      padding-right: unset;
     }
   }
 

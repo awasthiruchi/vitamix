@@ -40,26 +40,23 @@ export default function decorate(block) {
         }
       }
     });
-  });
-
-  /* update active link on scroll */
-  window.setInterval(() => {
-    links.forEach((link) => {
-      link.closest('li').setAttribute('aria-selected', 'false');
-      const href = link.getAttribute('href');
-      const element = document.getElementById(href.split('#')[1]);
-      if (element) {
-        const rect = element.getBoundingClientRect();
-        if (rect.top > 0 && rect.top < (window.innerHeight / 2)) {
-          window.jumpNavActiveLink = link;
-        }
-      }
-    });
-
-    if (window.jumpNavActiveLink) {
-      window.jumpNavActiveLink.closest('li').setAttribute('aria-selected', 'true');
+    const hash = link.href.split('#')[1];
+    const section = document.getElementById(hash);
+    if (section) {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            window.jumpNavActiveLink = link;
+            links.forEach((l) => {
+              l.closest('li').setAttribute('aria-selected', 'false');
+            });
+            link.closest('li').setAttribute('aria-selected', 'true');
+          }
+        });
+      });
+      io.observe(section);
     }
-  }, 200);
+  });
 
   [window.jumpNavActiveLink] = links;
 }
