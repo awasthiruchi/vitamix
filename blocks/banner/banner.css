@@ -199,7 +199,7 @@
 .banner.aligned > div div:not(.img-wrapper) {
   box-sizing: content-box;
   margin: auto;
-  max-width: 375px;
+  max-width: 400px;
   padding: var(--spacing-400);
 }
 
@@ -219,10 +219,12 @@
 
   .banner.aligned.left-text .img-wrapper::before {
     background: linear-gradient(to right, var(--overlay-charcoal), var(--color-charcoal));
+    opacity: 0.7;
   }
 
   .banner.aligned.right-text .img-wrapper::before {
     background: linear-gradient(to right, var(--color-charcoal), var(--overlay-charcoal));
+    opacity: 0.7;
   }
 
   .banner.aligned .img-wrapper img {
