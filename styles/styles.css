@@ -133,13 +133,13 @@ main {
   background-color: var(--layer-base);
   padding-bottom: var(--spacing-500);
   /* margin: 0 var(--horizontal-spacing); */
+  margin-top: var(--nav-banner-height);
 }
 
 @media (width >= 900px) {
   main {
     /* max-width: calc(100% - (2 * var(--horizontal-spacing))); */
     margin: 0 auto;
-    margin-top: var(--nav-banner-height);
   }
 }
 

@@ -515,9 +515,10 @@ header .nav-banner {
   background-color: var(--color-lightsalmon);
   color: var(--color-white);
   text-align: center;
-  font-size: var(--detail-size-m);
+  font-size: var(--detail-size-l);
   min-height: var(--nav-banner-height);
   letter-spacing: 0.03em;
+  z-index: 2;
 }
 
 header .nav-banner a:any-link {
