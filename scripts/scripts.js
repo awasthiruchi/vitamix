@@ -266,7 +266,10 @@ function decorateDisclaimers(main) {
 function decorateSectionBackgrounds(main) {
   main.querySelectorAll('.section.banner[data-background]').forEach((section) => {
     const { background } = section.dataset;
-    const backgroundPicture = createOptimizedPicture(background);
+    const backgroundPicture = createOptimizedPicture(background, '', false, [
+      { media: '(min-width: 800px)', width: '2880' },
+      { width: '1600' },
+    ]);
     backgroundPicture.classList.add('section-background-image');
     section.prepend(backgroundPicture);
     const text = section.textContent.trim();
