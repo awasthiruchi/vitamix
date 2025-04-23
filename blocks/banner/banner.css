@@ -95,6 +95,26 @@
   }
 }
 
+
+.banner.inset.text-center {
+  text-align: center;
+}
+
+.banner.inset.text-center p.button-wrapper {
+  justify-content: center;
+}
+
+@media (width >= 1000px) {
+  .banner.inset.text-center {
+    text-align: left;
+  }
+
+  .banner.inset.text-center p.button-wrapper {
+    justify-content: unset;
+  }
+}
+
+
 /* compact variant */
 .banner.compact {
   position: relative;
