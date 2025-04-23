@@ -432,7 +432,7 @@ button.button {
   display: inline-block;
   border: 1px solid var(--color-link);
   border-radius: var(--rounding-s);
-  padding: var(--spacing-100) var(--spacing-300);
+  padding: 17px 24px;
   background-color: var(--color-white);
   color: var(--color-link);
   font: inherit;
@@ -449,7 +449,6 @@ button.button {
 a.button:hover,
 button.button:hover,
 button.button:focus {
-  /* box-shadow: var(--shadow-200) 0 0 5px; */
   border-color: var(--color-red);
   background-color: var(--color-gray-100);
 }
@@ -518,6 +517,13 @@ button.button.close {
 button.button.close:hover,
 button.button.close:focus {
   background-color: var(--color-shadow);
+}
+
+@media (width >= 800px) {
+  a.button,
+  button.button {
+    padding: 17px 36px;
+  }
 }
 
 /* form elements */

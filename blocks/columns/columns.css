@@ -50,8 +50,4 @@
     max-width: max-content;
     align-self: flex-end;
   }
-
-  .columns > div > .column-button .button {
-    min-width: 150px;
-  }
 }
