@@ -67,17 +67,18 @@
   }
 }
 
-  .navigation nav ul li {
-    position: relative;
-    align-items: center;
-    height: 100%;
-    display: none;
-    width: fit-content;
-    padding-right: 40px;
-  }
+.navigation nav ul li {
+  position: relative;
+  align-items: center;
+  height: 100%;
+  display: none;
+  width: 100%;
+  padding-right: 40px;
+}
 
   @media (width >= 600px) {
     .navigation nav ul li {
+      width: fit-content;
       display: flex;
       padding-right: unset;
     }
