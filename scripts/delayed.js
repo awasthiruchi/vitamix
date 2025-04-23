@@ -14,7 +14,7 @@ loadScript('https://www.vitamix.com/etc.clientlibs/vitamix/clientlibs/clientlib-
   loadScript('https://www.vitamix.com/etc.clientlibs/vitamix/clientlibs/clientlib-base.lc-daf5b8dac79e9cf7cb1c0b30d8372e7a-lc.min.js');
 });
 loadScript('https://www.vitamix.com/etc.clientlibs/core/wcm/components/commons/site/clientlibs/container.lc-0a6aff292f5cc42142779cde92054524-lc.min.js');
-
+loadScript('https://assets.adobedtm.com/launch-EN40f2d69539754c3ea73511e70c65c801.min.js');
 loadScript('https://js.adsrvr.org/up_loader.1.1.0.js');
 
 /* eslint-disable */
