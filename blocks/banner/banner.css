@@ -260,7 +260,6 @@
 
 /* image variant */
 .banner.image {
-  align-items: center;
   text-align: left;
   line-height: var(--line-height-xl);
 }
@@ -275,6 +274,7 @@
 
 .banner.image > div {
   display: grid;
+  align-items: center;
   gap: var(--spacing-400);
 }
 
