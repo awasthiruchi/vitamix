@@ -462,11 +462,13 @@ function buildForm(fields, path) {
  */
 export default function decorate(block) {
   block.style.visibility = 'hidden';
+  block.dataset.form = 'unloaded';
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(async (entry) => {
       if (entry.isIntersecting) {
         const path = new URL(block.querySelector('a').href).pathname;
         try {
+          block.dataset.form = 'loading';
           const resp = await fetch(new URL(path, window.location.origin));
           if (!resp.ok) throw new Error(`${resp.status}: ${resp.statusText}`);
           const { data } = await resp.json();
@@ -474,6 +476,7 @@ export default function decorate(block) {
           const form = buildForm(data, path);
           block.replaceChildren(form);
           block.removeAttribute('style');
+          block.dataset.form = 'loaded';
         } catch (error) {
           // eslint-disable-next-line no-console
           console.error('Could not build form from', path, error);

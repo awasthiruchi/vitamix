@@ -2,6 +2,10 @@
   display: none;
 }
 
+.form[data-form='unloaded'] {
+  width: 0;
+}
+
 .form .form-field + .form-field {
   margin-top: var(--spacing-100);
 }
