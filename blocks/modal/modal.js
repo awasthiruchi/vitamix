@@ -66,6 +66,7 @@ export async function openModal(fragmentUrl) {
     : fragmentUrl;
 
   const fragment = await loadFragment(path);
-  const { showModal } = await createModal(fragment.childNodes);
+  const { block, showModal } = await createModal(fragment.childNodes);
+  block.dataset.modalPath = path;
   showModal();
 }
