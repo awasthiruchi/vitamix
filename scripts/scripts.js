@@ -1,5 +1,4 @@
 import {
-  buildBlock,
   loadHeader,
   loadFooter,
   decorateIcon,
@@ -163,33 +162,13 @@ export function buildCarousel(container, visibleSlides = 1, pagination = true) {
   return container;
 }
 
-function buildForms(main) {
-  // find form links
-  main.querySelectorAll('p a[href*="/forms/"]').forEach((a) => {
-    const wrapper = a.closest('p');
-    try {
-      const url = new URL(a.href);
-      const { pathname } = url;
-      if (pathname.includes('.json')) {
-        const form = buildBlock('form', [[pathname]]);
-        wrapper.replaceWith(form);
-      } else throw new Error(`Unrecognized form source: ${pathname}`);
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('Could not build form from', a.href, error);
-      wrapper.remove();
-    }
-  });
-}
-
 /**
  * Builds all synthetic blocks in a container element.
  * @param {Element} main The container element
  */
-function buildAutoBlocks(main) {
+function buildAutoBlocks() {
   try {
     // build auto blocks
-    buildForms(main);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Auto Blocking failed', error);
@@ -323,7 +302,6 @@ export function decorateMain(main) {
   decorateButtons(main);
   decorateEyebrows(main);
   decorateDisclaimers(main);
-  autolinkModals(main);
 }
 
 /**
@@ -370,6 +348,7 @@ async function loadLazy(doc) {
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   loadFonts();
   swapIcons(main);
+  autolinkModals(document);
 }
 
 /**

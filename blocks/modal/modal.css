@@ -82,3 +82,29 @@ body.modal-open {
 .modal dialog .section {
   padding: 0;
 }
+
+/* sign-up modal */
+.modal[data-modal-path$="sign-up"] dialog .modal-content {
+  background-color: var(--color-gray-200);
+  display: flex;
+}
+
+.modal[data-modal-path$="sign-up"] dialog .modal-content .section:nth-child(1) {
+  flex: 1;
+  line-height: 0;
+  display: none;
+}
+
+@media (width >= 600px) {
+  .modal[data-modal-path$="sign-up"] dialog .modal-content .section:nth-child(1) {
+    display: block;
+  }
+}
+
+.modal[data-modal-path$="sign-up"] dialog .modal-content .section:nth-child(2) {
+  flex: 1;
+  padding: 32px;
+}
+
+
+
