@@ -72,6 +72,7 @@ main > .navigation-container.section {
 @media (width >= 600px) {
   .navigation nav ul {
     flex-direction: row;
+    justify-content: flex-start;
   }
 }
 
@@ -84,12 +85,13 @@ main > .navigation-container.section {
   padding-right: 40px;
 }
 
-@media (width >= 600px) {
-  .navigation nav ul li {
-    display: flex;
-    padding-right: unset;
+  @media (width >= 600px) {
+    .navigation nav ul li {
+      width: fit-content;
+      display: flex;
+      padding-right: unset;
+    }
   }
-}
 
 .navigation nav ul li[aria-selected="true"] {
   display: flex;

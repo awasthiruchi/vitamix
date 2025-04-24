@@ -21,7 +21,7 @@ export default function decorate(block) {
   const links = ul.querySelectorAll('a[href]');
   links.forEach((link) => {
     link.addEventListener('click', (e) => {
-      const isMobile = window.matchMedia('(width >= 600px)');
+      const isMobile = !window.matchMedia('(width >= 600px)').matches;
       if (isMobile) {
         e.preventDefault();
         const li = link.closest('li');
