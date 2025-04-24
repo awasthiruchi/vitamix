@@ -172,6 +172,16 @@ main > .navigation-container.section {
   }
 }
 
+.navigation .navigation-popover {
+  display: block;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: var(--color-charcoal);
+  color: var(--color-white);
+}
+
 .navigation .navigation-popover[hidden] {
   display: none;
 }

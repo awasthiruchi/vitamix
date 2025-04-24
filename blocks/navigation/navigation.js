@@ -62,9 +62,10 @@ export default function decorate(block) {
               });
               // highlight the current link
               link.closest('li').setAttribute('aria-current', true);
-              // scroll nav into view if it's currently sticky
+              // scroll nav into view if it's currently sticky on desktop
+              const mobile = !window.matchMedia('(width >= 800px)').matches;
               const sticky = block.getBoundingClientRect().top === 0;
-              if (sticky) link.scrollIntoView({ behavior: 'smooth', inline: 'center' });
+              if (!mobile && sticky) link.scrollIntoView({ behavior: 'smooth', inline: 'center' });
             }
           });
         }, { threshold: 0.75 });
