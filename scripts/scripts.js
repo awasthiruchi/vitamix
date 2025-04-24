@@ -302,7 +302,6 @@ function autolinkModals(doc) {
   });
 }
 
-
 /**
  * Decorates the main element.
  * @param {Element} main The main element
