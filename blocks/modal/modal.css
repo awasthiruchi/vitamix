@@ -90,20 +90,25 @@ body.modal-open {
 }
 
 .modal[data-modal-path$="sign-up"] dialog .modal-content .section:nth-child(1) {
-  flex: 1;
-  line-height: 0;
   display: none;
+  line-height: 0;
+  flex: 1;
 }
 
-@media (width >= 600px) {
+.modal[data-modal-path$="sign-up"] dialog .modal-content .section:nth-child(1) picture {
+  display: block;
+  height: 100%;
+}
+
+@media (width >= 900px) {
   .modal[data-modal-path$="sign-up"] dialog .modal-content .section:nth-child(1) {
     display: block;
   }
 }
 
 .modal[data-modal-path$="sign-up"] dialog .modal-content .section:nth-child(2) {
-  flex: 1;
   padding: 32px;
+  flex: 1.5;
 }
 
 
