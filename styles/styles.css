@@ -416,6 +416,7 @@ a:focus {
   display: flex;
   flex-wrap: wrap;
   gap: 1ch var(--spacing-400);
+  max-width: 100%;
 }
 
 .button-wrapper > a {
@@ -429,6 +430,7 @@ p + .button-wrapper {
 a.button,
 button.button {
   display: inline-block;
+  max-width: 100%;
   border: 1px solid var(--color-link);
   border-radius: var(--rounding-s);
   padding: 17px 24px;
@@ -623,17 +625,6 @@ input[type='radio'] {
   justify-content: center;
   scroll-snap-align: start;
   position: relative;
-}
-
-.carousel > ul > li picture {
-  /* position: absolute; */
-  /* inset: 0; */
-}
-
-.carousel > ul > li picture > img {
-  /* height: 100%; */
-  /* width: 100%; */
-  /* object-fit: contain; */
 }
 
 .carousel nav {
