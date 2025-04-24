@@ -7,7 +7,10 @@ export default function decorate(block) {
   div.appendChild(ul);
   nav.appendChild(div);
   while (cell.firstElementChild) nav.append(cell.firstElementChild);
+
+  block.innerHTML = '';
   block.appendChild(nav);
+
   ul.addEventListener('scroll', (e) => {
     if (e.target.scrollLeft === 0) {
       div.classList.remove('navigation-left-scroll');

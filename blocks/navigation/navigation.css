@@ -1,7 +1,16 @@
-.navigation-container {
+main > .navigation-container.section {
   position: sticky;
   top: 0;
   z-index: 2;
+}
+
+.hero-container + .navigation-container {
+  margin-top: 0;
+}
+
+.navigation-container > .navigation-wrapper {
+  margin: 0;
+  padding: 0;
 }
 
 .navigation nav {
@@ -16,49 +25,49 @@
 }
 
 .navigation nav .navigation-list-wrapper {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
 }
 
 @media (width >= 600px) {
-    .navigation nav .navigation-list-wrapper.navigation-left-scroll::before {
-        content: "";
-        position: absolute;
-        z-index: 1;
-        left: 0;
-        top: 0;
-        width: 40px;
-        height: 100%;
-        background: linear-gradient(to right, var(--color-charcoal), transparent);
-    }
+  .navigation nav .navigation-list-wrapper.navigation-left-scroll::before {
+    content: "";
+    position: absolute;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 40px;
+    height: 100%;
+    background: linear-gradient(to right, var(--color-charcoal), transparent);
+  }
 
-    .navigation nav .navigation-list-wrapper::after {
-        content: "";
-        position: absolute;
-        z-index: 1;
-        right: 0;
-        top: 0;
-        width: 40px;
-        height: 100%;
-        background: linear-gradient(to left, var(--color-charcoal), transparent);
-    }
+  .navigation nav .navigation-list-wrapper::after {
+    content: "";
+    position: absolute;
+    z-index: 1;
+    right: 0;
+    top: 0;
+    width: 40px;
+    height: 100%;
+    background: linear-gradient(to left, var(--color-charcoal), transparent);
+  }
 }
 
 .navigation nav ul {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-xl);
-    list-style: none;
-    margin: 0;
-    overflow-x: scroll;
-    padding-left: 0;
-    padding-right: var(--spacing-xl);
-    position: relative;
-    align-items: center;
-    height: 100%;
-  }
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+  list-style: none;
+  margin: 0;
+  overflow-x: scroll;
+  padding-left: 0;
+  padding-right: var(--spacing-xl);
+  position: relative;
+  align-items: center;
+  height: 100%;
+}
 
 @media (width >= 600px) {
   .navigation nav ul {
@@ -66,48 +75,48 @@
   }
 }
 
-  .navigation nav ul li {
-    position: relative;
-    align-items: center;
-    height: 100%;
-    display: none;
-    width: 100%;
-    padding-right: 40px;
-  }
-
-  @media (width >= 600px) {
-    .navigation nav ul li {
-      display: flex;
-      padding-right: unset;
-    }
-  }
-
-  .navigation nav ul li[aria-selected="true"] {
-    display: flex;
-  }
+.navigation nav ul li {
+  position: relative;
+  align-items: center;
+  height: 100%;
+  display: none;
+  width: 100%;
+  padding-right: 40px;
+}
 
 @media (width >= 600px) {
-    .navigation nav ul li[aria-selected="true"]::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: calc(50% - 13px);
-        width: 26px;
-        height: 5px;
-        background-color: var(--color-red);
-    }
+  .navigation nav ul li {
+    display: flex;
+    padding-right: unset;
+  }
+}
+
+.navigation nav ul li[aria-selected="true"] {
+  display: flex;
+}
+
+@media (width >= 600px) {
+  .navigation nav ul li[aria-selected="true"]::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: calc(50% - 13px);
+    width: 26px;
+    height: 5px;
+    background-color: var(--color-red);
+  }
 }
 
 .navigation nav ul::-webkit-scrollbar {
-    display: none;
-  }
-  
+  display: none;
+}
+
 .navigation nav ul li a:any-link {
   color: inherit;
   text-decoration: none;
   font-size: var(--detail-size-xl);
   text-transform: uppercase;
-  letter-spacing: 1.75px;
+  letter-spacing: var(--letter-spacing-m);
 }
 
 .navigation nav ul li::after {
@@ -125,8 +134,8 @@
 }
 
 .navigation nav ul li[aria-expanded="true"]::after {
-    height: 100%;
-    content: "\002303";
+  height: 100%;
+  content: "\002303";
 }
 
 @media (width >= 600px) {
@@ -157,10 +166,10 @@
 }
 
 .navigation .navigation-popover ul li {
-    border-top: 1px solid var(--color-white);
-    padding: var(--spacing-m)var(--horizontal-spacing);
-    display: flex;
-    font-size: var(--detail-size-xs);
+  border-top: 1px solid var(--color-white);
+  padding: var(--spacing-m)var(--horizontal-spacing);
+  display: flex;
+  font-size: var(--detail-size-xs);
 }
 
 .navigation .navigation-popover ul li a:any-link {

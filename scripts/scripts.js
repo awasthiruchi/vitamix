@@ -277,10 +277,15 @@ function decorateSectionBackgrounds(main) {
   });
 
   main.querySelectorAll('.section.light, .section.dark').forEach((section) => {
-    const prev = section.previousElementSibling;
-    if (prev) prev.dataset.collapse = 'bottom';
-    const next = section.nextElementSibling;
-    if (next) next.dataset.collapse = 'top';
+    const setCollapse = (el, position) => {
+      const existing = el.dataset.collapse;
+      if (existing === (position === 'top' ? 'bottom' : 'top')) {
+        el.dataset.collapse = 'both';
+      } else if (!existing) el.dataset.collapse = position;
+    };
+
+    setCollapse(section.previousElementSibling, 'bottom');
+    setCollapse(section.nextElementSibling, 'top');
   });
 }
 

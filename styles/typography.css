@@ -16,6 +16,9 @@
   --font-size-900: 45px;
   --font-size-1000: 75px;
 
+  /* letter spacing */
+  --letter-spacing-m: 0.14em;
+
   /* font weights */
   --weight-medium: 500;
   --weight-regular: 400;

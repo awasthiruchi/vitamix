@@ -9,7 +9,7 @@
 
 .banner > div {
   display: grid;
-  gap: var(--spacing-400);
+  gap: var(--spacing-60);
 }
 
 .banner .img-wrapper {
@@ -120,6 +120,7 @@
 
 .banner.compact .button-wrapper {
   justify-content: center;
+  margin-bottom: 0;
 }
 
 .banner.compact > div {
