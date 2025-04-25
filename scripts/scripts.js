@@ -356,8 +356,12 @@ async function loadLazy(doc) {
  * without impacting the user experience.
  */
 function loadDelayed() {
+
   // eslint-disable-next-line import/no-cycle
-  window.setTimeout(() => import('./delayed.js'), 3000);
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('martech') !== 'off') {
+    window.setTimeout(() => import('./delayed.js'), 3000);
+  }
   // load anything that can be postponed to the latest here
 }
 
