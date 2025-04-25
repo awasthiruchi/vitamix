@@ -320,21 +320,27 @@ header .nav-tools .nav-tools-language button {
 header .nav-tools .nav-tools-language button::after {
   content: '';
   position: absolute;
-  left: var(--spacing-80);
-  transform: rotate(45deg);
-  transform-origin: 0 0;
+  top: 50%;
+  left: 1ch;
+  transform: rotate(45deg) translateY(-50%);
   width: 8px;
   height: 8px;
   border: 1.5px solid transparent;
   border-right-color: currentcolor;
   border-bottom-color: currentcolor;
   border-radius: var(--rounding-s);
+  transition: transform 0.2s, left 0.2s;
 }
 
 header .nav-tools .nav-tools-language button[aria-expanded='true'] {
   border-color: var(--color-gray-700);
   border-bottom-color: var(--color-background);
   z-index: 3;
+}
+
+header .nav-tools .nav-tools-language button[aria-expanded='true']::after {
+  left: 8px;
+  transform: rotate(-135deg);
 }
 
 header .nav-tools .nav-tools-language button + ul {
