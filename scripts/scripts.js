@@ -360,7 +360,7 @@ function loadDelayed() {
   // eslint-disable-next-line import/no-cycle
   const params = new URLSearchParams(window.location.search);
   if (params.get('martech') !== 'off') {
-    window.setTimeout(() => import('./delayed.js'), 3000);
+    window.setTimeout(() => import('./delayed.js'), 4000);
   }
   // load anything that can be postponed to the latest here
 }
