@@ -62,6 +62,9 @@ export default function decorate(block) {
     [caption] = slides.shift();
     caption.classList.add('carousel-caption');
 
+    const buttons = caption.querySelector('.button-wrapper');
+    if (buttons) block.parentElement.append(buttons);
+
     // track visible slide
     wrapper.addEventListener('scroll', () => {
       const { scrollLeft, clientWidth } = wrapper;
