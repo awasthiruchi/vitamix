@@ -20,6 +20,12 @@
       transform-origin: 206px 200px;
     }
   </style>
+  <title>
+    Vitamix blender control dial
+  </title>
+  <desc>
+     Icons around the dial indicate blend functions. Used to adjust blade speed and texture.
+  </desc>
   <g fill-rule="nonzero" fill="none">
     <path
       class="automated"

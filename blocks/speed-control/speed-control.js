@@ -80,6 +80,7 @@ export default function decorate(block) {
 
   const img = document.createElement('img');
   img.src = '/blocks/speed-control/speed-control.svg';
+  img.alt = 'Vitamix Blender control dial';
   diagram.append(img);
   figure.append(tabContent, diagram);
 
