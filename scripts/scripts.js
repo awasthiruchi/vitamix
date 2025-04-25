@@ -356,7 +356,6 @@ async function loadLazy(doc) {
  * without impacting the user experience.
  */
 function loadDelayed() {
-
   // eslint-disable-next-line import/no-cycle
   const params = new URLSearchParams(window.location.search);
   if (params.get('martech') !== 'off') {
