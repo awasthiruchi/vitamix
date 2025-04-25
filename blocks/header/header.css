@@ -682,4 +682,8 @@ header .nav-banner a:any-link {
     left: 0;
     right: 0;
   }
+
+  header [data-expanded="true"] .nav-banner {
+    display: unset;
+  }
 }
