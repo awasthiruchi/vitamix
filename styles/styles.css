@@ -230,10 +230,6 @@ main > .section.banner > div {
   main .section.banner {
     min-height: 480px;
   }
-
-  main .section.banner > div {
-    max-width: 500px;
-  }
 }
 
 main .section.banner,
@@ -246,6 +242,12 @@ main .section.banner > div {
   display: unset;
   z-index: 1;
   max-width: 70vw;
+}
+
+@media (width >= 800px) {
+  main .section.banner > div {
+    max-width: 500px;
+  }
 }
 
 /* images and icons */
