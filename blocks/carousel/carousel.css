@@ -326,7 +326,7 @@
   }
 }
 
-@media (width >= 1000px) {
+@media (width >= 1200px) {
   .carousel-wrapper.expansion-wrapper {
     display: grid;
     grid-template-columns: 1fr 3fr;
@@ -373,3 +373,18 @@
     height: clamp(265px, 25vw, 374px);
   }
 }
+
+/* simplistic min-height for carousel expansion */
+@media (width >= 1200px) {
+  .carousel.expansion ul {
+    min-height: 700px;
+  }
+}
+
+
+@media (width >= 1400px) {
+  .carousel.expansion ul {
+    min-height: 650px;
+  }
+}
+
