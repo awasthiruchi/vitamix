@@ -447,8 +447,11 @@ export default async function decorate(block) {
   const cartItems = cookies.cart_items_count;
   const compareProducts = cookies.compare_products_count;
   if (!compareProducts || compareProducts === '0') {
-    const compare = block.querySelector('.icon-compare').closest('li');
-    compare.remove();
+    const compare = block.querySelector('.icon-compare');
+    if (compare) {
+      const li = compare.closest('li');
+      li.remove();
+    }
   }
 
   if (customer) {
