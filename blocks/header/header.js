@@ -445,6 +445,12 @@ export default async function decorate(block) {
   const cookies = getCookies();
   const customer = cookies.vitamix_customer;
   const cartItems = cookies.cart_items_count;
+  const compareProducts = cookies.compare_products_count;
+  if (!compareProducts || compareProducts === '0') {
+    const compare = block.querySelector('.icon-compare').closest('li');
+    compare.remove();
+  }
+
   if (customer) {
     const account = block.querySelector('.icon-account').parentElement;
     account.lastChild.textContent = `${customer}'s Account`;
