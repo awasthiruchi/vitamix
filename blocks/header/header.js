@@ -412,9 +412,11 @@ export default async function decorate(block) {
       const tool = t.querySelector('.icon');
       const type = [...tool.classList].filter((c) => c !== 'icon')[0].replace('icon-', '');
       if (type.includes('flag')) {
-        t.classList.add('nav-tools-language');
         // enable language selector
+        t.classList.add('nav-tools-language');
         buildLanguageSelector(t);
+      } else if (type.includes('compare')) {
+        t.classList.add('nav-tools-compare');
       }
     });
   }
@@ -442,13 +444,25 @@ export default async function decorate(block) {
 
   swapIcons(block);
 
+  /* cookie logic */
   const cookies = getCookies();
+
+  const compareProducts = cookies.compare_products_count;
+  if (!compareProducts || compareProducts === '0') {
+    const compare = block.querySelector('li .icon-compare');
+    if (compare) {
+      const li = compare.closest('li');
+      li.remove();
+    }
+  }
+
   const customer = cookies.vitamix_customer;
-  const cartItems = cookies.cart_items_count;
   if (customer) {
     const account = block.querySelector('.icon-account').parentElement;
     account.lastChild.textContent = `${customer}'s Account`;
   }
+
+  const cartItems = cookies.cart_items_count;
   if (cartItems) {
     const cart = block.querySelector('.icon-cart').parentElement;
     cart.dataset.cartItems = cartItems;
