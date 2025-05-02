@@ -10,7 +10,14 @@
     "components": [
       "hero",
       "image",
-      "text"
+      "text",
+      "cards"
+    ]
+  },
+  {
+    "id": "cards",
+    "components": [
+      "card"
     ]
   }
 ]

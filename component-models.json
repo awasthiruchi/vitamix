@@ -45,6 +45,36 @@
     ]
   },
   {
+    "id": "card",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "div:nth-child(1)>picture:nth-child(1)>img:nth-child(3)[src]",
+        "label": "Image"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "div:nth-child(1)>picture:nth-child(1)>img:nth-child(3)[alt]",
+        "label": "Image Alt"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "div:nth-child(1)>p:nth-child(2)",
+        "label": "Title"
+      },
+      {
+        "component": "richtext",
+        "name": "div:nth-child(2)",
+        "value": "",
+        "label": "Text",
+        "valueType": "string"
+      }
+    ]
+  },
+  {
     "id": "hero",
     "fields": [
       {

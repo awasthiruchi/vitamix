@@ -48,6 +48,31 @@
       "id": "blocks",
       "components": [
         {
+          "title": "Cards",
+          "id": "cards",
+          "plugins": {
+            "da": {
+              "name": "cards",
+              "rows": 1,
+              "columns": 2
+            }
+          },
+          "model": "cards",
+          "filter": "cards"
+        },
+        {
+          "title": "Card",
+          "id": "card",
+          "plugins": {
+            "da": {
+              "name": "card",
+              "rows": 2,
+              "columns": 0
+            }
+          },
+          "model": "card"
+        },
+        {
           "title": "Hero",
           "id": "hero",
           "plugins": {

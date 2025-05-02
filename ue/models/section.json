@@ -49,7 +49,8 @@
       "components": [
         "hero",
         "image",
-        "text"
+        "text",
+        "cards"
       ]
     }
   ]
