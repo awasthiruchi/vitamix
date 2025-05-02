@@ -43,5 +43,16 @@
         ]
       }
     ]
+  },
+  {
+    "id": "hero",
+    "fields": [
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "div:nth-child(1)>div:nth-child(1)",
+        "label": "Hero Content"
+      }
+    ]
   }
 ]
