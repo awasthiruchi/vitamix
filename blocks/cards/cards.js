@@ -1,4 +1,5 @@
 import { createOptimizedPicture } from '../../scripts/aem.js';
+import { moveInstrumentation } from '../../ue/models/scripts/ue-utils.js';
 
 export default function decorate(block) {
   // replace default div structure with ordered list
@@ -6,6 +7,7 @@ export default function decorate(block) {
   [...block.children].forEach((row) => {
     // move all children from row into list item
     const li = document.createElement('li');
+    moveInstrumentation(row, li);
     while (row.firstElementChild) li.append(row.firstElementChild);
 
     // assign classes based on content
@@ -26,9 +28,11 @@ export default function decorate(block) {
   });
 
   // replace images with optimized versions
-  ul.querySelectorAll('picture > img').forEach((img) => img.closest('picture').replaceWith(
-    createOptimizedPicture(img.src, img.alt, false, [{ width: '750' }]),
-  ));
+  ul.querySelectorAll('picture > img').forEach((img) => {
+    const optimizedPic = createOptimizedPicture(img.src, img.alt, false, [{ width: '750' }]);
+    moveInstrumentation(img, optimizedPic.querySelector('img'));
+    img.closest('picture').replaceWith(optimizedPic);
+  });
 
   // decorate variant specifics
   const variants = [...block.classList].filter((c) => c !== 'block' && c !== 'cards');
