@@ -1,0 +1,28 @@
+{
+    "definitions": [
+      {
+        "title": "Hero",
+        "id": "hero",
+        "plugins": {
+          "da": {
+            "rows": 1,
+            "columns": 1
+          }
+        }
+      }
+    ],
+    "models": [
+      {
+        "id": "hero",
+        "fields": [
+          {
+            "component": "richtext",
+            "valueType": "string",
+            "name": "div:nth-child(1)>div:nth-child(1)",
+            "label": "Hero Content"
+          }
+        ]
+      }
+    ],
+    "filters": []
+  }
