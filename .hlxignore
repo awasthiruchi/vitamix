@@ -5,6 +5,4 @@ LICENSE
 package.json
 package-lock.json
 test/*
-ue/*
-!ue/scripts/
-!ue/scripts/**
+ue/models/*

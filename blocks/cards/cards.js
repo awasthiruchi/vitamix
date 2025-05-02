@@ -1,5 +1,5 @@
 import { createOptimizedPicture } from '../../scripts/aem.js';
-import { moveInstrumentation } from '../../ue/models/scripts/ue-utils.js';
+import { moveInstrumentation } from '../../ue/scripts/ue-utils.js';
 
 export default function decorate(block) {
   // replace default div structure with ordered list
