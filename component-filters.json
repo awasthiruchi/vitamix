@@ -12,5 +12,24 @@
       "image",
       "text"
     ]
+  },
+  {
+    "id": "hero",
+    "rte": {
+      "format": [
+        "bold",
+        "italic",
+        "underline"
+      ],
+      "alignment": [],
+      "indentation": [],
+      "sr_script": [],
+      "list": [],
+      "insert": [],
+      "advanced": [],
+      "extensions": [],
+      "editor": [],
+      "blocks": []
+    }
   }
 ]
