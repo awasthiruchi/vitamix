@@ -190,6 +190,7 @@ header .nav-sections ul.nested-submenu > li::after {
 header .nav-sections ul.nested-submenu > li p a {
   padding: 0;
   line-height: 1;
+  letter-spacing: 0.35px;
 }
 
 header .nav-sections ul.nested-submenu > li p a:last-child {
