@@ -26,7 +26,7 @@
       "id": "blocks",
       "components": [
         {
-          "...": "../../blocks/*/_*.json#/definitions"
+          "...": "./blocks/*.json#/definitions"
         }
       ]
     }

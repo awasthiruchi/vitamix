@@ -46,7 +46,18 @@
     {
       "title": "Blocks",
       "id": "blocks",
-      "components": []
+      "components": [
+        {
+          "title": "Hero",
+          "id": "hero",
+          "plugins": {
+            "da": {
+              "rows": 1,
+              "columns": 1
+            }
+          }
+        }
+      ]
     }
   ]
 }
