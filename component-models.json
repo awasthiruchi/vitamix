@@ -48,10 +48,46 @@
     "id": "hero",
     "fields": [
       {
-        "component": "richtext",
+        "component": "text",
         "valueType": "string",
-        "name": "div:nth-child(1)>div:nth-child(1)",
-        "label": "Hero Content"
+        "name": "div:nth-child(1)>div:nth-child(1)>p:nth-child(1)>a:nth-child(1)",
+        "label": "Video URL Text"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "div:nth-child(1)>div:nth-child(1)>p:nth-child(1)>a:nth-child(1)[href]",
+        "label": "Video URL"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "div:nth-child(1)>div:nth-child(1)>p:nth-child(2)",
+        "label": "Eyebrow"
+      },
+      {
+        "component": "rich-text",
+        "valueType": "string",
+        "name": "div:nth-child(1)>div:nth-child(1)>h1:nth-child(3)",
+        "label": "Title"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "div:nth-child(1)>div:nth-child(1)>p:nth-child(4)>a:nth-child(1)",
+        "label": "C2A Button Text"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "div:nth-child(1)>div:nth-child(1)>p:nth-child(4)>a:nth-child(1)[href]",
+        "label": "C2A Button Link"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "div:nth-child(1)>div:nth-child(1)>p:nth-child(5)>em:nth-child(1)>sub:nth-child(1)",
+        "label": "Disclaimer"
       }
     ]
   }

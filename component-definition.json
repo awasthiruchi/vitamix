@@ -52,8 +52,7 @@
           "id": "hero",
           "plugins": {
             "da": {
-              "rows": 1,
-              "columns": 1
+              "unsafeHTML": "<div class=\"hero\"><div><div><p><a href=\"\">Hero Video</a></p><p></p><h1></h1><p><a href=\"\" >Learn More</a></p><p><em><sub></sub></em></p></div></div></div>"
             }
           }
         }
