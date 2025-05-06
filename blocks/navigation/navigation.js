@@ -92,6 +92,7 @@ export default function decorate(block) {
     });
 
     wrapper.appendChild(ul);
+    ul.querySelector('li').setAttribute('aria-current', true);
     nav.appendChild(wrapper);
     row.prepend(nav);
   }
