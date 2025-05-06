@@ -5,7 +5,6 @@ import { buildCarousel } from '../../scripts/scripts.js';
  * @param {HTMLElement} carousel - Carousel element
  */
 function nextSlide(carousel) {
-  console.log('NEXT!');
   const slides = [...carousel.children];
   const current = slides.findIndex((s) => s.dataset.countdown);
   const next = slides[(current + 1) % slides.length];
