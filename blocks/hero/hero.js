@@ -9,6 +9,11 @@ export default function decorate(block) {
     video.autoplay = true;
     video.muted = true;
     video.loop = true;
+    video.setAttribute('playsinline', '');
+    video.addEventListener('canplay', () => {
+      video.muted = true;
+      video.play();
+    });
     const source = document.createElement('source');
     source.src = vid.href;
     source.type = 'video/mp4';
