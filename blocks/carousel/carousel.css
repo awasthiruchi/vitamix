@@ -154,7 +154,6 @@
 
 .carousel-wrapper.expansion-wrapper .button-wrapper {
   justify-content: center;
-  margin-bottom: 0;
 }
 
 .carousel-wrapper.expansion-wrapper .expansion-logo {
@@ -191,8 +190,10 @@
 }
 
 .carousel.expansion ul {
-  margin: auto;
   width: calc(100% - 64px);
+  min-height: 0;
+  margin: auto;
+  transition: min-height 0.2s;
 }
 
 .carousel.expansion ul > li {
@@ -259,10 +260,6 @@
 
   .carousel-wrapper.expansion-wrapper .button-wrapper {
     justify-content: unset;
-    margin-top: var(--spacing-800);
-    margin-left: var(--spacing-400);
-    margin-bottom: var(--spacing-200);
-    padding-left: 365px;
   }
 
   .carousel.expansion .expansion-timer {
@@ -276,6 +273,7 @@
     position: relative;
     display: block;
     overflow: visible;
+    min-height: calc(265px + var(--spacing-800));
   }
   
   .carousel.expansion ul > li {
@@ -340,13 +338,6 @@
     padding: 0;
   }
 
-  .carousel-wrapper.expansion-wrapper .button-wrapper {
-    grid-column: 2;
-    margin-left: 0;
-    margin-bottom: 0;
-    padding-left: calc(clamp(265px, 25vw, 374px) + 100px);
-  }
-
   .carousel-wrapper.expansion-wrapper .expansion-logo {
     top: var(--spacing-800);
     left: calc(-1 * var(--spacing-800));
@@ -355,6 +346,7 @@
   }
 
   .carousel.expansion ul {
+    min-height: calc(374px + var(--spacing-800));
     margin: 0;
   }
 
@@ -373,18 +365,3 @@
     height: clamp(265px, 25vw, 374px);
   }
 }
-
-/* simplistic min-height for carousel expansion */
-@media (width >= 1200px) {
-  .carousel.expansion ul {
-    min-height: 700px;
-  }
-}
-
-
-@media (width >= 1400px) {
-  .carousel.expansion ul {
-    min-height: 650px;
-  }
-}
-
