@@ -44,6 +44,7 @@ main > .navigation-container.section {
   list-style: none;
   margin: 0;
   padding: 0;
+  cursor: pointer;
 }
 
 .navigation ul a:any-link {
@@ -81,7 +82,7 @@ main > .navigation-container.section {
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     max-width: 100%;
-
+    cursor: unset;
   }
 
   .navigation nav .navigation-list-wrapper {
@@ -155,14 +156,20 @@ main > .navigation-container.section {
     flex-shrink: 0;
     display: inline-block;
     transform: rotate(-45deg);
-    transform-origin: 0 0;
     width: 14px;
     height: 14px;
+    margin-top: 0.75em;
     border: 3px solid transparent;
     border-top-color: currentcolor;
     border-right-color: currentcolor;
     border-radius: var(--rounding-s);
-    margin-top: 3ch;
+    transition: margin 0.2s, transform 0.2s;
+  }
+
+  .navigation nav ul > li[aria-expanded="true"]::after {
+    margin-top: 0;
+    margin-bottom: 0.75em;
+    transform: rotate(135deg);
   }
 }
 
@@ -199,4 +206,8 @@ main > .navigation-container.section {
 
 .navigation .navigation-popover ul > li {
   border-top: 1px solid var(--color-gray-400);
+}
+
+.navigation .navigation-popover ul > li:last-child {
+  border-bottom: 1px solid var(--color-gray-400);
 }
