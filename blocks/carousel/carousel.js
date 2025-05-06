@@ -62,9 +62,6 @@ export default function decorate(block) {
     // extract first "slide" as caption
     [caption] = slides.shift();
     caption.classList.add('carousel-caption');
-
-    const buttons = caption.querySelector('.button-wrapper');
-    if (buttons) block.parentElement.append(buttons);
   }
 
   slides.forEach((s) => {

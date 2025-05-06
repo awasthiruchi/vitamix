@@ -154,7 +154,6 @@
 
 .carousel-wrapper.expansion-wrapper .button-wrapper {
   justify-content: center;
-  margin-bottom: 0;
 }
 
 .carousel-wrapper.expansion-wrapper .expansion-logo {
@@ -259,10 +258,6 @@
 
   .carousel-wrapper.expansion-wrapper .button-wrapper {
     justify-content: unset;
-    margin-top: var(--spacing-800);
-    margin-left: var(--spacing-400);
-    margin-bottom: var(--spacing-200);
-    padding-left: 365px;
   }
 
   .carousel.expansion .expansion-timer {
@@ -338,13 +333,6 @@
     max-width: unset;
     margin: 0;
     padding: 0;
-  }
-
-  .carousel-wrapper.expansion-wrapper .button-wrapper {
-    grid-column: 2;
-    margin-left: 0;
-    margin-bottom: 0;
-    padding-left: calc(clamp(265px, 25vw, 374px) + 100px);
   }
 
   .carousel-wrapper.expansion-wrapper .expansion-logo {
