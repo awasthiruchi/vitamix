@@ -149,7 +149,7 @@ main > .navigation-container.section {
   }
 }
 
-@media (width >= 400px) {
+@media (width >= 345px) {
   .navigation nav ul > li[aria-current="true"]::after {
     content: "";
     flex-shrink: 0;
