@@ -10,7 +10,6 @@ export default function decorate(block) {
     video.muted = true;
     video.loop = true;
     video.setAttribute('playsinline', '');
-    video.removeAttribute('controls');
     video.addEventListener('canplay', () => {
       video.muted = true;
       video.play();
