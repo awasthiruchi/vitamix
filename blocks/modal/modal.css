@@ -93,7 +93,7 @@ body.modal-open {
 }
 
 .modal[data-modal-path$="sign-up"] dialog .modal-content {
-  background-color: #e0e1e3;
+  background-color: var(--color-gray-300);
   display: flex;
   height: 100%;
   max-height: calc(90dvh - 64px);
@@ -125,13 +125,13 @@ body.modal-open {
 }
 
 .modal[data-modal-path$="sign-up"] dialog .modal-content .section:nth-child(2) {
-  padding: 16px 0;
+  padding: var(--spacing-100) 0;
   flex: 1;
 }
 
 @media (width >= 900px) {
   .modal[data-modal-path$="sign-up"] dialog .modal-content .section:nth-child(2) {
-    padding: 32px;
+    padding: var(--spacing-400);
   }
 }
 
