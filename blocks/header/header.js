@@ -463,7 +463,7 @@ export default async function decorate(block) {
   }
 
   const cartItems = cookies.cart_items_count;
-  if (cartItems) {
+  if (cartItems && +cartItems > 0) {
     const cart = block.querySelector('.icon-cart').parentElement;
     cart.dataset.cartItems = cartItems;
     cart.lastChild.textContent = `Cart (${cartItems})`;
