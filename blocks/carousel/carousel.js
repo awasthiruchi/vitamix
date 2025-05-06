@@ -5,6 +5,7 @@ import { buildCarousel } from '../../scripts/scripts.js';
  * @param {HTMLElement} carousel - Carousel element
  */
 function nextSlide(carousel) {
+  console.log('NEXT!');
   const slides = [...carousel.children];
   const current = slides.findIndex((s) => s.dataset.countdown);
   const next = slides[(current + 1) % slides.length];
@@ -64,17 +65,6 @@ export default function decorate(block) {
 
     const buttons = caption.querySelector('.button-wrapper');
     if (buttons) block.parentElement.append(buttons);
-
-    // track visible slide
-    wrapper.addEventListener('scroll', () => {
-      const { scrollLeft, clientWidth } = wrapper;
-      const current = Math.round(scrollLeft / clientWidth);
-      const { children } = wrapper;
-      [...children].forEach((slide, i) => {
-        if (i === current) slide.setAttribute('data-countdown', true);
-        else slide.removeAttribute('data-countdown');
-      });
-    });
   }
 
   slides.forEach((s) => {
@@ -131,6 +121,12 @@ export default function decorate(block) {
     wrapper.append(slide);
   });
 
+  const carousel = buildCarousel(block, 1, false);
+  if (caption) carousel.parentElement.prepend(caption);
+
+  if (carousel) block.replaceWith(carousel);
+  else block.parentElement.remove();
+
   // start autorotation
   if (variants.includes('expansion')) {
     const firstSlide = wrapper.firstElementChild;
@@ -138,16 +134,19 @@ export default function decorate(block) {
 
     let autoRotateTimer = autoRotate(wrapper);
     let interactionTimeout;
+    let visible = false;
 
     const resetAutoRotate = () => {
-      clearInterval(autoRotateTimer);
-      clearTimeout(interactionTimeout);
-      interactionTimeout = setTimeout(() => {
-        autoRotateTimer = autoRotate(wrapper);
-      }, 100); // match scroll debounce
+      if (visible) {
+        clearInterval(autoRotateTimer);
+        clearTimeout(interactionTimeout);
+        interactionTimeout = setTimeout(() => {
+          autoRotateTimer = autoRotate(wrapper);
+        }, 100); // match scroll debounce
+      }
     };
 
-    wrapper.addEventListener('scroll', resetAutoRotate);
+    wrapper.addEventListener('scroll', () => resetAutoRotate());
 
     [...wrapper.children].forEach((slide) => {
       slide.addEventListener('click', () => {
@@ -156,11 +155,33 @@ export default function decorate(block) {
         resetAutoRotate();
       });
     });
+
+    const visibilityObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.intersectionRatio < 0.5 && visible) {
+          // carousel is less than 50% visible
+          clearInterval(autoRotateTimer);
+          autoRotateTimer = null;
+          visible = false;
+        } else if (entry.intersectionRatio >= 0.5 && !visible) {
+          // carousel is at least 50% visible
+          if (!autoRotateTimer) autoRotateTimer = autoRotate(wrapper);
+          visible = true;
+        }
+      });
+    }, { threshold: 0.5 });
+
+    visibilityObserver.observe(block.closest('.carousel-wrapper') || block);
+
+    // track visible slide
+    wrapper.addEventListener('scroll', () => {
+      const { scrollLeft, clientWidth } = wrapper;
+      const current = Math.round(scrollLeft / clientWidth);
+      const { children } = wrapper;
+      [...children].forEach((slide, i) => {
+        if (i === current) slide.setAttribute('data-countdown', true);
+        else slide.removeAttribute('data-countdown');
+      });
+    });
   }
-
-  const carousel = buildCarousel(block, 1, false);
-  if (caption) carousel.parentElement.prepend(caption);
-
-  if (carousel) block.replaceWith(carousel);
-  else block.parentElement.remove();
 }
