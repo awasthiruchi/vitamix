@@ -33,6 +33,26 @@ export default function decorate(block) {
 
     block.addEventListener('click', () => buildPopover(block, ul, popover), { once: true });
 
+    ul.addEventListener('click', (e) => {
+      const li = e.target.closest('li');
+      if (li) {
+        const link = li.querySelector('a[href]');
+        const mobile = !window.matchMedia('(width >= 800px)').matches;
+        if (mobile) { // enable mobile popover
+          e.preventDefault();
+          const expanded = li.hasAttribute('aria-expanded');
+          block.querySelectorAll('[aria-expanded]').forEach((el) => el.removeAttribute('aria-expanded'));
+          popover.hidden = true;
+          if (!expanded) {
+            li.setAttribute('aria-expanded', true);
+            popover.hidden = false;
+          }
+        } else { // desktop scroll into view
+          link.scrollIntoView({ behavior: 'smooth', inline: 'center' });
+        }
+      }
+    });
+
     ul.addEventListener('scroll', () => {
       const { scrollLeft, scrollWidth, clientWidth } = ul;
       const scrollRight = scrollWidth - clientWidth - scrollLeft;
@@ -71,27 +91,10 @@ export default function decorate(block) {
         }, { threshold: 0.75 });
         observer.observe(section);
       }
-
-      link.addEventListener('click', (e) => {
-        // enable mobile popover
-        const mobile = !window.matchMedia('(width >= 800px)').matches;
-        if (mobile) {
-          e.preventDefault();
-          const li = link.closest('li');
-          const expanded = li.hasAttribute('aria-expanded');
-          block.querySelectorAll('[aria-expanded]').forEach((el) => el.removeAttribute('aria-expanded'));
-          popover.hidden = true;
-          if (!expanded) {
-            li.setAttribute('aria-expanded', true);
-            popover.hidden = false;
-          }
-        } else { // desktop scroll into view
-          link.scrollIntoView({ behavior: 'smooth', inline: 'center' });
-        }
-      });
     });
 
     wrapper.appendChild(ul);
+    ul.querySelector('li').setAttribute('aria-current', true);
     nav.appendChild(wrapper);
     row.prepend(nav);
   }
