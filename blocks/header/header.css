@@ -371,8 +371,8 @@ header .nav-tools {
 header .nav-tools::before {
   content: '';
   position: absolute;
-  left: calc(-1 * var(--horizontal-spacing));
-  right: calc(-1 * var(--horizontal-spacing));
+  left: calc(-1 * var(--spacing-200));
+  right: calc(-1 * var(--spacing-200));
   top: 0;
   height: 1px;
   background: var(--color-gray-700);
@@ -399,6 +399,12 @@ header .nav-tools li a.icon-wrapper {
   outline-offset: var(--spacing-40);
 }
 
+header .nav-tools button {
+  padding: var(--spacing-80);
+  font-size: var(--detail-size-xs);
+  cursor: pointer;
+}
+
 @media (width >= 1000px) {
   header .nav-tools::before {
     content: none;
@@ -417,10 +423,7 @@ header .nav-tools .nav-tools-language {
 header .nav-tools .nav-tools-language button {
   gap: var(--spacing-s);
   position: relative;
-  padding: var(--spacing-80);
   border: 1px solid transparent;
-  font-size: var(--detail-size-xs);
-  cursor: pointer;
 }
 
 header .nav-tools .nav-tools-language button::after {

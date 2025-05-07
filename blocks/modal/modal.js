@@ -1,6 +1,6 @@
 import { loadFragment } from '../fragment/fragment.js';
 import {
-  buildBlock, decorateBlock, loadBlock, loadCSS,
+  buildBlock, decorateBlock, loadBlock, loadCSS, toClassName,
 } from '../../scripts/aem.js';
 
 /*
@@ -9,8 +9,12 @@ import {
   Other blocks can also use the createModal() and openModal() functions.
 */
 
-export async function createModal(contentNodes) {
+export async function createModal(contentNodes, path) {
   await loadCSS(`${window.hlx.codeBasePath}/blocks/modal/modal.css`);
+  const fallback = [...contentNodes]
+    .find((n) => n.textContent.trim()).textContent.trim().slice(0, 16);
+  const title = toClassName(path.split('/modals/')[1] || fallback);
+
   const dialog = document.createElement('dialog');
   const dialogContent = document.createElement('div');
   dialogContent.classList.add('modal-content');
@@ -20,6 +24,7 @@ export async function createModal(contentNodes) {
   const closeButton = document.createElement('button');
   closeButton.classList.add('close-button');
   closeButton.setAttribute('aria-label', 'Close');
+  closeButton.setAttribute('data-label', 'Close');
   closeButton.type = 'button';
   closeButton.innerHTML = '<span class="icon icon-close"></span>';
   closeButton.addEventListener('click', () => dialog.close());
@@ -47,6 +52,7 @@ export async function createModal(contentNodes) {
   });
 
   block.innerHTML = '';
+  block.id = title;
   block.append(dialog);
 
   return {
@@ -66,7 +72,7 @@ export async function openModal(fragmentUrl) {
     : fragmentUrl;
 
   const fragment = await loadFragment(path);
-  const { block, showModal } = await createModal(fragment.childNodes);
+  const { block, showModal } = await createModal(fragment.childNodes, path);
   block.dataset.modalPath = path;
   showModal();
 }

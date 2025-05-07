@@ -321,43 +321,74 @@ function toggleForm(form, disabled = true) {
   });
 }
 
+/**
+ * Configures footer sign-up form with submission handling.
+ * @param {HTMLFormElement} form - Footer sign-up form
+ */
+function enableFooterSignUp(form) {
+  form.classList.add('footer-sign-up');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    // disable form and show loading button
+    toggleForm(form);
+    const data = new FormData(form);
+    const entries = Object.fromEntries(data.entries());
+    const { email, mobile, optIn } = entries;
+    const payload = {
+      email,
+      mobile,
+      sms_optin: optIn ? '1' : '0',
+      lead_source: 'sub-em-footer-us',
+      pageUrl: window.location.href,
+      actionUrl: '/us/en_us/rest/V1/vitamix-api/newslettersubscribe',
+    };
+    const params = new URLSearchParams(payload);
+    try {
+      const resp = await fetch(`https://www.vitamix.com/bin/vitamix/newslettersubscription?${params.toString()}`);
+      if (!resp.ok) {
+        // eslint-disable-next-line no-console
+        console.error('Failed to submit newsletter subscription', resp);
+      }
+      const { data: { message } } = await resp.json();
+      // eslint-disable-next-line no-console
+      console.log(message);
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Failed to submit newsletter subscription', error);
+    }
+    const thankYou = document.createElement('div');
+    thankYou.className = 'form-thank-you';
+    thankYou.innerHTML = `<p>${e.submitter.dataset.thankYou}</p>`;
+    form.replaceWith(thankYou);
+  });
+}
+
+/**
+ * Configures nav search form with submission handling.
+ * @param {HTMLFormElement} form - Nav search form
+ */
+function enableNavSearch(form) {
+  form.classList.add('nav-search');
+  const button = form.querySelector('button');
+  button.classList.add('emphasis');
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const data = new FormData(form);
+    const { search } = Object.fromEntries(data.entries()) || '';
+    window.location.href = `https://www.vitamix.com/us/en_us/search-result?search=${search}`;
+  });
+}
+
+/**
+ * Enables form submission handling based on form path.
+ * @param {HTMLFormElement} form - Form element
+ * @param {string} path -Path associated with the form
+ */
 function enableSubmission(form, path) {
   if (path.includes('/footer-sign-up.json')) {
-    form.classList.add('footer-sign-up');
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      // disable form and show loading button
-      toggleForm(form);
-      const data = new FormData(form);
-      const entries = Object.fromEntries(data.entries());
-      const { email, mobile, optIn } = entries;
-      const payload = {
-        email,
-        mobile,
-        sms_optin: optIn ? '1' : '0',
-        lead_source: 'sub-em-footer-us',
-        pageUrl: window.location.href,
-        actionUrl: '/us/en_us/rest/V1/vitamix-api/newslettersubscribe',
-      };
-      const params = new URLSearchParams(payload);
-      try {
-        const resp = await fetch(`https://www.vitamix.com/bin/vitamix/newslettersubscription?${params.toString()}`);
-        if (!resp.ok) {
-          // eslint-disable-next-line no-console
-          console.error('Failed to submit newsletter subscription', resp);
-        }
-        const { data: { message } } = await resp.json();
-        // eslint-disable-next-line no-console
-        console.log(message);
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error('Failed to submit newsletter subscription', error);
-      }
-      const thankYou = document.createElement('div');
-      thankYou.className = 'form-thank-you';
-      thankYou.innerHTML = `<p>${e.submitter.dataset.thankYou}</p>`;
-      form.replaceWith(thankYou);
-    });
+    enableFooterSignUp(form);
+  } else if (path.includes('/nav-search.json')) {
+    enableNavSearch(form);
   }
 }
 
