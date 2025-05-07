@@ -108,6 +108,7 @@
   text-align: left;
   box-shadow: none;
   transition: border-color 0.4s, color 0.4s;
+  cursor: pointer;
 }
 
 .speed-control [role="tablist"] [role="tab"][aria-selected="true"] {
