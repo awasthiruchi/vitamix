@@ -53,6 +53,7 @@ body.modal-open {
   color: var(--color-white);
   line-height: 0;
   box-shadow: none;
+  cursor: pointer;
 }
 
 .modal .close-button .icon.icon-close {
@@ -147,4 +148,104 @@ body.modal-open {
 
 .modal[data-modal-path$="sign-up"] dialog .modal-content .section:nth-child(2) p:nth-of-type(2) {
   text-transform: uppercase;
+}
+
+/* search modal */
+.modal#search dialog {
+  max-width: 100%;
+  width: 100%;
+  background-color: var(--color-background);
+  margin-top: 0;
+}
+
+@keyframes slide {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.modal#search dialog[open] {
+  animation: slide 0.3s;
+}
+
+.modal#search dialog::backdrop {
+  background-color: var(--color-background);
+}
+
+.modal#search .close-button {
+  background-color: var(--color-charcoal);
+  border-radius: 50%;
+  border: 8px solid var(--color-background);
+  color: var(--color-charcoal);
+}
+
+.modal#search .close-button::after {
+  content: attr(data-label);
+  position: absolute;
+  top: calc(100% + var(--detail-size-xs));
+  left: 0;
+  font-size: var(--detail-size-xs);
+  font-weight: bold;
+}
+
+.modal#search .close-button .icon.icon-close::before,
+.modal#search .close-button .icon.icon-close::after {
+  width: 18px;
+  height: 3.5px;
+  border-radius: 1px;
+  background-color: var(--color-white);
+}
+
+.modal#search dialog h2 {
+  margin-bottom: var(--spacing-100);
+  color: var(--color-charcoal);
+  font-size: var(--heading-size-m);
+}
+
+.modal#search dialog .modal-content {
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (width >= 1000px) {
+  .modal#search dialog {
+    background-color: transparent;
+  }
+
+  @keyframes fade {
+    from {
+      opacity: 0;
+    }
+  
+    to {
+      opacity: 1;
+    }
+  }
+
+  .modal#search dialog[open] {
+    animation-name: fade;
+  }
+
+  .modal#search dialog::backdrop {
+    background-color: rgb(19 19 19 / 75%);
+  }
+
+  .modal#search .close-button {
+    display: none;
+  }
+
+  .modal#search dialog h2 {
+    display: none;
+  }
+
+  .modal#search dialog .modal-content {
+    margin-top: var(--spacing-100);
+  }
 }
