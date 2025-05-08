@@ -1,0 +1,63 @@
+{
+  "definitions": [
+    {
+      "title": "Hero",
+      "id": "hero",
+      "plugins": {
+        "da": {
+          "unsafeHTML": "<div class=\"hero\"><div><div><p><a href=\"\">Hero Video</a></p><p></p><h1></h1><p><a href=\"\" >Learn More</a></p><p><em><sub></sub></em></p></div></div></div>"
+        }
+      }
+    }
+  ],
+  "models": [
+    {
+      "id": "hero",
+      "fields": [
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "div:nth-child(1)>div:nth-child(1)>p:nth-child(1)>a:nth-child(1)[href]",
+          "label": "Video URL"
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "div:nth-child(1)>div:nth-child(1)>p:nth-child(1)>a:nth-child(1)",
+          "label": "Video URL Text"
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "div:nth-child(1)>div:nth-child(1)>p:nth-child(2)",
+          "label": "Eyebrow"
+        },
+        {
+          "component": "richtext",
+          "valueType": "string",
+          "name": "div:nth-child(1)>div:nth-child(1)>h1:nth-child(3)",
+          "label": "Title"
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "div:nth-child(1)>div:nth-child(1)>p:nth-child(4)>a:nth-child(1)",
+          "label": "C2A Button Text"
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "div:nth-child(1)>div:nth-child(1)>p:nth-child(4)>a:nth-child(1)[href]",
+          "label": "C2A Button Link"
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "div:nth-child(1)>div:nth-child(1)>p:nth-child(5)>em:nth-child(1)>sub:nth-child(1)",
+          "label": "Disclaimer"
+        }
+      ]
+    }
+  ],
+  "filters": []
+}
