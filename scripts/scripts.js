@@ -26,24 +26,34 @@ async function loadFonts() {
   }
 }
 
+/**
+ * Replaces image icon with its SVG equivalent.
+ * @param {HTMLImageElement} icon - Icon image element
+ */
 function swapIcon(icon) {
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(async (entry) => {
       if (entry.isIntersecting) {
-        const resp = await fetch(icon.src);
-        const temp = document.createElement('div');
-        temp.innerHTML = await resp.text();
-        const svg = temp.querySelector('svg');
-        temp.remove();
-        // check if svg has inline styles
-        let style = svg.querySelector('style');
-        if (style) style = style.textContent.toLowerCase().includes('currentcolor');
-        const fill = [...svg.querySelectorAll('[fill]')].some(
-          (el) => el.getAttribute('fill').toLowerCase().includes('currentcolor'),
-        );
-        // replace image with SVG, ensuring color inheritance
-        if ((style || fill) || (!style && !fill)) {
-          icon.replaceWith(svg);
+        try {
+          const resp = await fetch(icon.src);
+          const temp = document.createElement('div');
+          temp.innerHTML = await resp.text();
+          const svg = temp.querySelector('svg');
+          if (!svg) throw new Error('Icon does not contain an SVG');
+          temp.remove();
+          // check if svg has inline styles
+          let style = svg.querySelector('style');
+          if (style) style = style.textContent.toLowerCase().includes('currentcolor');
+          const fill = [...svg.querySelectorAll('[fill]')].some(
+            (el) => el.getAttribute('fill').toLowerCase().includes('currentcolor'),
+          );
+          // replace image with SVG, ensuring color inheritance
+          if ((style || fill) || (!style && !fill)) {
+            icon.replaceWith(svg);
+          }
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.error(`Unable to swap icon at ${icon.src}`, error);
         }
         observer.disconnect();
       }
@@ -61,6 +71,12 @@ export function swapIcons() {
   });
 }
 
+/**
+ * Builds and decorates an icon element.
+ * @param {string} name - Icon name
+ * @param {string} [modifier] - Optional icon modifier
+ * @returns {HTMLElement} Decorated icon element
+ */
 export function buildIcon(name, modifier) {
   const icon = document.createElement('span');
   icon.className = `icon icon-${name}`;
@@ -69,6 +85,12 @@ export function buildIcon(name, modifier) {
   return icon;
 }
 
+/**
+ * Builds and appends carousel index buttons for navigation.
+ * @param {HTMLElement} carousel - Carousel element
+ * @param {HTMLElement} indices - Container element where index buttons will be appended
+ * @param {number} [visibleSlides=1] - Number of slides visible at a time
+ */
 function buildCarouselIndices(carousel, indices, visibleSlides = 1) {
   indices.innerHTML = '';
   const slides = [...carousel.children];
@@ -176,6 +198,48 @@ function buildAutoBlocks() {
 }
 
 /**
+ * Replaces an MP4 anchor element with a <video> element.
+ * @param {HTMLElement} el - Container element
+ * @returns {HTMLVideoElement|null} Created <video> element (or `null` if no video link found)
+ */
+export function buildVideo(el) {
+  const vid = el.querySelector('a[href*=".mp4"]');
+  if (vid) {
+    const imgWrapper = vid.closest('.img-wrapper');
+    if (imgWrapper) imgWrapper.classList.add('vid-wrapper');
+    // create video element
+    const video = document.createElement('video');
+    video.loop = true;
+    video.muted = true; // must be set BEFORE play()
+    video.setAttribute('playsinline', '');
+    video.setAttribute('preload', 'none');
+    // create source element
+    const source = document.createElement('source');
+    source.type = 'video/mp4';
+    source.dataset.src = vid.href;
+    video.append(source);
+    // load and play video on observation
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting && !source.dataset.loaded) {
+          source.src = source.dataset.src;
+          video.autoplay = true;
+          video.load();
+          video.addEventListener('canplay', () => video.play());
+          source.dataset.loaded = true;
+          observer.disconnect();
+        }
+      });
+    }, { threshold: 0 });
+    observer.observe(video);
+
+    vid.parentElement.replaceWith(video);
+    return video;
+  }
+  return null;
+}
+
+/**
  * Decorates links with appropriate classes to style them as buttons
  * @param {HTMLElement} main The main container element
  */
@@ -216,6 +280,10 @@ function decorateButtons(main) {
   });
 }
 
+/**
+ * Wraps all <img> elements inside <p> tags with a class for styling.
+ * @param {HTMLElement} main - Main container element
+ */
 function decorateImages(main) {
   main.querySelectorAll('p img').forEach((img) => {
     const p = img.closest('p');
@@ -223,6 +291,10 @@ function decorateImages(main) {
   });
 }
 
+/**
+ * Identifies and decorates "eyebrow" text above headings.
+ * @param {HTMLElement} main - Main container element
+ */
 function decorateEyebrows(main) {
   main.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((h) => {
     const prev = h.previousElementSibling;
@@ -235,6 +307,10 @@ function decorateEyebrows(main) {
   });
 }
 
+/**
+ * Adds `disclaimer` class to paragraphs containing <sub> elements.
+ * @param {HTMLElement} main - Main container element
+ */
 function decorateDisclaimers(main) {
   main.querySelectorAll('sub').forEach((sub) => {
     const p = sub.closest('p');
@@ -242,6 +318,10 @@ function decorateDisclaimers(main) {
   });
 }
 
+/**
+ * Decorates section backgrounds for banner sections and sets overlay/collapse classes.
+ * @param {HTMLElement} main - Main container element
+ */
 function decorateSectionBackgrounds(main) {
   main.querySelectorAll('.section.banner[data-background]').forEach((section) => {
     const { background } = section.dataset;
@@ -256,8 +336,13 @@ function decorateSectionBackgrounds(main) {
   });
 
   main.querySelectorAll('.section.light, .section.dark').forEach((section) => {
+    /**
+     * Sets the collapse data attribute on a section element.
+     * @param {Element} el - The section element to set collapse on.
+     * @param {string} position - 'top' or 'bottom'.
+     */
     const setCollapse = (el, position) => {
-      const existing = el.dataset.collapse;
+      const existing = el?.dataset?.collapse;
       if (existing === (position === 'top' ? 'bottom' : 'top')) {
         el.dataset.collapse = 'both';
       } else if (!existing) el.dataset.collapse = position;
@@ -268,6 +353,10 @@ function decorateSectionBackgrounds(main) {
   });
 }
 
+/**
+ * Sets the id of sections based on their data-anchor attribute.
+ * @param {HTMLElement} main - Main container element
+ */
 function decorateSectionAnchors(main) {
   main.querySelectorAll('.section[data-anchor]').forEach((section) => {
     const { anchor } = section.dataset;
@@ -275,9 +364,13 @@ function decorateSectionAnchors(main) {
   });
 }
 
+/**
+ * Automatically loads and opens modal dialogs.
+ * @param {Document|HTMLElement} doc - Document or container to attach the event listener to.
+ */
 function autolinkModals(doc) {
   doc.addEventListener('click', async (e) => {
-    const origin = e.target.closest('a');
+    const origin = e.target.closest('a[href]');
     if (origin && origin.href && origin.href.includes('/modals/')) {
       e.preventDefault();
       const { openModal } = await import(`${window.hlx.codeBasePath}/blocks/modal/modal.js`);
@@ -364,6 +457,9 @@ function loadDelayed() {
   // load anything that can be postponed to the latest here
 }
 
+/**
+ * Loads the page in eager, lazy, and delayed phases.
+ */
 async function loadPage() {
   await loadEager(document);
   await loadLazy(document);
