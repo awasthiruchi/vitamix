@@ -1,4 +1,4 @@
-import { buildCarousel } from '../../scripts/scripts.js';
+import { buildCarousel, buildVideo } from '../../scripts/scripts.js';
 
 /**
  * Calculates max height needed to display any slide in expanded state.
@@ -77,60 +77,30 @@ export default function decorate(block) {
 
   // extract slides
   const slides = rows.map((s) => s.children);
-  let caption;
+  let staticContent;
+
+  // decorate carousels with static content
+  if (variants.includes('expansion') || variants.includes('testimonial')) {
+    variants.forEach((v) => block.parentElement.classList.add(`${v}-wrapper`));
+
+    [staticContent] = slides.shift();
+    staticContent.classList.add('carousel-static');
+  }
 
   // decorate expansion variant
   if (variants.includes('expansion')) {
-    variants.forEach((v) => block.parentElement.classList.add(`${v}-wrapper`));
-
     // add logo icon
     const logo = document.createElement('img');
     logo.className = 'expansion-logo';
     logo.src = '/icons/mark.svg';
     logo.alt = '';
     block.parentElement.prepend(logo);
-
-    // extract first "slide" as caption
-    [caption] = slides.shift();
-    caption.classList.add('carousel-caption');
   }
 
   slides.forEach((s) => {
     const slide = document.createElement('li');
     [...s].forEach((cell) => {
-      const vid = cell.querySelector('a[href$=".mp4"]');
-      if (vid) {
-        // build video
-        const video = document.createElement('video');
-        video.muted = true;
-        video.loop = true;
-        video.setAttribute('playsinline', '');
-        video.addEventListener('canplay', () => {
-          video.muted = true;
-          video.play();
-        });
-        const source = document.createElement('source');
-        source.dataset.src = vid.href;
-        source.type = 'video/mp4';
-        video.append(source);
-        vid.parentElement.replaceWith(video);
-        // load video
-        const observer = new IntersectionObserver((entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              if (source.dataset.loaded) return;
-              source.src = source.dataset.src;
-              video.autoplay = true;
-              video.load();
-              video.play();
-              source.dataset.loaded = true;
-              observer.disconnect();
-            }
-          });
-        }, { threshold: 0 });
-
-        observer.observe(video);
-      }
+      buildVideo(cell);
       slide.append(cell);
     });
 
@@ -143,19 +113,11 @@ export default function decorate(block) {
       else slide.prepend(timer);
     }
 
-    if (variants.includes('testimonial')) {
-      const img = slide.querySelector('div img, div svg');
-      if (img) {
-        const wrap = img.closest('div');
-        wrap.className = 'img-wrapper';
-      }
-    }
-
     wrapper.append(slide);
   });
 
   const carousel = buildCarousel(block, 1, false);
-  if (caption) carousel.parentElement.prepend(caption);
+  if (staticContent) carousel.parentElement.prepend(staticContent);
 
   if (carousel) block.replaceWith(carousel);
   else block.parentElement.remove();

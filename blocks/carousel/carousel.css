@@ -9,107 +9,175 @@
 }
 
 /* testimonial variant */
-.carousel.testimonial > ul > li {
+.carousel-wrapper.testimonial-wrapper {
   position: relative;
+  padding: 0;
 }
 
-.carousel.testimonial .img-wrapper {
-  margin-right: 25px;
+.carousel-wrapper.testimonial-wrapper .carousel-static {
+  height: 250px;
 }
-
-.carousel.testimonial .img-wrapper img {
+  
+.carousel-wrapper.testimonial-wrapper .carousel-static img {
   width: 100%;
-  max-height: 50dvh;
+  height: 100%;
+  object-fit: cover;
 }
 
-.carousel.testimonial .img-wrapper + div {
-  position: relative;
-  margin-top: -25px;
-  margin-left: 25px;
-  padding: var(--spacing-600) 25px calc(var(--spacing-600) - 25px) var(--spacing-700);
+.carousel.testimonial {
+  position: unset;
+}
+
+.carousel.testimonial nav {
+  top: calc(250px - (52px / 2));
+  right: var(--spacing-40);
+  bottom: unset;
+  left: var(--spacing-40);
+  height: 52px;
+}
+
+.carousel.testimonial > ul {
+  padding: var(--spacing-400) 0;
   background-color: var(--color-gray-100);
+  font-size: var(--body-size-xs);
+  font-weight: bold;
 }
 
-.carousel.testimonial .img-wrapper + div::before {
-  content: url('../../icons/quote-mark.svg');
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  top: 40px;
-  left: -25px;
-  width: 50px;
-  height: 50px;
-  border-radius: var(--rounding-s);
-  background-color: var(--color-charcoal);
-  color: var(--color-white);
+.carousel.testimonial > ul > li {
+  justify-content: flex-start;
+  padding: 0 var(--horizontal-spacing);
 }
 
-.carousel.testimonial .img-wrapper + div ul {
+.carousel.testimonial > ul > li > div ul {
   padding: 0;
   font-size: var(--body-size-xxl);
+  font-weight: normal;
 }
 
-.carousel.testimonial .img-wrapper + div ul li {
-  margin-top: 25px;
-  padding-top: 25px;
+.carousel.testimonial > ul > li > div ul > li {
+  display: block;
+  padding-top: var(--spacing-300);
+  text-align: center;
 }
 
-.carousel.testimonial .img-wrapper + div ul li::before {
+.carousel.testimonial > ul > li > div ul > li::before {
   content: '';
   position: absolute;
   top: 0;
+  left: 50%;
+  transform: translateX(-50%);
   width: 50px;
   height: 5px;
   background-color: var(--color-red);
 }
 
-.carousel.testimonial .img-wrapper + div ul em {
+.carousel.testimonial > ul > li > div ul > li em {
   font-size: initial;
   font-style: normal;
 }
 
-@media (width >= 600px) {
-  .carousel.testimonial > ul > li {
-    padding-bottom: 110px;
-  }
-
-  .carousel.testimonial .img-wrapper img {
-    width: 100%;
-    max-height: 40dvh;
-  }
-
-  .carousel.testimonial .img-wrapper + div {
-    position: absolute;
-    bottom: 0;
-    margin-left: 75px;
-    margin-top: 0;
-    padding: var(--spacing-600) var(--spacing-700) var(--spacing-800);
-    background-color: var(--color-gray-100);
-  }
-}
-
 @media (width >= 800px) {
-  .carousel.testimonial .img-wrapper + div ul li {
+  .carousel-wrapper.testimonial-wrapper {
+    padding: 0 var(--horizontal-spacing);
+  }
+
+  .carousel-wrapper.testimonial-wrapper .carousel-static {
+    height: 432px;
+  }
+
+  .carousel-wrapper.testimonial-wrapper .carousel-static img {
+    height: 432px;
+    width: auto;
+  }
+
+  .carousel.testimonial {
+    position: relative;
+    margin-top: -144px;
+    padding-left: 72px;
+  }
+
+  .carousel.testimonial nav {
+    display: flex;
+    gap: var(--spacing-400);
+    justify-content: flex-end;
+    top: unset;
+    right: var(--spacing-400);
+    bottom: 0;
+    left: 0;
+  }
+
+  .carousel.testimonial nav > button {
+    position: relative;
+  }
+
+  .carousel.testimonial > ul {
+    margin: 0;
+    margin-bottom: calc(52px / 2);
+    padding: 56px 0;
+    background-color: var(--color-gray-100);
+    font-size: var(--body-size-m);
+    font-weight: normal;
+  }
+
+  .carousel.testimonial > ul > li {
+    position: static;
+    padding: 0 var(--spacing-600);
+  }
+
+  .carousel.testimonial > ul > li > div::before {
+    content: url('../../icons/quote-mark.svg');
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: var(--spacing-600);
+    left: calc(72px - (52px / 2));
+    width: 50px;
+    height: 50px;
+    border-radius: var(--rounding-s);
+    background-color: var(--color-charcoal);
+    color: var(--color-white);
+    line-height: 1;
+  }
+
+  .carousel.testimonial > ul > li > div p:first-of-type {
+    margin-top: 0;
+  }
+
+  .carousel.testimonial > ul > li > div ul > li {
     margin-top: var(--spacing-600);
     padding-top: 0;
     padding-left: 75px;
+    text-align: left;
   }
-
-  .carousel.testimonial .img-wrapper + div ul li::before {
-    top: 1.3ch;
+  
+  .carousel.testimonial > ul > li > div ul > li::before {
+    top: 1ch;
     left: 0;
+    transform: unset;
   }
 }
 
 @media (width >= 1000px) {
-  .carousel.testimonial > ul > li {
-    padding-bottom: 25px;
+  .carousel-wrapper.testimonial-wrapper .carousel-static,
+  .carousel-wrapper.testimonial-wrapper .carousel-static img {
+    height: 695px;
+  }
+
+  .carousel.testimonial {
+    margin-top: -500px;
+    margin-bottom: 216px;
+    max-width: 80%;
+    margin-left: auto;
+  }
+
+  .carousel.testimonial > ul {
+    padding: var(--spacing-800) 0;
     font-size: var(--body-size-xxl);
   }
 
-  .carousel.testimonial .img-wrapper + div {
-    margin-left: 25%;
+  .carousel.testimonial > ul > li {
+    padding: 0 72px;
   }
 }
 
@@ -138,17 +206,17 @@
   overflow-x: hidden;
 }
 
-.carousel-wrapper.expansion-wrapper .carousel-caption {
+.carousel-wrapper.expansion-wrapper .carousel-static {
   margin-bottom: var(--spacing-700);
   padding: 0 var(--horizontal-spacing);
   z-index: 1;
 }
 
-.carousel-wrapper.expansion-wrapper .carousel-caption h2 {
+.carousel-wrapper.expansion-wrapper .carousel-static h2 {
   font-size: var(--font-size-500);
 }
 
-.carousel-wrapper.expansion-wrapper .carousel-caption p {
+.carousel-wrapper.expansion-wrapper .carousel-static p {
   line-height: var(--line-height-xl);
 }
 
@@ -243,7 +311,7 @@
     text-align: left;
   }
 
-  .carousel-wrapper.expansion-wrapper .carousel-caption {
+  .carousel-wrapper.expansion-wrapper .carousel-static {
     max-width: calc(100% - 128px);
     margin: auto;
   }
@@ -254,7 +322,7 @@
     height: 387px;
   }
 
-  .carousel-wrapper.expansion-wrapper .carousel-caption h2 {
+  .carousel-wrapper.expansion-wrapper .carousel-static h2 {
     font-size: var(--font-size-800);
   }
 
@@ -275,7 +343,7 @@
     overflow: visible;
     min-height: calc(265px + var(--spacing-800));
   }
-  
+
   .carousel.expansion ul > li {
     display: block;
     padding-left: 365px;
@@ -332,7 +400,7 @@
     padding: var(--spacing-900) var(--horizontal-spacing);
   }
 
-  .carousel-wrapper.expansion-wrapper .carousel-caption {
+  .carousel-wrapper.expansion-wrapper .carousel-static {
     max-width: unset;
     margin: 0;
     padding: 0;
