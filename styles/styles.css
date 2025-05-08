@@ -650,6 +650,7 @@ input[type='radio'] {
   transform: translateY(-50%);
   width: 52px;
   height: 52px;
+  border: 1px solid var(--color-gray-300);
   border-radius: var(--rounding-s);
   background-color: var(--color-charcoal);
   color: var(--color-white);
