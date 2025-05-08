@@ -370,6 +370,12 @@ async function loadPage() {
   loadDelayed();
 }
 
+// UE Editor support
+if (window.location.hostname.includes('ue.da.live')) {
+  // eslint-disable-next-line import/no-unresolved
+  import(`${window.hlx.codeBasePath}/ue/scripts/ue.js`).then(({ default: ue }) => ue());
+}
+
 loadPage();
 
 // DA Live Preview
