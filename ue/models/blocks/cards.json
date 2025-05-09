@@ -28,6 +28,30 @@
     ],
     "models": [
       {
+        "id": "cards",
+        "fields": [
+          {
+            "component": "multiselect",
+            "name": "classes",
+            "label": "Options",
+            "options": [
+              {
+                "value": "articles",
+                "name": "Articles"
+              },
+              {
+                "value": "grid",
+                "name": "Grid"
+              },
+              {
+                "value": "knockout",
+                "name": "Knockout"
+              }
+            ]
+          }
+        ]
+      },
+      {
         "id": "card",
         "fields": [
           {
