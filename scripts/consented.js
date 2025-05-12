@@ -8,8 +8,6 @@ window.config = {
   BOTALIASID: 'HUKYDI5LGI',
 };
 
-loadScript('https://consent.cookiebot.com/uc.js', { 'data-cbid': '1d1d4c74-9c10-49e5-9577-f8eb4ba520fb' });
-
 loadScript('https://www.vitamix.com/etc.clientlibs/vitamix/clientlibs/clientlib-chatbot.lc-5aa4591c22ce9007a60fafc1f19aa690-lc.min.js');
 loadScript('https://www.vitamix.com/etc.clientlibs/core/wcm/components/commons/site/clientlibs/container.lc-0a6aff292f5cc42142779cde92054524-lc.min.js');
 loadScript('https://assets.adobedtm.com/launch-EN40f2d69539754c3ea73511e70c65c801.min.js');
