@@ -149,7 +149,7 @@ pintrk('load', '2621075961855'); pintrk('page');
 try {
 setTimeout(function () {var p, s, d, w;d = document;w = window.location;p = d.createElement("IMG");s = w.protocol + "//tvspix.com/t.png?&t=" + (new Date).getTime() + "&l=tvscientific-pix-o-4b66e973-23f2-45e9-91e5-aa5f89462df5&u3=" + encodeURIComponent(w.href);p.setAttribute("src", s);
 p.setAttribute("height", "0");p.setAttribute("width", "0");p.setAttribute("alt", "");p.style.setProperty("display", "none");p.style.setProperty("position", "absolute");
-p.style.setProperty("visibility", "hidden");d.body.appendChild(p);},500)();
+p.style.setProperty("visibility", "hidden");d.body.appendChild(p);},500);
 } catch (error) {
   console.error('TV Scientific Pixel Code failed to load', error);
 }

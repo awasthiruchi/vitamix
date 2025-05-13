@@ -457,6 +457,8 @@ async function loadDelayed() {
     window.addEventListener('CookiebotOnConsentReady', () => {
       if (window.Cookiebot.consented) {
         import('./consented.js');
+      } else if (params.get('martech') === 'on') {
+        import('./consented.js');
       }
     });
   }
