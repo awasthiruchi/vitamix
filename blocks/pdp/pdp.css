@@ -5,7 +5,7 @@
   padding-top: var(--spacing-xl);
   font-family: var(--font-family-body);
 
-  grid-template-columns: 1fr;
+  grid-template-columns: 100%;
   grid-template-areas: 
     "title"
     "gallery"
@@ -31,7 +31,7 @@
 
 @media (min-width: 768px) {
   .pdp {
-    padding-top: var(--spacing-3xl);
+    padding-top: var(--spacing-xl);
     grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
     grid-template-areas: 
       "title gallery"
@@ -182,5 +182,10 @@
 .reviews-placeholder,
 .payments-placeholder {
   width: auto;
+  max-width: 100%;
+  min-width: 50%;
+  height: auto;
+  object-fit: scale-down;
+  object-position: left;
 }
 
