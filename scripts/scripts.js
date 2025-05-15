@@ -212,7 +212,12 @@ function buildPDPBlock(main) {
   const lcp = main.querySelector('div:first-child');
   // take all children of main and append to section
   section.append(buildBlock('pdp', { elems: [...lcp.children] }));
-  // prepend section to main
+
+  // remove all children of main
+  while (main.firstChild) {
+    main.removeChild(main.firstChild);
+  }
+  // prepend pdp section to main
   main.prepend(section);
 }
 

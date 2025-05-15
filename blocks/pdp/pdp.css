@@ -2,8 +2,17 @@
   display: grid;
   row-gap: 24px;
   column-gap: 32px;
-  padding-top: 64px;
+  padding-top: 32px;
   font-family: var(--font-family-body);
+
+  grid-template-columns: 1fr;
+  grid-template-areas: 
+    "title"
+    "gallery"
+    "pricing"
+    "options"
+    "details"
+    "specs";
 }
 
 .pdp .eyebrow {
@@ -22,6 +31,7 @@
 
 @media (min-width: 768px) {
   .pdp {
+    padding-top: 64px;
     grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
     grid-template-areas: 
       "title gallery"
@@ -29,19 +39,6 @@
       "options gallery"
       "details gallery"
       "specs gallery";
-  }
-}
-
-@media (max-width: 767px) {
-  .pdp {
-    grid-template-columns: 1fr;
-    grid-template-areas: 
-      "title"
-      "gallery"
-      "pricing"
-      "options"
-      "details"
-      "specs";
   }
 }
 
