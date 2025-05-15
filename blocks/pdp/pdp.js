@@ -10,12 +10,8 @@ function renderGallery(block, variants) {
   galleryContainer.classList.add('gallery');
 
   const defaultVariant = variants[0];
-  const defaultImage = defaultVariant.image[0];
 
-  const selectedImage = document.createElement('div');
-  selectedImage.classList.add('gallery-selected-image');
-  const lcp = createOptimizedPicture(defaultImage, defaultVariant.name, true);
-  selectedImage.append(lcp);
+  const selectedImage = block.querySelector('.gallery-selected-image');
   galleryContainer.append(selectedImage);
 
   const galleryImages = document.createElement('div');

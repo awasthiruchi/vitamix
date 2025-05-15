@@ -209,7 +209,18 @@ function buildAutoBlocks(main) {
  */
 function buildPDPBlock(main) {
   const section = document.createElement('div');
+
+  const lcpPicture = main.querySelector('div:nth-child(2) picture');
+  const lcpImage = lcpPicture.querySelector('img');
+  lcpImage.loading = 'eager';
+
+  const selectedImage = document.createElement('div');
+  selectedImage.classList.add('gallery-selected-image');
+  selectedImage.append(lcpPicture);
+
   const lcp = main.querySelector('div:first-child');
+  lcp.append(selectedImage);
+
   // take all children of main and append to section
   section.append(buildBlock('pdp', { elems: [...lcp.children] }));
 
