@@ -118,6 +118,38 @@
 
 .details {
   grid-area: details;
+  gap: var(--spacing-xl);
+  font-family: var(--body-font-family);
+  color: var(--color-text);
+  font-weight: var(--weight-light);
+}
+
+.details p {
+  padding-bottom: var(--spacing-s);
+}
+
+.details h2 {
+  font-family: var(--body-font-family);
+  font-size: var(--heading-size-m);
+  font-weight: var(--weight-medium);
+}
+
+.details h3 {
+  font-family: var(--body-font-family);
+  font-size: var(--heading-size-xs);
+  font-weight: var(--weight-medium);
+}
+
+.details p, .details li {
+  color: rgb(102, 102, 102);
+}
+
+.details ul {
+  padding-inline-start: var(--spacing-xl);
+}
+
+.details li {
+  padding-bottom: var(--spacing-s);
 }
 
 .specs {
@@ -178,14 +210,27 @@
   padding-bottom: var(--spacing-m);
 }
 
+/** Cookbook */
+.promo-heading {
+  font-size: var(--body-size-s);
+  font-weight: var(--weight-medium);
+  color: var(--color-text);
+}
+
 /** TEMPORARY */
 .reviews-placeholder,
-.payments-placeholder {
+.payments-placeholder, 
+.cookbook-placeholder {
   width: auto;
   max-width: 100%;
   min-width: 50%;
   height: auto;
   object-fit: scale-down;
   object-position: left;
+}
+
+.cookbook-placeholder {
+  margin-left: -12px;
+  cursor: pointer;
 }
 

@@ -235,7 +235,20 @@ function renderOptions(block, variants) {
   warrentyValue.textContent = '10 Year Standard Warranty (Free)';
   warrentyContainer.append(warrentyValue);
 
-  optionsContainer.append(warrentyContainer);
+  const cookbookContainer = document.createElement('div');
+  cookbookContainer.classList.add('cookbook');
+
+  const promoHeading = document.createElement('div');
+  promoHeading.classList.add('promo-heading');
+  promoHeading.textContent = 'Free Simply Soups & Simply Smoothies Cookbooks with purchase of $399.95 or more!';
+  cookbookContainer.append(promoHeading);
+
+  const cookbookPlaceholder = document.createElement('img');
+  cookbookPlaceholder.classList.add('cookbook-placeholder');
+  cookbookPlaceholder.src = '/blocks/pdp/cookbook.png';
+  cookbookContainer.append(cookbookPlaceholder);
+
+  optionsContainer.append(cookbookContainer);
 
   return optionsContainer;
 }
