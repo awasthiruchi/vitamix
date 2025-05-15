@@ -30,10 +30,21 @@ function renderGallery(block, variants) {
 
   galleryImages.append(...variantImageElements, ...images);
 
+  attachImageListeners(galleryImages, selectedImage);
+
+  galleryContainer.append(galleryImages);
+
+  return galleryContainer;
+}
+
+function attachImageListeners(galleryImages, selectedImageElement) {
   // Add click listener to each gallery image and assign to .gallery-selected-image
+  // TODO: This is adding multiple listeners to the same element
   galleryImages.querySelectorAll('picture').forEach(picture => {
     picture.addEventListener('click', () => {
-      console.log('clicked');
+      // if the picture is already selected, do nothing
+      if (picture.classList.contains('selected')) return;
+
       // remove selected class from all pictures
       galleryImages.querySelectorAll('picture').forEach(picture => {
         picture.classList.remove('selected');
@@ -42,16 +53,11 @@ function renderGallery(block, variants) {
       picture.classList.add('selected');
 
       // swap the selected picture with the .gallery-selected-image
-      const selectedImage = galleryContainer.querySelector('.gallery-selected-image');
-      const currentImage = selectedImage.querySelector('picture');
+      const currentImage = selectedImageElement.querySelector('picture');
       currentImage.remove();
-      selectedImage.append(picture.cloneNode(true));
+      selectedImageElement.append(picture.cloneNode(true));
     });
   });
-
-  galleryContainer.append(galleryImages);
-
-  return galleryContainer;
 }
 
 /**
@@ -164,6 +170,16 @@ function onOptionChange(block, variants, color) {
   variantImages.reverse().forEach(image => {
     galleryImages.prepend(image);
   });
+
+  // remove selected class from all pictures
+  galleryImages.querySelectorAll('picture').forEach(picture => {
+    picture.classList.remove('selected');
+  });
+
+  // add selected class to the first image
+  galleryImages.querySelector('picture').classList.add('selected');
+
+  attachImageListeners(galleryImages, selectedImage);
 }
 
 /**
