@@ -12,6 +12,7 @@ import {
   loadCSS,
   createOptimizedPicture,
   sampleRUM,
+  buildBlock,
 } from './aem.js';
 
 /**
@@ -188,13 +189,31 @@ export function buildCarousel(container, visibleSlides = 1, pagination = true) {
  * Builds all synthetic blocks in a container element.
  * @param {Element} main The container element
  */
-function buildAutoBlocks() {
+function buildAutoBlocks(main) {
   try {
     // build auto blocks
+    const metaSku = document.querySelector('meta[name="sku"]');
+    const pdpBlock = document.querySelector('.pdp');
+    if (metaSku && !pdpBlock) {
+      buildPDPBlock(main);
+    }
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Auto Blocking failed', error);
   }
+}
+
+/**
+ * Builds hero block and prepends to main in a new section.
+ * @param {Element} main The container element
+ */
+function buildPDPBlock(main) {
+  const section = document.createElement('div');
+  const lcp = main.querySelector('div:first-child');
+  // take all children of main and append to section
+  section.append(buildBlock('pdp', { elems: [...lcp.children] }));
+  // prepend section to main
+  main.prepend(section);
 }
 
 /**

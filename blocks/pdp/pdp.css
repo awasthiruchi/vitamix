@@ -1,0 +1,79 @@
+.pdp {
+  display: grid;
+  gap: 32px;
+  padding-top: 64px;
+  font-family: var(--font-family-body);
+}
+
+.pdp .eyebrow {
+  font-family: var(--heading-font-family);
+  font-size: var(--font-size-200);
+  font-weight: var(--weight-light);
+  color: var(--color-text);
+  text-transform: none;
+}
+
+.pdp h1 {
+  font-family: var(--body-font-family);
+  font-size: var(--font-size-950);
+  font-weight: var(--weight-light);
+}
+
+@media (min-width: 768px) {
+  .pdp {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    grid-template-areas: 
+      "title gallery"
+      "pricing gallery"
+      "options gallery"
+      "details gallery"
+      "specs gallery";
+  }
+}
+
+@media (max-width: 767px) {
+  .pdp {
+    grid-template-columns: 1fr;
+    grid-template-areas: 
+      "title"
+      "gallery"
+      "pricing"
+      "options"
+      "details"
+      "specs";
+  }
+}
+
+.title {
+  grid-area: title;
+}
+
+.pricing {
+  grid-area: pricing;
+}
+
+.options {
+  grid-area: options;
+}
+
+.details {
+  grid-area: details;
+}
+
+.specs {
+  grid-area: specs;
+}
+
+.gallery {
+  grid-area: gallery;
+}
+
+.gallery p:not(:first-of-type) {
+  display: none;
+}
+
+/** TEMPORARY */
+.reviews-placeholder {
+  width: auto;
+}
+
