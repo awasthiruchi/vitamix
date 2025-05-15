@@ -107,13 +107,50 @@ function renderPricing(block) {
  * @param {Element} block - The PDP block element
  * @returns {Element} The options container element
  */
-function renderOptions(block) {
+function renderOptions(block, variants) {
   const optionsContainer = document.createElement('div');
   optionsContainer.classList.add('options');
 
+  const selectionContainer = document.createElement('div');
+  selectionContainer.classList.add('selection');
+
+  const selectedOptionLabel = document.createElement('div');
+  selectedOptionLabel.classList.add('selected-option-label');
+  selectedOptionLabel.textContent = `Color: ${variants[0].color}`;
+  selectionContainer.append(selectedOptionLabel);
+
+  const colors = variants.map(variant => variant.color.replace(/\s+/g, '-').toLowerCase());
+
+  const colorOptions = colors.map(color => {
+    const colorOption = document.createElement('div');
+    colorOption.classList.add('color-swatch');
+    colorOption.classList.add(color);
+
+    const colorSwatch = document.createElement('div');
+    colorSwatch.classList.add('color-inner');
+    colorOption.append(colorSwatch);
+
+    return colorOption;
+  });
+
+  const colorOptionsContainer = document.createElement('div');
+  colorOptionsContainer.classList.add('color-options');
+  colorOptionsContainer.append(...colorOptions);
+  selectionContainer.append(colorOptionsContainer);
+
+  optionsContainer.append(selectionContainer);
+
   const warrentyContainer = document.createElement('div');
-  warrentyContainer.classList.add('warrenty');
-  warrentyContainer.textContent = '10 Year Standard Warranty (Free)';
+  warrentyContainer.classList.add('warranty');
+
+  const warrentyHeading = document.createElement('div');
+  warrentyHeading.textContent = 'Warranty:';
+  warrentyContainer.append(warrentyHeading);
+
+  const warrentyValue = document.createElement('div');
+  warrentyValue.textContent = '10 Year Standard Warranty (Free)';
+  warrentyContainer.append(warrentyValue);
+
   optionsContainer.append(warrentyContainer);
 
   return optionsContainer;
@@ -151,10 +188,15 @@ function renderSpecs(block) {
  * @param {Element} block - The PDP block element
  */
 export default function decorate(block) {
+  // Get the json-ld from the head and parse it
+  const jsonLd = document.head.querySelector('script[type="application/ld+json"]');
+  const jsonLdData = jsonLd ? JSON.parse(jsonLd.textContent) : null;
+  const variants = jsonLdData.hasVariant ? jsonLdData.hasVariant : [];
+
   const galleryContainer = renderGallery(block);
   const titleContainer = renderTitle(block);
   const pricingContainer = renderPricing(block);
-  const optionsContainer = renderOptions(block);
+  const optionsContainer = renderOptions(block, variants);
   const detailsContainer = renderDetails(block);
   const specsContainer = renderSpecs(block);
 
