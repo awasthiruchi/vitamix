@@ -46,6 +46,7 @@
   --code-font-family: monospace;
 
   /* spacing */
+  --spacing-3xl: var(--spacing-800);
   --spacing-xxl: var(--spacing-700);
   --spacing-xl: var(--spacing-400);
   --spacing-l: var(--spacing-300);

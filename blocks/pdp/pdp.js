@@ -1,14 +1,28 @@
+import { createOptimizedPicture } from "../../scripts/aem.js";
+
 /**
  * Renders the gallery section of the PDP block.
  * @param {Element} block - The PDP block element
  * @returns {Element} The gallery container element
  */
-function renderGallery(block) {
+function renderGallery(block, variants) {
   const galleryContainer = document.createElement('div');
   galleryContainer.classList.add('gallery');
 
+  const defaultVariant = variants[0];
+  const defaultImage = defaultVariant.image[0];
+  const lcp = createOptimizedPicture(defaultImage, defaultVariant.name, true);
+  galleryContainer.append(lcp);
+
+  const galleryImages = document.createElement('div');
+  galleryImages.classList.add('gallery-images');
+  const variantImageElements = defaultVariant.image.map(image => createOptimizedPicture(image, '', false));
+  variantImageElements[0].classList.add('selected');
+
   const images = block.querySelectorAll('.img-wrapper');
-  galleryContainer.append(...images);
+  galleryImages.append(...variantImageElements, ...images);
+
+  galleryContainer.append(galleryImages);
 
   return galleryContainer;
 }
@@ -193,7 +207,7 @@ export default function decorate(block) {
   const jsonLdData = jsonLd ? JSON.parse(jsonLd.textContent) : null;
   const variants = jsonLdData.hasVariant ? jsonLdData.hasVariant : [];
 
-  const galleryContainer = renderGallery(block);
+  const galleryContainer = renderGallery(block, variants);
   const titleContainer = renderTitle(block);
   const pricingContainer = renderPricing(block);
   const optionsContainer = renderOptions(block, variants);
