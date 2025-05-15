@@ -454,15 +454,16 @@ async function loadDelayed() {
   const params = new URLSearchParams(window.location.search);
   if (params.get('martech') !== 'off') {
     await loadScript('https://consent.cookiebot.com/uc.js', { 'data-cbid': '1d1d4c74-9c10-49e5-9577-f8eb4ba520fb' });
-    window.addEventListener('CookiebotOnConsentReady', () => {
-      if (window.Cookiebot.consented) {
-        import('./consented.js');
-      } else if (params.get('martech') === 'on') {
-        import('./consented.js');
-      }
-    });
+    if (params.get('martech') === 'on') {
+      import('./consented.js');
+    } else {
+      window.addEventListener('CookiebotOnConsentReady', () => {
+        if (window.Cookiebot.consented) {
+          import('./consented.js');
+        }
+      });
+    }
   }
-  // load anything that can be postponed to the latest here
 }
 
 /**
