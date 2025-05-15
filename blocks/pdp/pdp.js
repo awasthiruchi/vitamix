@@ -268,12 +268,138 @@ function renderDetails(block) {
  * @param {Element} block - The PDP block element
  * @returns {Element} The specifications container element
  */
-function renderSpecs(block) {
+function renderSpecs(specifications, parent, jsonLD) {
   const specsContainer = document.createElement('div');
-  specsContainer.classList.add('specs');
+  specsContainer.classList.add('tabs-container');
 
-  specsContainer.append(block.querySelector('.specifications'));
-  return specsContainer;
+  const tabs = [
+    { id: 'specifications', label: 'Specifications' },
+    { id: 'warranty', label: 'Warranty' },
+    { id: 'resources', label: 'Resources' }
+  ];
+
+  const tabButtons = document.createElement('div');
+  tabButtons.classList.add('tabs');
+
+  tabs.forEach(tab => {
+    const button = document.createElement('button');
+    button.classList.add('tab');
+    button.setAttribute('data-target', tab.id);
+    button.textContent = tab.label;
+    tabButtons.appendChild(button);
+  });
+
+  specsContainer.appendChild(tabButtons);
+
+  const contents = document.createElement('div');
+  contents.classList.add('tab-contents');
+
+  tabs.forEach(tab => {
+    const content = document.createElement('div');
+    content.classList.add('tab-content');
+    content.id = tab.id;
+
+    if (tab.id === 'specifications') {
+      const heading = document.createElement('h3');
+      heading.textContent = 'Product Specifications';
+      content.append(heading);
+      content.append(specifications.cloneNode(true));
+    } else if (tab.id === 'warranty') {
+      const warrantyContainer = document.createElement('div');
+      warrantyContainer.classList.add('warranty-container');
+
+      const warrantyImage = createOptimizedPicture('/blocks/pdp/10-year-warranty.png', '10-Year Warranty', false);
+      warrantyImage.classList.add('warranty-icon');
+
+      const details = document.createElement('div');
+      details.classList.add('warranty-details');
+
+      const title = document.createElement('h3');
+      title.classList.add('warranty-title');
+      title.textContent = '10-Year Full Warranty';
+
+      const paragraph = document.createElement('p');
+      paragraph.classList.add('warranty-text');
+      paragraph.textContent = 'We stand behind the quality of our machines with full warranties, covering parts, performance, labor, and two-way shipping at no cost to you. ';
+
+      const link = document.createElement('a');
+      link.href = '#';
+      link.textContent = 'Read the Warranty.';
+      link.classList.add('warranty-link');
+
+      details.append(title, paragraph, link);
+
+      warrantyContainer.appendChild(warrantyImage);
+      warrantyContainer.appendChild(details);
+      content.appendChild(warrantyContainer);
+    } else if (tab.id === 'resources') {
+      const resourcesContainer = document.createElement('div');
+      resourcesContainer.classList.add('resources-container');
+
+      const resourceTitle = document.createElement('h3');
+      resourceTitle.textContent = 'Ascent® X2 Resources';
+
+      const resourceItem = document.createElement('div');
+      const resourceIcon = document.createElement('span');
+      resourceIcon.textContent = '📄';
+      const resourceLink = document.createElement('a');
+      resourceLink.href = '#';
+      resourceLink.textContent = 'Ascent X2 Owners Manual pdf';
+      const resourceDetails = document.createElement('p');
+      resourceDetails.textContent = '6 mb - PDF';
+
+      resourceItem.appendChild(resourceIcon);
+      resourceItem.appendChild(resourceLink);
+      resourceItem.appendChild(resourceDetails);
+
+      const contactTitle = document.createElement('h3');
+      contactTitle.textContent = 'Have a question?';
+
+      const contactInfo = document.createElement('p');
+      contactInfo.textContent = 'Contact customer service!';
+
+      const emailLink = document.createElement('a');
+      emailLink.href = 'mailto:service@vitamix.com';
+      emailLink.textContent = 'service@vitamix.com';
+
+      const phoneLink = document.createElement('p');
+      phoneLink.textContent = '1.800.848.2649';
+
+      resourcesContainer.appendChild(resourceTitle);
+      resourcesContainer.appendChild(resourceItem);
+      resourcesContainer.appendChild(contactTitle);
+      resourcesContainer.appendChild(contactInfo);
+      resourcesContainer.appendChild(emailLink);
+      resourcesContainer.appendChild(phoneLink);
+      content.appendChild(resourcesContainer);
+    }
+    contents.appendChild(content);
+  });
+
+  specsContainer.appendChild(contents);
+  parent.append(specsContainer);
+
+  // Tab logic
+  const tabsInContainer = specsContainer.querySelectorAll('.tab');
+  const contentsInContainer = specsContainer.querySelectorAll('.tab-content');
+
+  tabsInContainer.forEach((tab) => {
+    tab.addEventListener('click', () => {
+      tabsInContainer.forEach(t => t.classList.remove('active'));
+      contentsInContainer.forEach(c => c.classList.remove('active'));
+
+      tab.classList.add('active');
+      const target = tab.getAttribute('data-target');
+      const targetContent = specsContainer.querySelector(`#${target}`);
+      if (targetContent) {
+        targetContent.classList.add('active');
+      }
+    });
+  });
+
+  // Set initial active tab within this container
+  tabsInContainer[0].classList.add('active');
+  contentsInContainer[0].classList.add('active');
 }
 
 function renderAddToCart(block) {
@@ -322,7 +448,6 @@ export default function decorate(block) {
   const optionsContainer = renderOptions(block, variants);
   const addToCartContainer = renderAddToCart(block);
   const detailsContainer = renderDetails(block);
-  const specsContainer = renderSpecs(block);
 
   // TODO: Add Bazaarvoice reviews
   // const bazaarvoiceContainer = document.createElement('div');
@@ -334,7 +459,13 @@ export default function decorate(block) {
   //   });
   // });
 
-  block.append(titleContainer, pricingContainer, optionsContainer, addToCartContainer, detailsContainer, specsContainer, galleryContainer);
+  block.append(titleContainer, pricingContainer, optionsContainer, addToCartContainer, detailsContainer, galleryContainer);
+
+
+  const specifications = detailsContainer.querySelector('.specifications');
+  renderSpecs(specifications, galleryContainer, jsonLdData);
+  renderSpecs(specifications, detailsContainer, jsonLdData);
+  specifications.remove();
 
   // remove eyebrow classes from all but the first eyebrow
   [...block.querySelectorAll('p.eyebrow')].slice(1).forEach(element => {
