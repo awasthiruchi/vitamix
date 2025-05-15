@@ -24,6 +24,10 @@ function renderGallery(block, variants) {
   variantImageElements[0].classList.add('selected');
 
   const images = block.querySelectorAll('.img-wrapper');
+
+  // Keep track of the default product images
+  window.defaultProductImages = Array.from(images).map(image => image.cloneNode(true));
+
   galleryImages.append(...variantImageElements, ...images);
 
   // Add click listener to each gallery image and assign to .gallery-selected-image
@@ -139,6 +143,29 @@ function renderPricing(block) {
   return pricingContainer;
 }
 
+function onOptionChange(block, variants, color) {
+  const selectedOptionLabel = block.querySelector('.selected-option-label');
+  const variant = variants.find(variant => variant.color.replace(/\s+/g, '-').toLowerCase() === color);
+  selectedOptionLabel.textContent = `Color: ${variant.color}`;
+
+  const selectedImage = block.querySelector('.gallery-selected-image');
+  const currentImage = selectedImage.querySelector('picture');
+  currentImage.remove();
+  selectedImage.append(createOptimizedPicture(variant.image[0], '', false));
+
+  // Update the gallery images
+  const galleryImages = block.querySelector('.gallery-images');
+  const currentVariantImages = block.querySelectorAll('.gallery-images > picture');
+  currentVariantImages.forEach(image => {
+    image.remove();
+  });
+
+  const variantImages = variant.image.map(image => createOptimizedPicture(image, '', false));
+  variantImages.reverse().forEach(image => {
+    galleryImages.prepend(image);
+  });
+}
+
 /**
  * Renders the options section of the PDP block.
  * @param {Element} block - The PDP block element
@@ -166,6 +193,10 @@ function renderOptions(block, variants) {
     const colorSwatch = document.createElement('div');
     colorSwatch.classList.add('color-inner');
     colorOption.append(colorSwatch);
+
+    colorOption.addEventListener('click', () => {
+      onOptionChange(block, variants, color);
+    });
 
     return colorOption;
   });
