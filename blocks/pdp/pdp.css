@@ -126,6 +126,14 @@
 
 .gallery {
   grid-area: gallery;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-l);
+}
+
+.gallery-selected-image img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
 }
 
 .gallery-images {

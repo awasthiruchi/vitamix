@@ -11,8 +11,12 @@ function renderGallery(block, variants) {
 
   const defaultVariant = variants[0];
   const defaultImage = defaultVariant.image[0];
+
+  const selectedImage = document.createElement('div');
+  selectedImage.classList.add('gallery-selected-image');
   const lcp = createOptimizedPicture(defaultImage, defaultVariant.name, true);
-  galleryContainer.append(lcp);
+  selectedImage.append(lcp);
+  galleryContainer.append(selectedImage);
 
   const galleryImages = document.createElement('div');
   galleryImages.classList.add('gallery-images');
@@ -21,6 +25,25 @@ function renderGallery(block, variants) {
 
   const images = block.querySelectorAll('.img-wrapper');
   galleryImages.append(...variantImageElements, ...images);
+
+  // Add click listener to each gallery image and assign to .gallery-selected-image
+  galleryImages.querySelectorAll('picture').forEach(picture => {
+    picture.addEventListener('click', () => {
+      console.log('clicked');
+      // remove selected class from all pictures
+      galleryImages.querySelectorAll('picture').forEach(picture => {
+        picture.classList.remove('selected');
+      });
+      // add selected class to the clicked picture
+      picture.classList.add('selected');
+
+      // swap the selected picture with the .gallery-selected-image
+      const selectedImage = galleryContainer.querySelector('.gallery-selected-image');
+      const currentImage = selectedImage.querySelector('picture');
+      currentImage.remove();
+      selectedImage.append(picture.cloneNode(true));
+    });
+  });
 
   galleryContainer.append(galleryImages);
 
