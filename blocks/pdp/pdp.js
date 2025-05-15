@@ -1,4 +1,4 @@
-import { createOptimizedPicture } from "../../scripts/aem.js";
+import { createOptimizedPicture, loadScript } from "../../scripts/aem.js";
 
 /**
  * Renders the gallery section of the PDP block.
@@ -280,6 +280,36 @@ function renderSpecs(block) {
   return specsContainer;
 }
 
+function renderAddToCart(block) {
+  const addToCartContainer = document.createElement('div');
+  addToCartContainer.classList.add('add-to-cart');
+
+  // Quantity Label
+  const quantityLabel = document.createElement('label');
+  quantityLabel.textContent = 'Quantity:';
+  addToCartContainer.appendChild(quantityLabel);
+
+  const quantityContainer = document.createElement('div');
+  quantityContainer.classList.add('quantity-container');
+  const quantitySelect = document.createElement('select');
+  for (let i = 1; i <= 10; i++) {
+    const option = document.createElement('option');
+    option.value = i;
+    option.textContent = i;
+    quantitySelect.appendChild(option);
+  }
+  quantityContainer.appendChild(quantitySelect);
+
+  // Add to Cart Button
+  const addToCartButton = document.createElement('button');
+  addToCartButton.textContent = 'Add to Cart';
+  quantityContainer.appendChild(addToCartButton);
+
+  addToCartContainer.appendChild(quantityContainer);
+
+  return addToCartContainer;
+}
+
 /**
  * Decorates the PDP block.
  * @param {Element} block - The PDP block element
@@ -294,10 +324,21 @@ export default function decorate(block) {
   const titleContainer = renderTitle(block);
   const pricingContainer = renderPricing(block);
   const optionsContainer = renderOptions(block, variants);
+  const addToCartContainer = renderAddToCart(block);
   const detailsContainer = renderDetails(block);
   const specsContainer = renderSpecs(block);
 
-  block.append(titleContainer, pricingContainer, optionsContainer, detailsContainer, specsContainer, galleryContainer);
+  // TODO: Add Bazaarvoice reviews
+  // const bazaarvoiceContainer = document.createElement('div');
+  // bazaarvoiceContainer.classList.add('BVRRContainer');
+
+  // loadScript('https://apps.bazaarvoice.com/deployments/vitamix/main_site/production/en_US/bv.js').then(() => {
+  //   $BV.ui('rr', 'show_reviews', {
+  //     productId: 'ascent-x2'
+  //   });
+  // });
+
+  block.append(titleContainer, pricingContainer, optionsContainer, addToCartContainer, detailsContainer, specsContainer, galleryContainer);
 
   // remove eyebrow classes from all but the first eyebrow
   [...block.querySelectorAll('p.eyebrow')].slice(1).forEach(element => {
