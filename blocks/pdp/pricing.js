@@ -30,7 +30,7 @@ function extractPricing(element) {
  * @param {Element} block - The PDP block element
  * @returns {Element} The pricing container element
  */
-export function renderPricing(block) {
+export default function renderPricing(block) {
   const pricingContainer = document.createElement('div');
   pricingContainer.classList.add('pricing');
 

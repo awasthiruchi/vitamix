@@ -186,24 +186,6 @@ export function buildCarousel(container, visibleSlides = 1, pagination = true) {
 }
 
 /**
- * Builds all synthetic blocks in a container element.
- * @param {Element} main The container element
- */
-function buildAutoBlocks(main) {
-  try {
-    // build auto blocks
-    const metaSku = document.querySelector('meta[name="sku"]');
-    const pdpBlock = document.querySelector('.pdp');
-    if (metaSku && !pdpBlock) {
-      buildPDPBlock(main);
-    }
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('Auto Blocking failed', error);
-  }
-}
-
-/**
  * Builds hero block and prepends to main in a new section.
  * @param {Element} main The container element
  */
@@ -230,6 +212,24 @@ function buildPDPBlock(main) {
   }
   // prepend pdp section to main
   main.prepend(section);
+}
+
+/**
+ * Builds all synthetic blocks in a container element.
+ * @param {Element} main The container element
+ */
+function buildAutoBlocks(main) {
+  try {
+    // build auto blocks
+    const metaSku = document.querySelector('meta[name="sku"]');
+    const pdpBlock = document.querySelector('.pdp');
+    if (metaSku && !pdpBlock) {
+      buildPDPBlock(main);
+    }
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Auto Blocking failed', error);
+  }
 }
 
 /**

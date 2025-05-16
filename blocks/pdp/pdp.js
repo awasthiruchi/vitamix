@@ -1,8 +1,8 @@
-import { createOptimizedPicture, loadScript } from "../../scripts/aem.js";
-import { renderSpecs } from "./specification-tabs.js";
-import { renderPricing } from "./pricing.js";
-import { renderOptions } from "./options.js";
-import { renderGallery } from "./gallery.js";
+import { loadScript } from '../../scripts/aem.js';
+import renderGallery from './gallery.js';
+import renderSpecs from './specification-tabs.js';
+import renderPricing from './pricing.js';
+import renderOptions from './options.js';
 
 /**
  * Renders the title section of the PDP block.
@@ -18,9 +18,9 @@ function renderTitle(block) {
   reviewsPlaceholder.src = '/blocks/pdp/reviews.png';
 
   titleContainer.append(
-    block.querySelector('p:nth-of-type(1)'), 
+    block.querySelector('p:nth-of-type(1)'),
     block.querySelector('h1:first-of-type'),
-    reviewsPlaceholder
+    reviewsPlaceholder,
   );
 
   return titleContainer;
@@ -42,10 +42,9 @@ function renderDetails(block) {
 
 /**
  * Renders the add to cart section of the PDP block.
- * @param {Element} block - The PDP block element
  * @returns {Element} The add to cart container element
  */
-function renderAddToCart(block) {
+function renderAddToCart() {
   const addToCartContainer = document.createElement('div');
   addToCartContainer.classList.add('add-to-cart');
 
@@ -57,6 +56,8 @@ function renderAddToCart(block) {
   const quantityContainer = document.createElement('div');
   quantityContainer.classList.add('quantity-container');
   const quantitySelect = document.createElement('select');
+
+  // eslint-disable-next-line no-plusplus
   for (let i = 1; i <= 10; i++) {
     const option = document.createElement('option');
     option.value = i;
@@ -79,14 +80,16 @@ function renderAddToCart(block) {
  * Renders the reviews section of the PDP block.
  * @param {Element} block - The PDP block element
  */
+// eslint-disable-next-line no-unused-vars
 function renderReviews(block) {
   // TODO: Add Bazaarvoice reviews
   const bazaarvoiceContainer = document.createElement('div');
   bazaarvoiceContainer.classList.add('BVRRContainer');
 
   loadScript('https://apps.bazaarvoice.com/deployments/vitamix/main_site/production/en_US/bv.js').then(() => {
+    // eslint-disable-next-line no-undef
     $BV.ui('rr', 'show_reviews', {
-      productId: 'ascent-x2'
+      productId: 'ascent-x2',
     });
   });
 
@@ -111,7 +114,14 @@ export default function decorate(block) {
   const detailsContainer = renderDetails(block);
   // renderReviews(block);
 
-  block.append(titleContainer, pricingContainer, optionsContainer, addToCartContainer, detailsContainer, galleryContainer);
+  block.append(
+    titleContainer,
+    pricingContainer,
+    optionsContainer,
+    addToCartContainer,
+    detailsContainer,
+    galleryContainer,
+  );
 
   const specifications = detailsContainer.querySelector('.specifications');
   renderSpecs(specifications, galleryContainer, jsonLdData);
@@ -119,7 +129,7 @@ export default function decorate(block) {
   specifications.remove();
 
   // remove eyebrow classes from all but the first eyebrow
-  [...block.querySelectorAll('p.eyebrow')].slice(1).forEach(element => {
+  [...block.querySelectorAll('p.eyebrow')].slice(1).forEach((element) => {
     element.classList.remove('eyebrow');
   });
 }
