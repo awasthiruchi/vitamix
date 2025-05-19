@@ -104,8 +104,8 @@ export default function decorate(block) {
   // Get the json-ld from the head and parse it
   const jsonLd = document.head.querySelector('script[type="application/ld+json"]');
   const jsonLdData = jsonLd ? JSON.parse(jsonLd.textContent) : null;
-  const variants = jsonLdData.hasVariant ? jsonLdData.hasVariant : [];
 
+  const { variants } = window;
   const galleryContainer = renderGallery(block, variants);
   const titleContainer = renderTitle(block);
   const pricingContainer = renderPricing(block);
