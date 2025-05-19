@@ -36,7 +36,7 @@ export default function renderPricing(block) {
 
   const pricingElement = block.querySelector('p:nth-of-type(1)');
   const pricing = extractPricing(pricingElement);
-  // pricingElement.remove();
+  pricingElement.remove();
 
   const nowLabel = document.createElement('div');
   nowLabel.className = 'pricing-now';
