@@ -9,13 +9,14 @@ import { attachImageListeners } from './gallery.js';
  */
 function onOptionChange(block, variants, color) {
   const selectedOptionLabel = block.querySelector('.selected-option-label');
-  const variant = variants.find((colorVariant) => colorVariant.color.replace(/\s+/g, '-').toLowerCase() === color);
-  selectedOptionLabel.textContent = `Color: ${variant.color}`;
+  const variant = variants.find((colorVariant) => colorVariant.options.color.replace(/\s+/g, '-').toLowerCase() === color);
+  const variantColor = variant.options.color;
+  selectedOptionLabel.textContent = `Color: ${variantColor}`;
 
   const selectedImage = block.querySelector('.gallery-selected-image');
   const currentImage = selectedImage.querySelector('picture');
   currentImage.remove();
-  selectedImage.append(createOptimizedPicture(variant.image[0], '', false));
+  selectedImage.append(variant.images[0].cloneNode(true));
 
   // Update the gallery images
   const galleryImages = block.querySelector('.gallery-images');
@@ -24,8 +25,7 @@ function onOptionChange(block, variants, color) {
     image.remove();
   });
 
-  const variantImages = variant.image.map((image) => createOptimizedPicture(image, '', false));
-  variantImages.reverse().forEach((image) => {
+  Array.from(variant.images).forEach((image) => {
     galleryImages.prepend(image);
   });
 
@@ -54,10 +54,10 @@ export default function renderOptions(block, variants) {
 
   const selectedOptionLabel = document.createElement('div');
   selectedOptionLabel.classList.add('selected-option-label');
-  selectedOptionLabel.textContent = `Color: ${variants[0].color}`;
+  selectedOptionLabel.textContent = `Color: ${variants[0].options.color}`;
   selectionContainer.append(selectedOptionLabel);
 
-  const colors = variants.map((variant) => variant.color.replace(/\s+/g, '-').toLowerCase());
+  const colors = variants.map((variant) => variant.options.color.replace(/\s+/g, '-').toLowerCase());
 
   const colorOptions = colors.map((color) => {
     const colorOption = document.createElement('div');

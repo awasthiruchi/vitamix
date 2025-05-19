@@ -198,10 +198,44 @@ function buildPDPBlock(main) {
 
   const selectedImage = document.createElement('div');
   selectedImage.classList.add('gallery-selected-image');
-  selectedImage.append(lcpPicture);
+  selectedImage.append(lcpPicture.cloneNode(true));
 
   const lcp = main.querySelector('div:first-child');
   lcp.append(selectedImage);
+  lcp.remove();
+
+  const divs = Array.from(main.querySelectorAll(':scope > div'));
+
+  window.variants = divs.map((div) => {
+    const name = div.querySelector('h2')?.textContent.trim();
+
+    const metadata = {};
+    const options = {};
+    const metadataDiv = div.querySelector('.section-metadata');
+
+    if (metadataDiv) {
+      metadataDiv.querySelectorAll('div').forEach((meta) => {
+        const key = meta.children[0]?.textContent.trim();
+        const value = meta.children[1]?.textContent.trim();
+        if (key && value) {
+          if (key === 'sku') {
+            metadata[key] = value;
+          } else {
+            options[key] = value;
+          }
+        }
+      });
+    }
+
+    const imagesHTML = div.querySelectorAll('picture');
+
+    return {
+      name,
+      ...metadata,
+      options,
+      images: imagesHTML,
+    };
+  });
 
   // take all children of main and append to section
   section.append(buildBlock('pdp', { elems: [...lcp.children] }));
@@ -210,6 +244,7 @@ function buildPDPBlock(main) {
   while (main.firstChild) {
     main.removeChild(main.firstChild);
   }
+
   // prepend pdp section to main
   main.prepend(section);
 }

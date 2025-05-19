@@ -44,15 +44,14 @@ export default function renderGallery(block, variants) {
 
   const galleryImages = document.createElement('div');
   galleryImages.classList.add('gallery-images');
-  const variantImageElements = defaultVariant.image.map((image) => createOptimizedPicture(image, '', false));
-  variantImageElements[0].classList.add('selected');
+  defaultVariant.images[0].classList.add('selected');
 
   const images = block.querySelectorAll('.img-wrapper');
 
   // Keep track of the default product images
   window.defaultProductImages = Array.from(images).map((image) => image.cloneNode(true));
 
-  galleryImages.append(...variantImageElements, ...images);
+  galleryImages.append(...defaultVariant.images, ...images);
 
   attachImageListeners(galleryImages, selectedImage);
 
