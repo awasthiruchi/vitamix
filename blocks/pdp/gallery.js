@@ -1,5 +1,3 @@
-import { createOptimizedPicture } from '../../scripts/aem.js';
-
 /**
  * Attaches click listeners to each gallery image and assigns them to the .gallery-selected-image.
  * @param {Element} galleryImages - The gallery images container element

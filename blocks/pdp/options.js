@@ -1,4 +1,3 @@
-import { createOptimizedPicture } from '../../scripts/aem.js';
 import { attachImageListeners } from './gallery.js';
 
 /**
