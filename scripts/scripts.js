@@ -237,6 +237,20 @@ function buildPDPBlock(main) {
     };
   });
 
+  // product bus pages won't have nav or footer meta tags for now
+  const existingMeta = document.head.querySelector('meta[name="nav"]');
+  if (!existingMeta) {
+    const navMeta = document.createElement('meta');
+    navMeta.name = 'nav';
+    navMeta.content = '/us/en_us/nav/nav';
+    document.head.appendChild(navMeta);
+
+    const footerMeta = document.createElement('meta');
+    footerMeta.name = 'footer';
+    footerMeta.content = '/us/en_us/footer/footer';
+    document.head.appendChild(footerMeta);
+  }
+
   // take all children of main and append to section
   section.append(buildBlock('pdp', { elems: [...lcp.children] }));
 
