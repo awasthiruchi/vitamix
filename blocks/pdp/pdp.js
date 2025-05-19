@@ -18,7 +18,6 @@ function renderTitle(block) {
   reviewsPlaceholder.src = '/blocks/pdp/reviews.png';
 
   titleContainer.append(
-    block.querySelector('p:nth-of-type(1)'),
     block.querySelector('h1:first-of-type'),
     reviewsPlaceholder,
   );
@@ -101,6 +100,11 @@ function renderReviews(block) {
  * @param {Element} block - The PDP block element
  */
 export default function decorate(block) {
+  // remove eyebrow classes from all but the first eyebrow
+  [...block.querySelectorAll('p.eyebrow')].forEach((element) => {
+    element.classList.remove('eyebrow');
+  });
+
   // Get the json-ld from the head and parse it
   const jsonLd = document.head.querySelector('script[type="application/ld+json"]');
   const jsonLdData = jsonLd ? JSON.parse(jsonLd.textContent) : null;
@@ -127,9 +131,4 @@ export default function decorate(block) {
   renderSpecs(specifications, galleryContainer, jsonLdData);
   renderSpecs(specifications, detailsContainer, jsonLdData);
   specifications.remove();
-
-  // remove eyebrow classes from all but the first eyebrow
-  [...block.querySelectorAll('p.eyebrow')].slice(1).forEach((element) => {
-    element.classList.remove('eyebrow');
-  });
 }
