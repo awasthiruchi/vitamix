@@ -673,7 +673,7 @@ header .nav-banner {
   justify-content: center;
   border-bottom: 2px solid var(--color-white);
   padding: var(--spacing-40) var(--horizontal-spacing);
-  background-color: var(--color-charcoal);
+  background-color: var(--color-charcoal); /* TODO needs to updated via content */
   color: var(--color-white);
   text-align: center;
   font-size: var(--detail-size-l);
