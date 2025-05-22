@@ -421,12 +421,6 @@ export default async function decorate(block) {
     });
   }
 
-  // temp banner
-  const banner = document.createElement('div');
-  banner.className = 'nav-banner';
-  banner.innerHTML = '<p><b>20% Off Select Accessories.</b> Get the most out of your blender with must-have accessories for every Vitamix owner. <b><a href="https://www.vitamix.com/shop/sale">Shop the Sale.</a></b></p>';
-  nav.prepend(banner);
-
   toggleHeader(isDesktop.matches, nav, hamburgerButton);
   toggleNavView(isDesktop.matches, nav);
 
