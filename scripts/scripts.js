@@ -13,6 +13,7 @@ import {
   createOptimizedPicture,
   sampleRUM,
   buildBlock,
+  loadScript,
 } from './aem.js';
 
 /**
@@ -532,13 +533,21 @@ async function loadLazy(doc) {
  * Loads everything that happens a lot later,
  * without impacting the user experience.
  */
-function loadDelayed() {
+async function loadDelayed() {
   // eslint-disable-next-line import/no-cycle
   const params = new URLSearchParams(window.location.search);
   if (params.get('martech') !== 'off') {
-    window.setTimeout(() => import('./delayed.js'), 4000);
+    await loadScript('https://consent.cookiebot.com/uc.js', { 'data-cbid': '1d1d4c74-9c10-49e5-9577-f8eb4ba520fb' });
+    if (params.get('martech') === 'on') {
+      import('./consented.js');
+    } else {
+      window.addEventListener('CookiebotOnConsentReady', () => {
+        if (window.Cookiebot.consented) {
+          import('./consented.js');
+        }
+      });
+    }
   }
-  // load anything that can be postponed to the latest here
 }
 
 /**
