@@ -61,7 +61,6 @@
 
   /* widths and heights */
   --header-height: 68px;
-  --nav-banner-height: 54px;
   --horizontal-spacing: var(--spacing-400);
   --site-width: 1440px;
 }
@@ -132,7 +131,6 @@ main {
   max-width: var(--site-width);
   background-color: var(--layer-base);
   padding-bottom: var(--spacing-500);
-  margin-top: var(--nav-banner-height);
 }
 
 @media (width >= 900px) {
@@ -248,6 +246,23 @@ main .section.banner > div {
   main .section.banner > div {
     max-width: 500px;
   }
+}
+
+main .nav-banner {
+  border-bottom: var(--border-m) solid var(--color-white);
+  padding: var(--spacing-60);
+  background-color: var(--color-charcoal);
+  color: var(--color-gray-100);
+  font-size: var(--detail-size-l);
+  text-align: center;
+}
+
+main .nav-banner a {
+  color: inherit;
+}
+
+main .nav-banner.nav-banner-dark {
+  color: var(--color-text);
 }
 
 /* images and icons */
@@ -396,6 +411,7 @@ var {
 }
 
 /* links */
+/* stylelint-disable no-descending-specificity */
 a:any-link {
   color: var(--color-link);
   text-decoration: underline;
@@ -634,7 +650,6 @@ input[type='radio'] {
   inset: 0;
 }
 
-/* stylelint-disable-next-line no-descending-specificity */
 .carousel nav button {
   appearance: none;
   margin: 0;
