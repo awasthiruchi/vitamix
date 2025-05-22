@@ -12,6 +12,7 @@ import {
   loadCSS,
   createOptimizedPicture,
   sampleRUM,
+  buildBlock,
   loadScript,
 } from './aem.js';
 
@@ -186,12 +187,95 @@ export function buildCarousel(container, visibleSlides = 1, pagination = true) {
 }
 
 /**
+ * Builds hero block and prepends to main in a new section.
+ * @param {Element} main The container element
+ */
+function buildPDPBlock(main) {
+  const section = document.createElement('div');
+
+  const lcpPicture = main.querySelector('div:nth-child(2) picture');
+  const lcpImage = lcpPicture.querySelector('img');
+  lcpImage.loading = 'eager';
+
+  const selectedImage = document.createElement('div');
+  selectedImage.classList.add('gallery-selected-image');
+  selectedImage.append(lcpPicture.cloneNode(true));
+
+  const lcp = main.querySelector('div:first-child');
+  lcp.append(selectedImage);
+  lcp.remove();
+
+  const divs = Array.from(main.querySelectorAll(':scope > div'));
+
+  window.variants = divs.map((div) => {
+    const name = div.querySelector('h2')?.textContent.trim();
+
+    const metadata = {};
+    const options = {};
+    const metadataDiv = div.querySelector('.section-metadata');
+
+    if (metadataDiv) {
+      metadataDiv.querySelectorAll('div').forEach((meta) => {
+        const key = meta.children[0]?.textContent.trim();
+        const value = meta.children[1]?.textContent.trim();
+        if (key && value) {
+          if (key === 'sku') {
+            metadata[key] = value;
+          } else {
+            options[key] = value;
+          }
+        }
+      });
+    }
+
+    const imagesHTML = div.querySelectorAll('picture');
+
+    return {
+      name,
+      ...metadata,
+      options,
+      images: imagesHTML,
+    };
+  });
+
+  // product bus pages won't have nav or footer meta tags for now
+  const existingMeta = document.head.querySelector('meta[name="nav"]');
+  if (!existingMeta) {
+    const navMeta = document.createElement('meta');
+    navMeta.name = 'nav';
+    navMeta.content = '/us/en_us/nav/nav';
+    document.head.appendChild(navMeta);
+
+    const footerMeta = document.createElement('meta');
+    footerMeta.name = 'footer';
+    footerMeta.content = '/us/en_us/footer/footer';
+    document.head.appendChild(footerMeta);
+  }
+
+  // take all children of main and append to section
+  section.append(buildBlock('pdp', { elems: [...lcp.children] }));
+
+  // remove all children of main
+  while (main.firstChild) {
+    main.removeChild(main.firstChild);
+  }
+
+  // prepend pdp section to main
+  main.prepend(section);
+}
+
+/**
  * Builds all synthetic blocks in a container element.
  * @param {Element} main The container element
  */
-function buildAutoBlocks() {
+function buildAutoBlocks(main) {
   try {
     // build auto blocks
+    const metaSku = document.querySelector('meta[name="sku"]');
+    const pdpBlock = document.querySelector('.pdp');
+    if (metaSku && !pdpBlock) {
+      buildPDPBlock(main);
+    }
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Auto Blocking failed', error);

@@ -27,7 +27,7 @@
 
   /* layers */
   --layer-elevated: var(--color-gray-100);
-  --layer-base: var(--color-white);
+  --layer-base: var(--color-gray-100);
   --layer-depth: var(--color-gray-200);
   --layer-pasteboard: var(--color-gray-300);
 
@@ -46,6 +46,7 @@
   --code-font-family: monospace;
 
   /* spacing */
+  --spacing-3xl: var(--spacing-800);
   --spacing-xxl: var(--spacing-700);
   --spacing-xl: var(--spacing-400);
   --spacing-l: var(--spacing-300);
