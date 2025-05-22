@@ -440,15 +440,16 @@ async function loadNavBanner(main) {
   banner.className = 'nav-banner';
   banner.append(...content);
 
-  // apply custom color to pre code
-  const pre = banner.querySelector('pre code');
-  if (pre) {
-    const bg = pre.textContent.trim().toLowerCase();
-    if (bg) {
-      banner.style.backgroundColor = bg;
-      banner.classList.add(`nav-banner-${getTextColor(bg)}`);
+  // apply custom color
+  const section = fragment.querySelector('div[data-background]');
+  if (section) {
+    const { background } = section.dataset;
+    const styles = getComputedStyle(document.documentElement);
+    const value = styles.getPropertyValue(`--color-${background}`).trim();
+    if (value) {
+      banner.style.backgroundColor = `var(--color-${background})`;
+      banner.classList.add(`nav-banner-${getTextColor(value)}`);
     }
-    pre.closest('pre').remove();
   }
   main.prepend(banner);
 }
