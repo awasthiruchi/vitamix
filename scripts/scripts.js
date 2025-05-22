@@ -13,6 +13,7 @@ import {
   createOptimizedPicture,
   sampleRUM,
   loadScript,
+  getMetadata,
 } from './aem.js';
 
 /**
@@ -300,8 +301,13 @@ function decorateEyebrows(main) {
   main.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((h) => {
     const prev = h.previousElementSibling;
     if (prev && prev.tagName === 'P') {
+      // ignore p tags sandwiched between h tags
+      const next = prev.nextElementSibling;
+      if (next && next.tagName.startsWith('H')) return;
+      // ignore p tags with images or links
       const disqualifiers = prev.querySelector('img, a[href]');
       if (disqualifiers) return;
+
       prev.classList.add('eyebrow');
       h.dataset.eyebrow = prev.textContent;
     }
@@ -399,14 +405,65 @@ export function decorateMain(main) {
 }
 
 /**
+ * Determines what text color to use against provided color background.
+ * @param {string} hex - Hex color string
+ * @returns {string} 'dark' if the background is light, 'light' if the background is dark.
+ */
+function getTextColor(hex) {
+  let cleanHex = hex.replace('#', '');
+  // expand 3-digit hex to 6-digit
+  if (cleanHex.length === 3) cleanHex = cleanHex.split('').map((h) => h + h).join('');
+
+  const r = parseInt(cleanHex.substring(0, 2), 16);
+  const g = parseInt(cleanHex.substring(2, 4), 16);
+  const b = parseInt(cleanHex.substring(4, 6), 16);
+  const luminance = (r * 299 + g * 587 + b * 114) / 1000;
+  return luminance > 128 ? 'dark' : 'light';
+}
+
+/**
+ * Loads and prepends nav banner.
+ * @param {HTMLElement} main - Main element
+ */
+async function loadNavBanner(main) {
+  const meta = getMetadata('nav-banner');
+  if (!meta) return;
+
+  const path = new URL(meta, window.location).pathname;
+  // eslint-disable-next-line import/no-cycle
+  const { loadFragment } = await import('../blocks/fragment/fragment.js');
+  const fragment = await loadFragment(path);
+  const content = fragment.querySelectorAll('main > div > div');
+  if (content.length < 1) return;
+
+  const banner = document.createElement('aside');
+  banner.className = 'nav-banner';
+  banner.append(...content);
+
+  // apply custom color to pre code
+  const pre = banner.querySelector('pre code');
+  if (pre) {
+    const bg = pre.textContent.trim().toLowerCase();
+    if (bg) {
+      banner.style.backgroundColor = bg;
+      banner.classList.add(`nav-banner-${getTextColor(bg)}`);
+    }
+    pre.closest('pre').remove();
+  }
+  main.prepend(banner);
+}
+
+/**
  * Loads everything needed to get to LCP.
  * @param {Element} doc The container element
  */
 async function loadEager(doc) {
   document.documentElement.lang = 'en';
   decorateTemplateAndTheme();
+
   const main = doc.querySelector('main');
   if (main) {
+    await loadNavBanner(main);
     decorateMain(main);
     document.body.classList.add('appear');
     await loadSection(main.querySelector('.section'), waitForFirstImage);
