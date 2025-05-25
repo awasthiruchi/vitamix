@@ -351,7 +351,7 @@
   color: var(--color-text);
 }
 
-@media (width >= 768px) {
+@media (width >= 900px) {
   .pdp {
     padding-top: var(--spacing-xl);
     grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
@@ -390,3 +390,6 @@
   cursor: pointer;
 }
 
+.pdp-reviews-summary-placeholder {
+  min-height: 22.5px;
+}
