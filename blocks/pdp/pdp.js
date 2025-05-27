@@ -1,8 +1,10 @@
-import { loadScript } from '../../scripts/aem.js';
+import { loadScript, toClassName, getMetadata } from '../../scripts/aem.js';
 import renderGallery from './gallery.js';
 import renderSpecs from './specification-tabs.js';
 import renderPricing from './pricing.js';
 import renderOptions from './options.js';
+
+const BV_PRODUCT_ID = toClassName(getMetadata('sku')).replace(/-/g, '');
 
 /**
  * Renders the title section of the PDP block.
@@ -13,9 +15,9 @@ function renderTitle(block) {
   const titleContainer = document.createElement('div');
   titleContainer.classList.add('title');
 
-  const reviewsPlaceholder = document.createElement('img');
-  reviewsPlaceholder.classList.add('reviews-placeholder');
-  reviewsPlaceholder.src = '/blocks/pdp/reviews.png';
+  const reviewsPlaceholder = document.createElement('div');
+  reviewsPlaceholder.classList.add('pdp-reviews-summary-placeholder');
+  reviewsPlaceholder.innerHTML = `<div data-bv-show="rating_summary" data-bv-product-id="${BV_PRODUCT_ID}">`;
 
   titleContainer.append(
     block.querySelector('h1:first-of-type'),
@@ -80,17 +82,14 @@ function renderAddToCart() {
  * @param {Element} block - The PDP block element
  */
 // eslint-disable-next-line no-unused-vars
-function renderReviews(block) {
+async function renderReviews(block) {
   // TODO: Add Bazaarvoice reviews
   const bazaarvoiceContainer = document.createElement('div');
-  bazaarvoiceContainer.classList.add('BVRRContainer');
+  bazaarvoiceContainer.innerHTML = `<div data-bv-show="reviews" data-bv-product-id="${BV_PRODUCT_ID}"></div>`;
 
-  loadScript('https://apps.bazaarvoice.com/deployments/vitamix/main_site/production/en_US/bv.js').then(() => {
-    // eslint-disable-next-line no-undef
-    $BV.ui('rr', 'show_reviews', {
-      productId: 'ascent-x2',
-    });
-  });
+  setTimeout(async () => {
+    await loadScript('https://apps.bazaarvoice.com/deployments/vitamix/main_site/production/en_US/bv.js');
+  }, 5000);
 
   block.append(bazaarvoiceContainer);
 }
@@ -116,7 +115,7 @@ export default function decorate(block) {
   const optionsContainer = renderOptions(block, variants);
   const addToCartContainer = renderAddToCart(block);
   const detailsContainer = renderDetails(block);
-  // renderReviews(block);
+  renderReviews(block);
 
   block.append(
     titleContainer,
