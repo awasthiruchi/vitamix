@@ -85,6 +85,7 @@ function renderAddToCart() {
 async function renderReviews(block) {
   // TODO: Add Bazaarvoice reviews
   const bazaarvoiceContainer = document.createElement('div');
+  bazaarvoiceContainer.classList.add('pdp-reviews-container');
   bazaarvoiceContainer.innerHTML = `<div data-bv-show="reviews" data-bv-product-id="${BV_PRODUCT_ID}"></div>`;
 
   setTimeout(async () => {

@@ -11,7 +11,8 @@
     "options"
     "add-to-cart"
     "details"
-    "specs";
+    "specs"
+    "reviews";
 }
 
 .pdp .eyebrow {
@@ -361,6 +362,7 @@
       "options gallery"
       "add-to-cart gallery"
       "details gallery"
+      "reviews reviews"
   }
 
   .details .tabs-container {
@@ -391,4 +393,8 @@
 
 .pdp-reviews-summary-placeholder {
   min-height: 22.5px;
+}
+
+.pdp-reviews-container {
+  grid-area: reviews;
 }
