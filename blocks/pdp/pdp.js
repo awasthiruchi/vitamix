@@ -120,11 +120,14 @@ export default function decorate(block) {
   block.append(
     titleContainer,
     pricingContainer,
-    optionsContainer,
     addToCartContainer,
     detailsContainer,
     galleryContainer,
   );
+
+  if (optionsContainer) {
+    block.append(optionsContainer);
+  }
 
   const specifications = detailsContainer.querySelector('.specifications');
   renderSpecs(specifications, galleryContainer, jsonLdData);
