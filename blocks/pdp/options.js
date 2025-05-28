@@ -66,7 +66,7 @@ export default function renderOptions(block, variants) {
 
   const colorOptions = colors.map((color) => {
     const getKnownColor = (c) => {
-      const knownColors = ['midnight-blue', 'black', 'gray', 'white', 'red', 'graphite', 'stainless'];
+      const knownColors = ['midnight-blue', 'black', 'gray', 'white', 'red', 'graphite', 'stainless', 'gold'];
       const colorIndex = knownColors
         .findIndex((knownColor) => toClassName(c).includes(knownColor));
       return colorIndex > -1 ? knownColors[colorIndex] : c;
