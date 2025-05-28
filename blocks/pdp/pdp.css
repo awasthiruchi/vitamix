@@ -365,6 +365,10 @@
   grid-area: faq;
 }
 
+.faq-container a {
+  text-decoration: none;
+}
+
 .faq-container h4 {
   font-family: var(--body-font-family);
   font-size: var(--heading-size-xl);
