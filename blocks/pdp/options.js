@@ -65,19 +65,12 @@ export default function renderOptions(block, variants) {
   const colors = variants.map((variant) => toClassName(variant.options.color));
 
   const colorOptions = colors.map((color) => {
-    const getKnownColor = (c) => {
-      const knownColors = ['midnight-blue', 'black', 'gray', 'white', 'red', 'graphite', 'stainless', 'gold'];
-      const colorIndex = knownColors
-        .findIndex((knownColor) => toClassName(c).includes(knownColor));
-      return colorIndex > -1 ? knownColors[colorIndex] : c;
-    };
-
     const colorOption = document.createElement('div');
     colorOption.classList.add('color-swatch');
 
     const colorSwatch = document.createElement('div');
     colorSwatch.classList.add('color-inner');
-    colorSwatch.style.backgroundColor = `var(--color-${getKnownColor(color)})`;
+    colorSwatch.style.backgroundColor = `var(--color-${color})`;
     colorOption.append(colorSwatch);
 
     colorOption.addEventListener('click', () => {
