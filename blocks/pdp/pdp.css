@@ -425,3 +425,9 @@
   --color-midnight-blue: #00263e;
   --color-brushed-gold: #ccba78;
 }
+
+.pdp-payments-placeholder {
+  margin-top: var(--spacing-m);
+  font-size: var(--body-size-s);
+  min-height: 40px;
+}
