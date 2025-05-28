@@ -45,12 +45,12 @@ function createSpecificationsContent(specifications) {
  * @returns {HTMLDivElement} The warranty content container.
  */
 // eslint-disable-next-line no-unused-vars
-function createWarrantyContent(warrantyText) {
+function createWarrantyContent(warranty) {
   // TOOO: Assumes 10-year warranty
   const container = document.createElement('div');
   container.classList.add('warranty-container');
 
-  const warrantyImage = createOptimizedPicture('/blocks/pdp/10-year-warranty.png', '10-Year Warranty', false);
+  const warrantyImage = createOptimizedPicture(`/blocks/pdp/${warranty.sku}.png`, warranty.name, false);
   warrantyImage.classList.add('warranty-icon');
 
   const details = document.createElement('div');
@@ -58,14 +58,26 @@ function createWarrantyContent(warrantyText) {
 
   const title = document.createElement('h3');
   title.classList.add('warranty-title');
-  title.textContent = '10-Year Full Warranty';
+  title.textContent = warranty.name;
 
   const paragraph = document.createElement('p');
   paragraph.classList.add('warranty-text');
   paragraph.textContent = 'We stand behind the quality of our machines with full warranties, covering parts, performance, labor, and two-way shipping at no cost to you.';
 
   const link = document.createElement('a');
-  link.href = '#';
+
+  // if warranty is 10 year.. Link to https://www.vitamix.com/us/en_us/shop/10-year-warranty
+  // if warranty is 7 year.. Link to https://www.vitamix.com/us/en_us/shop/7-year-warranty
+  // if warranty is 3 year.. Link to https://www.vitamix.com/us/en_us/shop/3-year-warranty
+
+  if (warranty.sku.includes('10')) {
+    link.href = 'https://www.vitamix.com/us/en_us/shop/10-year-warranty';
+  } else if (warranty.sku.includes('7')) {
+    link.href = 'https://www.vitamix.com/us/en_us/shop/7-year-warranty';
+  } else if (warranty.sku.includes('3')) {
+    link.href = 'https://www.vitamix.com/us/en_us/shop/3-year-warranty';
+  }
+
   link.textContent = 'Read the Warranty.';
   link.classList.add('warranty-link');
 
@@ -131,7 +143,7 @@ function createResourcesContent(resources) {
  * @param {Object} data - The JSON-LD object containing custom data.
  * @returns {HTMLDivElement} The content container for the tab.
  */
-function createTabContent(tab, specifications, data) {
+function createTabContent(tab, specifications, standardWarranty, data) {
   const content = document.createElement('div');
   content.classList.add('tab-content');
   content.id = tab.id;
@@ -144,8 +156,8 @@ function createTabContent(tab, specifications, data) {
       }
       break;
     case 'warranty':
-      if (custom.warranty) {
-        content.appendChild(createWarrantyContent(custom.warranty));
+      if (standardWarranty) {
+        content.appendChild(createWarrantyContent(standardWarranty));
       }
       break;
     case 'resources':
@@ -205,9 +217,10 @@ function initializeTabs(container) {
  * @returns {Element} The specifications container element
  */
 export default function renderSpecs(specifications, parent, data) {
+  const standardWarranty = data.custom.options?.find((option) => option.name.includes('Standard Warranty'));
   const tabs = [
     { id: 'specifications', label: 'Specifications', show: !!specifications },
-    { id: 'warranty', label: 'Warranty', show: !!data.custom.warranty },
+    { id: 'warranty', label: 'Warranty', show: !!standardWarranty },
     { id: 'resources', label: 'Resources', show: !!data.custom.resources },
   ].filter((tab) => tab.show);
 
@@ -226,7 +239,7 @@ export default function renderSpecs(specifications, parent, data) {
   contents.classList.add('tab-contents');
 
   tabs.forEach((tab) => {
-    const content = createTabContent(tab, specifications, data);
+    const content = createTabContent(tab, specifications, standardWarranty, data);
     contents.appendChild(content);
   });
 

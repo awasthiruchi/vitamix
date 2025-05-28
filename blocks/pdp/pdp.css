@@ -229,6 +229,11 @@
   font-weight: var(--weight-light);
 }
 
+.tab-content .specifications ul li p {
+  padding: 5px 0 0 0;
+  margin: 0;
+}
+
 .tab-content .warranty-container {
   display: flex;
   gap: var(--spacing-100);
