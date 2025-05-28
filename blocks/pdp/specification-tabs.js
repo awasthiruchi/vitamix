@@ -66,10 +66,7 @@ function createWarrantyContent(warranty) {
 
   const link = document.createElement('a');
 
-  // if warranty is 10 year.. Link to https://www.vitamix.com/us/en_us/shop/10-year-warranty
-  // if warranty is 7 year.. Link to https://www.vitamix.com/us/en_us/shop/7-year-warranty
-  // if warranty is 3 year.. Link to https://www.vitamix.com/us/en_us/shop/3-year-warranty
-
+  // TODO: Might want to make a little more robust...
   if (warranty.sku.includes('10')) {
     link.href = 'https://www.vitamix.com/us/en_us/shop/10-year-warranty';
   } else if (warranty.sku.includes('7')) {
