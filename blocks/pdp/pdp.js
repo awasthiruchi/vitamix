@@ -4,7 +4,7 @@ import renderSpecs from './specification-tabs.js';
 import renderPricing from './pricing.js';
 import renderOptions from './options.js';
 
-const BV_PRODUCT_ID = toClassName(getMetadata('sku')).replace(/-/g, '');
+const BV_PRODUCT_ID = getMetadata('reviews-id') || toClassName(getMetadata('sku')).replace(/-/g, '');
 
 /**
  * Renders the title section of the PDP block.
@@ -91,6 +91,8 @@ async function renderReviews(block) {
   setTimeout(async () => {
     await loadScript('https://apps.bazaarvoice.com/deployments/vitamix/main_site/production/en_US/bv.js');
   }, 5000);
+
+  window.bvCallback = () => { };
 
   block.append(bazaarvoiceContainer);
 }
