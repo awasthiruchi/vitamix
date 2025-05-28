@@ -12,6 +12,7 @@
     "add-to-cart"
     "details"
     "specs"
+    "faq"
     "reviews";
 }
 
@@ -147,7 +148,7 @@
   font-weight: var(--weight-medium);
 }
 
-.details h3, h4 {
+.details h3, .details h4 {
   font-family: var(--body-font-family);
   font-size: var(--heading-size-xs);
   font-weight: var(--weight-medium);
@@ -351,6 +352,7 @@
       "options gallery"
       "add-to-cart gallery"
       "details gallery"
+      "faq faq"
       "reviews reviews"
   }
 
@@ -360,6 +362,52 @@
 
   .gallery .tabs-container {
     display: block;
+  }
+}
+
+/* FAQ */
+.faq-container {
+  grid-area: faq;
+}
+
+.faq-container a {
+  text-decoration: none;
+}
+
+.faq-container h4 {
+  font-family: var(--body-font-family);
+  font-size: var(--heading-size-xl);
+  font-weight: var(--weight-medium);
+  margin-top: .25em;
+}
+
+.pdp .faq-container ul {
+  padding-inline-start: 0;
+}
+
+.faq-container ul li {
+  list-style-type: none;
+  margin: 16px 0;
+}
+
+@media (width >= 900px) {
+  .faq-container {
+    margin: 0 10px;
+    border-top: 1px solid var(--color-gray-400);
+    border-bottom: 1px solid var(--color-gray-400);
+    display: flex;
+    gap: 10%;
+  }
+
+  .faq-container h4 {
+    font-size: var(--heading-size-l);
+    margin-top: 1.125em;
+  }
+
+  .faq-container ul {
+    display: flex;
+    justify-content: space-around;
+    width: 50%;
   }
 }
 

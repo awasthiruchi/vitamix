@@ -95,6 +95,18 @@ async function renderReviews(block) {
   block.append(bazaarvoiceContainer);
 }
 
+function renderFAQ(block) {
+  const faqContainer = document.createElement('div');
+  faqContainer.classList.add('faq-container');
+  faqContainer.innerHTML = `
+  <h4>Have a question?</h4>
+  <ul>
+    <li><a href="https://www.vitamix.com/us/en_us/owners-resources/product-support/faqs/">Frequently Asked Questions</a></li>
+    <li><a href="https://www.vitamix.com/us/en_us/customer-service/contact-us/">Contact Us</a></li>
+  </ul>`;
+  block.append(faqContainer);
+}
+
 /**
  * Decorates the PDP block.
  * @param {Element} block - The PDP block element
@@ -116,6 +128,7 @@ export default function decorate(block) {
   const optionsContainer = renderOptions(block, variants);
   const addToCartContainer = renderAddToCart(block);
   const detailsContainer = renderDetails(block);
+  renderFAQ(block);
   renderReviews(block);
 
   block.append(
