@@ -1,4 +1,5 @@
 import { attachImageListeners } from './gallery.js';
+import { toClassName } from '../../scripts/aem.js';
 
 /**
  * Handles the change of an option.
@@ -61,15 +62,22 @@ export default function renderOptions(block, variants) {
   selectedOptionLabel.textContent = `Color: ${variants[0].options.color}`;
   selectionContainer.append(selectedOptionLabel);
 
-  const colors = variants.map((variant) => variant.options.color.replace(/\s+/g, '-').toLowerCase());
+  const colors = variants.map((variant) => toClassName(variant.options.color));
 
   const colorOptions = colors.map((color) => {
+    const getKnownColor = (c) => {
+      const knownColors = ['midnight-blue', 'black', 'gray', 'white', 'red', 'graphite', 'stainless'];
+      const colorIndex = knownColors
+        .findIndex((knownColor) => toClassName(c).includes(knownColor));
+      return colorIndex > -1 ? knownColors[colorIndex] : c;
+    };
+
     const colorOption = document.createElement('div');
     colorOption.classList.add('color-swatch');
-    colorOption.classList.add(color);
 
     const colorSwatch = document.createElement('div');
     colorSwatch.classList.add('color-inner');
+    colorSwatch.style.backgroundColor = `var(--color-${getKnownColor(color)})`;
     colorOption.append(colorSwatch);
 
     colorOption.addEventListener('click', () => {

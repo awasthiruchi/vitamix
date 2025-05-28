@@ -81,22 +81,6 @@
   border-radius: 50%;
 }
 
-.color-swatch.shadow-black .color-inner {
-  background-color: var(--color-black);
-}
-
-.color-swatch.polar-white .color-inner {
-  background-color: var(--color-white);
-}
-
-.color-swatch.nano-gray .color-inner {
-  background-color: var(--color-gray);
-}
-
-.color-swatch.midnight-blue .color-inner {
-  background-color: #00263e;
-}
-
 .warranty {
   font-size: var(--body-size-s);
   font-weight: var(--weight-medium);
@@ -397,4 +381,15 @@
 
 .pdp-reviews-container {
   grid-area: reviews;
+}
+
+/* product swatches colors */
+.pdp .color-swatch {
+  --color-midnight-blue: #00263e;
+  --color-black: #000;
+  --color-gray: #888;
+  --color-white: #fff;
+  --color-red: #f00;
+  --color-graphite: #333f48;
+  --color-stainless: #ccc;
 }
