@@ -244,6 +244,25 @@ async function populateNavFragments(li, a) {
     });
   });
 
+  const trigger = ul.closest('[data-source]');
+  const button = trigger.querySelector('button');
+  const nestedUl = trigger.querySelector('ul');
+
+  trigger.addEventListener('mouseover', (e) => {
+    const { target } = e;
+
+    // ignore mouseover on nested <ul>
+    if (nestedUl && nestedUl.contains(target)) return;
+
+    button.click();
+  });
+
+  trigger.addEventListener('mouseleave', (e) => {
+    const { relatedTarget } = e;
+    const inHeader = relatedTarget && relatedTarget.closest('header');
+    if (!inHeader) button.click();
+  });
+
   rewriteLinks(ul);
   sanitizeNavList(ul);
 }
