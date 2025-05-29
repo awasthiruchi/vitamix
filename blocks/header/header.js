@@ -244,23 +244,21 @@ async function populateNavFragments(li, a) {
     });
   });
 
+  const header = ul.closest('header');
   const trigger = ul.closest('[data-source]');
   const button = trigger.querySelector('button');
-  const nestedUl = trigger.querySelector('ul');
 
-  trigger.addEventListener('mouseover', (e) => {
-    const { target } = e;
-
-    // ignore mouseover on nested <ul>
-    if (nestedUl && nestedUl.contains(target)) return;
-
-    button.click();
+  trigger.addEventListener('mouseenter', () => {
+    if (!isDesktop.matches) return; // only on desktop
+    if (button.getAttribute('aria-expanded') === 'false') button.click();
   });
 
-  trigger.addEventListener('mouseleave', (e) => {
-    const { relatedTarget } = e;
-    const inHeader = relatedTarget && relatedTarget.closest('header');
-    if (!inHeader) button.click();
+  header.addEventListener('mouseleave', (e) => {
+    if (!isDesktop.matches) return; // only on desktop
+    const to = e.relatedTarget;
+    if (to && !header.contains(to)) {
+      if (button.getAttribute('aria-expanded') === 'true') button.click();
+    }
   });
 
   rewriteLinks(ul);
