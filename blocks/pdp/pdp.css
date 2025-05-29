@@ -1,3 +1,9 @@
+.pdp-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-400);
+}
+
 .pdp {
   display: grid;
   gap: var(--spacing-l) var(--spacing-xl);
@@ -11,9 +17,7 @@
     "options"
     "add-to-cart"
     "details"
-    "specs"
-    "faq"
-    "reviews";
+    "specs";
 }
 
 .pdp .eyebrow {
@@ -164,6 +168,10 @@
 
 .details li {
   padding-bottom: var(--spacing-s);
+}
+
+.details dd {
+  margin-inline-start: 0;
 }
 
 .specs {
@@ -354,6 +362,10 @@
       "details gallery"
       "faq faq"
       "reviews reviews"
+  }
+
+  .gallery {
+    grid-row: title / specs;
   }
 
   .details .tabs-container {
