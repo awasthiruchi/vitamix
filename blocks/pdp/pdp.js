@@ -92,7 +92,7 @@ async function renderReviews(block) {
     await loadScript('https://apps.bazaarvoice.com/deployments/vitamix/main_site/production/en_US/bv.js');
   }, 5000);
 
-  block.append(bazaarvoiceContainer);
+  block.parentElement.append(bazaarvoiceContainer);
 }
 
 function renderFAQ(block) {
@@ -104,7 +104,7 @@ function renderFAQ(block) {
     <li><a href="https://www.vitamix.com/us/en_us/owners-resources/product-support/faqs/">Frequently Asked Questions</a></li>
     <li><a href="https://www.vitamix.com/us/en_us/customer-service/contact-us/">Contact Us</a></li>
   </ul>`;
-  block.append(faqContainer);
+  block.parentElement.append(faqContainer);
 }
 
 /**
