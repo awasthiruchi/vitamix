@@ -4,7 +4,7 @@ import renderSpecs from './specification-tabs.js';
 import renderPricing from './pricing.js';
 import renderOptions from './options.js';
 
-const BV_PRODUCT_ID = getMetadata('reviews-id') || toClassName(getMetadata('sku')).replace(/-/g, '');
+const BV_PRODUCT_ID = getMetadata('reviewsId') || toClassName(getMetadata('sku')).replace(/-/g, '');
 
 /**
  * Renders the title section of the PDP block.
