@@ -1,4 +1,4 @@
-import { getMetadata } from '../../scripts/aem.js';
+import { getMetadata, toClassName } from '../../scripts/aem.js';
 import { swapIcons } from '../../scripts/scripts.js';
 import { loadFragment } from '../fragment/fragment.js';
 
@@ -32,27 +32,6 @@ function getCookies() {
     if (key && value) cookieMap[key.trim()] = value.trim();
   });
   return cookieMap;
-}
-
-/**
- * Updates navigation view state based on screen size
- * @param {boolean} desktop - Whether layout is currently desktop
- * @param {HTMLElement} nav - Navigation container element
- */
-function toggleNavView(desktop, nav) {
-  nav.querySelectorAll('[data-view]').forEach((el) => {
-    el.dataset.view = desktop ? 'desktop' : 'mobile';
-    const { id } = el;
-    const wrapper = el.parentElement;
-    const button = wrapper.querySelector(`button[aria-controls=${id}]`);
-    if (button) button.setAttribute('aria-expanded', !desktop);
-  });
-  nav.querySelectorAll('.nested-submenu').forEach((submenu) => {
-    const { id } = submenu;
-    const wrapper = submenu.parentElement;
-    const button = wrapper.querySelector(`button[aria-controls="${id}"]`);
-    if (button) button.setAttribute('aria-expanded', isDesktop.matches);
-  });
 }
 
 /**
@@ -148,6 +127,84 @@ function buildLanguageSelector(tool) {
 }
 
 /**
+ * Sanitizes navigation list.
+ * @param {HTMLElement} ul - Navigation list element
+ */
+function sanitizeNavList(ul) {
+  [...ul.children].forEach((li) => {
+    // unwrap nested <as>
+    li.querySelectorAll('p').forEach((p) => {
+      const onlyChild = p.children.length === 1 && p.querySelector('a');
+      const noOtherContent = p.childNodes.length === 1;
+      if (onlyChild && noOtherContent) p.replaceWith(p.firstElementChild);
+    });
+
+    // de-button
+    li.querySelectorAll('a').forEach((a) => a.removeAttribute('class'));
+
+    const a = li.querySelector('a');
+    const submenu = li.querySelector('ul');
+
+    if (a && submenu && !li.querySelector('button.submenu-toggle')) {
+      const text = a.textContent.trim();
+
+      // generate unique id from link text
+      const id = `submenu-${toClassName(text)}`;
+      submenu.id = id;
+      submenu.setAttribute('aria-hidden', true);
+
+      // add toggle button
+      const toggle = document.createElement('button');
+      toggle.setAttribute('aria-expanded', false);
+      toggle.setAttribute('aria-controls', id);
+      toggle.setAttribute('aria-label', `Toggle ${text} submenu`);
+      toggle.className = 'submenu-toggle';
+      const chevron = document.createElement('i');
+      chevron.className = 'symbol symbol-chevron';
+      toggle.prepend(chevron);
+
+      li.insertBefore(toggle, submenu);
+      li.classList.add('submenu-wrapper');
+
+      toggle.addEventListener('click', () => {
+        const expanded = toggle.getAttribute('aria-expanded') === 'true';
+        toggle.setAttribute('aria-expanded', !expanded);
+        submenu.setAttribute('aria-hidden', expanded);
+      });
+
+      // handled nested submenus
+      sanitizeNavList(submenu);
+    }
+  });
+}
+
+/**
+ * Enforces the open/closed state of the "Products" submenu.
+ * @param {HTMLElement} nav - Navigation container element
+ */
+function enforceSubmenuState(nav) {
+  const submenuProducts = nav.querySelector('#submenu-products');
+  const toggleProducts = nav.querySelector('[aria-controls="submenu-products"]');
+
+  if (!submenuProducts || !toggleProducts) return;
+
+  if (isDesktop.matches) { // on desktop, collapse parent and open children
+    submenuProducts.setAttribute('aria-hidden', true);
+    toggleProducts.setAttribute('aria-expanded', false);
+
+    submenuProducts.querySelectorAll('ul').forEach((ul) => {
+      ul.setAttribute('aria-hidden', false);
+      const li = ul.closest('li');
+      const toggle = li.querySelector('.submenu-toggle');
+      if (toggle) toggle.setAttribute('aria-expanded', true);
+    });
+  } else { // on mobile, open parent and allow children to toggle
+    submenuProducts.setAttribute('aria-hidden', false);
+    toggleProducts.setAttribute('aria-expanded', true);
+  }
+}
+
+/**
  * Fetches navigation fragments from given link.
  * @param {string} a - Anchor href pointing to a nav fragment
  * @returns {Promise} NodeList of <ul> elements (or null on error)
@@ -155,12 +212,9 @@ function buildLanguageSelector(tool) {
 async function fetchNavFragments(a) {
   try {
     const { pathname } = new URL(a, window.location);
-    const resp = await fetch(pathname);
-    const temp = document.createElement('div');
-    temp.innerHTML = await resp.text();
-    const sections = temp.querySelectorAll('div > ul');
-    temp.remove();
-    return sections;
+    const fragment = await loadFragment(pathname);
+    const uls = fragment.querySelectorAll('div > ul');
+    return [...uls];
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Error fetching nav fragment:', error);
@@ -169,106 +223,77 @@ async function fetchNavFragments(a) {
 }
 
 /**
- * Populates navigation fragments.
- * @param {Event} e - Event object
- * @param {Element} navA - Navigation anchor element
+ * Replaces <li> element with new list items fetched from navigation fragment.
+ * @param {HTMLLIElement} li - Original list item element
+ * @param {string} a - URL to fetch the fragment from
  */
-async function populateNavFragments(e, navA) {
-  e.preventDefault();
-  const navFragmentSections = await fetchNavFragments(navA);
-  const menu = navA.parentElement.parentElement;
-  menu.innerHTML = '';
-  menu.dataset.view = isDesktop.matches ? 'desktop' : 'mobile';
-  navFragmentSections.forEach((s) => {
-    const menuItem = document.createElement('li');
-    menuItem.setAttribute('role', 'menuitem');
+async function populateNavFragments(li, a) {
+  const ul = li.closest('ul');
+  if (!ul) return;
 
-    menuItem.append(s);
-    menu.append(menuItem);
+  // remove the original <li> (to be replaced with fragment content)
+  li.remove();
 
-    rewriteLinks(menuItem);
+  const fragments = await fetchNavFragments(a);
+  if (!fragments) return;
+
+  // insert all <li> children from fetched fragment into current <ul>
+  fragments.forEach((fragmentUl) => {
+    [...fragmentUl.children].forEach((childLi) => {
+      ul.appendChild(childLi);
+    });
   });
-  // decorate any nested uls inside nav fragments
-  menu.querySelectorAll(':scope > li > ul > li > ul').forEach((nestedUl, j) => {
-    const nestedLi = nestedUl.closest('li');
-    if (nestedLi) {
-      const parentUl = nestedUl.closest('ul');
-      const subId = `${parentUl.id || 'subsection'}-sub-${j + 1}`;
-      nestedUl.id = subId;
-      nestedUl.setAttribute('role', 'menu');
-      nestedUl.classList.add('nested-submenu');
-      nestedLi.classList.add('nested-submenu-item');
 
-      const label = nestedLi.textContent.replace(nestedUl.textContent, '').trim();
+  const header = ul.closest('header');
+  const trigger = ul.closest('[data-source]');
+  const button = trigger.querySelector('button');
 
-      const toggle = document.createElement('button');
-      toggle.setAttribute('type', 'button');
-      toggle.className = 'nested-toggle';
-      toggle.setAttribute('aria-haspopup', true);
-      toggle.setAttribute('aria-expanded', false);
-      toggle.setAttribute('aria-controls', subId);
-      toggle.setAttribute('aria-label', `Toggle ${label} menu`);
+  trigger.addEventListener('mouseenter', () => {
+    if (!isDesktop.matches) return; // only on desktop
+    if (button.getAttribute('aria-expanded') === 'false') button.click();
+  });
 
-      const chevron = document.createElement('i');
-      chevron.className = 'symbol symbol-chevron';
-      toggle.prepend(chevron);
-
-      toggle.addEventListener('click', () => {
-        const expanded = toggle.getAttribute('aria-expanded') === 'true';
-        toggle.setAttribute('aria-expanded', !expanded);
-      });
-
-      const p = nestedLi.querySelector('p');
-      if (p) {
-        p.insertAdjacentElement('afterend', toggle);
-      } else {
-        nestedLi.insertBefore(toggle, nestedUl);
-      }
-
-      nestedLi.append(nestedUl); // make sure submenu stays in DOM
+  header.addEventListener('mouseleave', (e) => {
+    if (!isDesktop.matches) return; // only on desktop
+    const to = e.relatedTarget;
+    if (to && !header.contains(to)) {
+      if (button.getAttribute('aria-expanded') === 'true') button.click();
     }
   });
-  if (!isDesktop.matches) { // set default mobile open state
-    const { id } = menu;
-    const button = menu.parentElement.querySelector(`button[aria-controls="${id}"]`);
-    if (button) button.setAttribute('aria-expanded', true);
-  } else { // set default desktop open state
-    menu.querySelectorAll('.nested-submenu').forEach((submenu) => {
-      const { id } = submenu;
-      const button = submenu.parentElement.querySelector(`button[aria-controls="${id}"]`);
-      if (button) button.setAttribute('aria-expanded', true);
-    });
-  }
+
+  rewriteLinks(ul);
+  sanitizeNavList(ul);
 }
 
 /**
- * Sets up event listeners for lazy loading navigation fragments.
- * @param {HTMLElement} nav - Navigation container element
- * @param {HTMLElement} li - List item element containing navigation fragment
- * @param {HTMLElement} a - Anchor element pointing to navigation fragment URL
+ * Attaches one-time listeners to load navigation fragments.
+ * @param {HTMLElement} nav - Nav container
+ * @param {HTMLElement} ul - List element whose link will trigger fragment loading
+ * @param {HTMLElement} li - List item whose link will trigger fragment loading
+ * @param {string} a - URL to fetch the fragment from
  */
-function setupFragmentLoader(nav, li, a) {
+function setupFragmentLoader(nav, ul, li, a) {
   const hamburgerButton = nav.querySelector('.nav-hamburger button');
+  const fragment = li.closest('ul');
+  fragment.style.visibility = 'hidden';
+  fragment.parentElement.dataset.source = 'fragment';
   let loaded = false;
 
-  let onMouseOver;
-  let onClick;
-
-  const loadFragmentOnce = (e) => {
+  // loads the fragment only once, triggered by either event type
+  const load = async (e) => {
     if (loaded) return;
     e.preventDefault();
-    populateNavFragments(e, a);
+    ul.removeEventListener('mouseover', load);
+    hamburgerButton.removeEventListener('click', load);
     loaded = true;
 
-    li.removeEventListener('mouseover', onMouseOver);
-    hamburgerButton.removeEventListener('click', onClick);
+    await populateNavFragments(li, a);
+    fragment.removeAttribute('style');
+    enforceSubmenuState(nav);
   };
 
-  onMouseOver = (e) => loadFragmentOnce(e);
-  onClick = (e) => loadFragmentOnce(e);
-
-  li.addEventListener('mouseover', onMouseOver);
-  hamburgerButton.addEventListener('click', onClick);
+  ul.addEventListener('mouseover', load);
+  hamburgerButton.addEventListener('click', load);
 }
 
 /**
@@ -317,7 +342,6 @@ export default async function decorate(block) {
   hamburgerButton.append(hamburger);
   hamburgerButton.addEventListener('click', () => {
     toggleHamburger(hamburgerButton, nav);
-    toggleNavView(isDesktop.matches, nav);
   });
 
   hamburgerButton.addEventListener('click', () => {
@@ -355,54 +379,22 @@ export default async function decorate(block) {
   if (sections) {
     const wrapper = document.createElement('nav');
     const ul = sections.querySelector('ul');
-    const clone = ul.cloneNode(true);
-    wrapper.append(clone);
-    [...clone.children].forEach((li, i) => {
-      // clear buttons
-      const as = li.querySelectorAll('a[href]');
-      as.forEach((a) => {
-        a.classList.remove('button');
-        a.parentElement.classList.remove('button-wrapper');
-      });
 
-      const subsection = li.querySelector('ul');
-      if (subsection) {
-        li.className = 'subsection';
-        subsection.id = `subsection-${i + 1}`;
-        subsection.setAttribute('role', 'menu');
+    sanitizeNavList(ul);
 
-        // populate nav fragments
-        const navA = li.querySelector('a[href*="/nav"]');
-        if (navA) setupFragmentLoader(nav, li, navA);
-
-        [...subsection.children].forEach((subli) => subli.setAttribute('role', 'menuitem'));
-        const label = li.textContent.replace(subsection.textContent, '').trim();
-        const button = document.createElement('button');
-        button.setAttribute('aria-haspopup', true);
-        button.setAttribute('aria-expanded', false);
-        button.setAttribute('aria-controls', `subsection-${i + 1}`);
-        button.classList.add('subsection-toggle');
-        button.textContent = label;
-        button.addEventListener('click', () => {
-          const expanded = button.getAttribute('aria-expanded') === 'true';
-          if (isDesktop.matches) {
-            wrapper.querySelectorAll('[aria-expanded="true"]').forEach((ex) => ex.setAttribute('aria-expanded', false));
-            wrapper.querySelectorAll('.nested-toggle').forEach((toggle) => {
-              toggle.setAttribute('aria-expanded', true);
-            });
-          }
-          button.setAttribute('aria-expanded', !expanded);
-        });
-
-        const chevron = document.createElement('i');
-        chevron.className = 'symbol symbol-chevron';
-        button.prepend(chevron);
-
-        li.innerHTML = '';
-        li.prepend(button, subsection);
-      }
+    // set up fragment loading for all "/nav" links
+    ul.querySelectorAll('li a[href*="/nav"]').forEach((a) => {
+      const li = a.closest('li');
+      setupFragmentLoader(nav, ul, li, a);
     });
-    ul.replaceWith(wrapper);
+
+    wrapper.append(ul);
+    sections.replaceChildren(wrapper);
+    enforceSubmenuState(sections);
+
+    isDesktop.addEventListener('change', () => {
+      enforceSubmenuState(sections);
+    });
   }
 
   // decorate tools
@@ -422,13 +414,10 @@ export default async function decorate(block) {
   }
 
   toggleHeader(isDesktop.matches, nav, hamburgerButton);
-  toggleNavView(isDesktop.matches, nav);
 
   // enable viewport responsive nav
   isDesktop.addEventListener('change', (e) => {
     toggleHeader(e.matches, nav, hamburgerButton);
-    // update all nav-submenus to reflect new view
-    toggleNavView(e.matches, nav);
   });
 
   const navWrapper = document.createElement('div');
@@ -446,7 +435,8 @@ export default async function decorate(block) {
     const compare = block.querySelector('li .icon-compare');
     if (compare) {
       const li = compare.closest('li');
-      li.remove();
+      li.setAttribute('aria-hidden', true);
+      li.replaceChildren();
     }
   }
 
