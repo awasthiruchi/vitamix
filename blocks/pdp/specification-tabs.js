@@ -213,7 +213,7 @@ function initializeTabs(container) {
  * @param {Object} data - The JSON-LD object containing custom data.
  * @returns {Element} The specifications container element
  */
-export default function renderSpecs(specifications, parent, data) {
+export default function renderSpecs(specifications, data) {
   const standardWarranty = data.custom.options?.find((option) => option.name.includes('Standard Warranty'));
   const tabs = [
     { id: 'specifications', label: 'Specifications', show: !!specifications },
@@ -223,7 +223,7 @@ export default function renderSpecs(specifications, parent, data) {
 
   // if there are no tabs, don't render anything
   if (tabs.length === 0) {
-    return;
+    return null;
   }
 
   const specsContainer = document.createElement('div');
@@ -241,8 +241,9 @@ export default function renderSpecs(specifications, parent, data) {
   });
 
   specsContainer.appendChild(contents);
-  parent.append(specsContainer);
 
   attachTabListeners(specsContainer);
   initializeTabs(specsContainer);
+
+  return specsContainer;
 }
