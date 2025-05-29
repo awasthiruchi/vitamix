@@ -16,8 +16,11 @@
     "pricing"
     "options"
     "add-to-cart"
+    "content"
     "details"
-    "specs";
+    "specs"
+    "faq"
+    "reviews";
 }
 
 .pdp .eyebrow {
@@ -174,11 +177,8 @@
   margin-inline-start: 0;
 }
 
-.specs {
-  grid-area: specs;
-}
-
 .tabs-container {
+  grid-area: specs;
   width: 100%;
 }
 
@@ -293,10 +293,6 @@
   gap: var(--spacing-l);
 }
 
-.gallery .tabs-container {
-  display: none;
-}
-
 .lcp-image img {
   width: 100%;
   aspect-ratio: 1 / 1;
@@ -359,21 +355,10 @@
       "pricing gallery"
       "options gallery"
       "add-to-cart gallery"
-      "details gallery"
+      "content content"
+      "details specs"
       "faq faq"
       "reviews reviews"
-  }
-
-  .gallery {
-    grid-row: title / specs;
-  }
-
-  .details .tabs-container {
-    display: none;
-  }
-
-  .gallery .tabs-container {
-    display: block;
   }
 }
 
@@ -495,4 +480,8 @@
   margin-top: var(--spacing-m);
   font-size: var(--body-size-s);
   min-height: 40px;
+}
+
+.pdp-content-fragment {
+  grid-area: content;
 }

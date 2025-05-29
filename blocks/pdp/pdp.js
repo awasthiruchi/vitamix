@@ -3,6 +3,7 @@ import renderGallery from './gallery.js';
 import renderSpecs from './specification-tabs.js';
 import renderPricing from './pricing.js';
 import renderOptions from './options.js';
+import { loadFragment } from '../fragment/fragment.js';
 
 const BV_PRODUCT_ID = getMetadata('reviewsId') || toClassName(getMetadata('sku')).replace(/-/g, '');
 
@@ -109,6 +110,20 @@ function renderFAQ(block) {
   block.parentElement.append(faqContainer);
 }
 
+function renderContent() {
+  const contentContainer = document.createElement('div');
+  contentContainer.classList.add('pdp-content-fragment');
+  const fragmentPath = window.location.pathname.replace('/products/', '/products/fragments/');
+  const insertFragment = async () => {
+    const fragment = await loadFragment(fragmentPath);
+    while (fragment.firstChild) {
+      contentContainer.append(fragment.firstChild);
+    }
+  };
+  insertFragment();
+  return contentContainer;
+}
+
 /**
  * Decorates the PDP block.
  * @param {Element} block - The PDP block element
@@ -130,23 +145,25 @@ export default function decorate(block) {
   const optionsContainer = renderOptions(block, variants);
   const addToCartContainer = renderAddToCart(block);
   const detailsContainer = renderDetails(block);
+  const specifications = detailsContainer.querySelector('.specifications');
+  const specsContainer = renderSpecs(specifications, jsonLdData);
+  specifications.remove();
+
+  const contentContainer = renderContent();
   renderFAQ(block);
   renderReviews(block);
 
   block.append(
     titleContainer,
+    galleryContainer,
     pricingContainer,
     addToCartContainer,
+    contentContainer,
     detailsContainer,
-    galleryContainer,
+    specsContainer,
   );
 
   if (optionsContainer) {
     block.append(optionsContainer);
   }
-
-  const specifications = detailsContainer.querySelector('.specifications');
-  renderSpecs(specifications, galleryContainer, jsonLdData);
-  renderSpecs(specifications, detailsContainer, jsonLdData);
-  specifications.remove();
 }
