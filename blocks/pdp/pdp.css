@@ -343,7 +343,7 @@
   .pdp {
     padding-top: var(--spacing-xl);
     grid-template-columns: 2fr 3fr;
-    grid-template-rows: 180px auto auto auto auto;
+    grid-template-rows: fit-content(180px) auto auto auto auto;
     /* stylelint-disable-next-line declaration-block-no-redundant-longhand-properties */
     grid-template-areas:
       "title gallery"
