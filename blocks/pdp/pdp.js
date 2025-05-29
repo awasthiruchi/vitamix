@@ -146,6 +146,25 @@ function renderFreeShipping(offers) {
   return freeShippingContainer;
 }
 
+function renderAlert(offers) {
+  if (
+    offers[0]
+    && (
+      offers[0].availability === 'https://schema.org/Discontinued' ||
+      offers[0].availability === 'https://schema.org/PreOrder'
+    )
+  ) {
+    const alertContainer = document.createElement('div');
+    const text = offers[0].availability === 'https://schema.org/Discontinued' ? 'Retired Product' : 'Coming Soon';
+    alertContainer.classList.add('pdp-alert');
+    alertContainer.innerHTML = `
+      <p>${text}</p>
+    `;
+    return alertContainer;
+  }
+  return null;
+}
+
 function renderShare() {
   const shareContainer = document.createElement('div');
   shareContainer.classList.add('pdp-share-container');
@@ -177,6 +196,7 @@ export default function decorate(block) {
   const { variants } = window;
   const galleryContainer = renderGallery(block, variants);
   const titleContainer = renderTitle(block);
+  const alertContainer = renderAlert(jsonLdData.offers);
 
   const buyBox = document.createElement('div');
   buyBox.classList.add('pdp-buy-box');
@@ -206,6 +226,7 @@ export default function decorate(block) {
   renderReviews(block);
 
   block.append(
+    alertContainer || '',
     titleContainer,
     galleryContainer,
     buyBox,

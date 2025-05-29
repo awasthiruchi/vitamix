@@ -11,6 +11,7 @@
   font-family: var(--font-family-body);
   grid-template-columns: 100%;
   grid-template-areas: 
+    "alert"
     "title"
     "gallery"
     "buy-box"
@@ -343,9 +344,10 @@
   .pdp {
     padding-top: var(--spacing-xl);
     grid-template-columns: 2fr 3fr;
-    grid-template-rows: fit-content(180px) auto auto auto auto;
+    grid-template-rows: fit-content(30px) fit-content(180px) auto auto auto auto;
     /* stylelint-disable-next-line declaration-block-no-redundant-longhand-properties */
     grid-template-areas:
+      "alert gallery"
       "title gallery"
       "buy-box gallery"
       "content content"
@@ -538,4 +540,11 @@
 .pdp div.pdp-share-container a.pdp-share-email img {
   background-color: unset;
   border-radius: unset;
+}
+
+.pdp-alert {
+  grid-area: alert;
+  background-color: var(--color-gray-900);
+  color: var(--color-white);
+  text-align: center;
 }
