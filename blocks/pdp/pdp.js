@@ -59,7 +59,7 @@ function renderAddToCart() {
   const quantitySelect = document.createElement('select');
 
   // eslint-disable-next-line no-plusplus
-  for (let i = 1; i <= 10; i++) {
+  for (let i = 1; i <= 3; i++) {
     const option = document.createElement('option');
     option.value = i;
     option.textContent = i;
@@ -94,7 +94,19 @@ async function renderReviews(block) {
 
   window.bvCallback = () => { };
 
-  block.append(bazaarvoiceContainer);
+  block.parentElement.append(bazaarvoiceContainer);
+}
+
+function renderFAQ(block) {
+  const faqContainer = document.createElement('div');
+  faqContainer.classList.add('faq-container');
+  faqContainer.innerHTML = `
+  <h4>Have a question?</h4>
+  <ul>
+    <li><a href="https://www.vitamix.com/us/en_us/owners-resources/product-support/faqs/">Frequently Asked Questions</a></li>
+    <li><a href="https://www.vitamix.com/us/en_us/customer-service/contact-us/">Contact Us</a></li>
+  </ul>`;
+  block.parentElement.append(faqContainer);
 }
 
 /**
@@ -118,6 +130,7 @@ export default function decorate(block) {
   const optionsContainer = renderOptions(block, variants);
   const addToCartContainer = renderAddToCart(block);
   const detailsContainer = renderDetails(block);
+  renderFAQ(block);
   renderReviews(block);
 
   block.append(
