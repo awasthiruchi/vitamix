@@ -59,7 +59,7 @@ function renderAddToCart() {
   const quantitySelect = document.createElement('select');
 
   // eslint-disable-next-line no-plusplus
-  for (let i = 1; i <= 10; i++) {
+  for (let i = 1; i <= 3; i++) {
     const option = document.createElement('option');
     option.value = i;
     option.textContent = i;
