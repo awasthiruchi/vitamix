@@ -8,6 +8,12 @@ window.config = {
   BOTALIASID: 'HUKYDI5LGI',
 };
 
+const currentEnvironment = document.createElement('div');
+currentEnvironment.classList.add('current-environment');
+currentEnvironment.dataset.deploymentEnv = 'prod';
+currentEnvironment.dataset.templatePath = '/conf/vitamix/settings/wcm/templates/default-page';
+document.body.appendChild(currentEnvironment);
+
 loadScript('https://www.vitamix.com/etc.clientlibs/vitamix/clientlibs/clientlib-chatbot.lc-5aa4591c22ce9007a60fafc1f19aa690-lc.min.js');
 loadScript('https://www.vitamix.com/etc.clientlibs/core/wcm/components/commons/site/clientlibs/container.lc-0a6aff292f5cc42142779cde92054524-lc.min.js');
 
