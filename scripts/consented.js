@@ -8,8 +8,10 @@ window.config = {
   BOTALIASID: 'HUKYDI5LGI',
 };
 
+window.adobeDataLayer = window.adobeDataLayer || [];
+
 const currentEnvironment = document.createElement('div');
-currentEnvironment.classList.add('current-environment');
+currentEnvironment.classList.add('currentEnvironment');
 currentEnvironment.dataset.deploymentEnv = 'prod';
 currentEnvironment.dataset.templatePath = '/conf/vitamix/settings/wcm/templates/default-page';
 document.body.appendChild(currentEnvironment);
