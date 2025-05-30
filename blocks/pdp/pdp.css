@@ -11,11 +11,10 @@
   font-family: var(--font-family-body);
   grid-template-columns: 100%;
   grid-template-areas: 
+    "alert"
     "title"
     "gallery"
-    "pricing"
-    "options"
-    "add-to-cart"
+    "buy-box"
     "content"
     "details"
     "specs"
@@ -39,10 +38,6 @@
 
 .title {
   grid-area: title;
-}
-
-.pricing {
-  grid-area: pricing;
 }
 
 .options {
@@ -96,7 +91,6 @@
 }
 
 .add-to-cart {
-  grid-area: add-to-cart;
   display: flex;
   flex-direction: column;
 }
@@ -350,11 +344,12 @@
   .pdp {
     padding-top: var(--spacing-xl);
     grid-template-columns: 2fr 3fr;
+    grid-template-rows: fit-content(30px) fit-content(180px) auto auto auto auto;
+    /* stylelint-disable-next-line declaration-block-no-redundant-longhand-properties */
     grid-template-areas:
+      "alert gallery"
       "title gallery"
-      "pricing gallery"
-      "options gallery"
-      "add-to-cart gallery"
+      "buy-box gallery"
       "content content"
       "details specs"
       "faq faq"
@@ -484,4 +479,72 @@
 
 .pdp-content-fragment {
   grid-area: content;
+}
+
+.pdp-buy-box {
+  grid-area: buy-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-l);
+  justify-content: flex-start;
+}
+
+.pdp-compare-button {
+  background-color: var(--color-gray-300);
+  color: var(--color-text);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 8px 16px;
+  font-weight: var(--weight-light);
+  margin-right: var(--spacing-s);
+}
+
+.pdp-compare-container a:any-link {
+  text-decoration: none;
+}
+
+
+.pdp div.pdp-free-shipping-container {
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+  color: var(--color-black);
+}
+
+.pdp div.pdp-free-shipping-container img {
+  width: 1.2em;
+  height: 1.2em;
+  margin-right: var(--spacing-s)
+}
+
+.pdp-share-container {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-s);
+  font-size: var(--body-size-s);
+  color: var(--color-gray-800);
+  margin-top: var(--spacing-s);
+  border-top: 1px solid var(--color-gray-400);
+  border-bottom: 1px solid var(--color-gray-400);
+  padding: var(--spacing-m) 0;
+}
+
+.pdp div.pdp-share-container a img {
+  width: 1.5em;
+  height: 1.5em;
+  background-color: currentcolor;
+  border-radius: 50%;
+}
+
+.pdp div.pdp-share-container a.pdp-share-email img {
+  background-color: unset;
+  border-radius: unset;
+}
+
+.pdp-alert {
+  grid-area: alert;
+  background-color: var(--color-gray-900);
+  color: var(--color-white);
+  text-align: center;
 }

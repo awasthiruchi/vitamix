@@ -110,6 +110,17 @@ function renderFAQ(block) {
   block.parentElement.append(faqContainer);
 }
 
+function renderCompare() {
+  const compareContainer = document.createElement('div');
+  compareContainer.classList.add('pdp-compare-container');
+  compareContainer.innerHTML = `
+    <div>
+      <button class="pdp-compare-button">Compare</button>
+      <a href="https://www.vitamix.com/us/en_us/catalog/product_compare/index/" title="View Comparison" class="comparelistlink">View Comparison List.</a>
+    </div>`;
+  return compareContainer;
+}
+
 function renderContent() {
   const contentContainer = document.createElement('div');
   contentContainer.classList.add('pdp-content-fragment');
@@ -122,6 +133,44 @@ function renderContent() {
   };
   insertFragment();
   return contentContainer;
+}
+
+function renderFreeShipping(offers) {
+  if (!offers[0] || offers[0].price < 99) return null;
+  const freeShippingContainer = document.createElement('div');
+  freeShippingContainer.classList.add('pdp-free-shipping-container');
+  freeShippingContainer.innerHTML = `
+      <img src="/icons/delivery.svg" alt="Free Shipping" />
+      <span>Eligible for FREE shipping</span>
+  `;
+  return freeShippingContainer;
+}
+
+function renderAlert(offers) {
+  if (offers[0] && (offers[0].availability === 'https://schema.org/Discontinued' || offers[0].availability === 'https://schema.org/PreOrder')) {
+    const alertContainer = document.createElement('div');
+    const text = offers[0].availability === 'https://schema.org/Discontinued' ? 'Retired Product' : 'Coming Soon';
+    alertContainer.classList.add('pdp-alert');
+    alertContainer.innerHTML = `
+      <p>${text}</p>
+    `;
+    return alertContainer;
+  }
+  return null;
+}
+
+function renderShare() {
+  const shareContainer = document.createElement('div');
+  shareContainer.classList.add('pdp-share-container');
+  const url = decodeURIComponent(window.location.href);
+  shareContainer.innerHTML = `
+    Share: 
+    <a rel="noopener noreferrer nofollow" href="https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${url}"><img src="/icons/facebook.svg" alt="Facebook" /></a>
+    <a rel="noopener noreferrer nofollow" href="https://www.twitter.com/share?url=${url}"><img src="/icons/twitter.svg" alt="Twitter" /></a>
+    <a rel="noopener noreferrer nofollow" href="https://www.pinterest.com/pin/create/button/?url=${url}"><img src="/icons/pinterest.svg" alt="Pinterest" /></a>
+    <a rel="noopener noreferrer nofollow" class="pdp-share-email"href="mailto: ?subject=Check this out on Vitamix.com&body=${url}"><img src="/icons/email.svg" alt="Email" /></a>
+  `;
+  return shareContainer;
 }
 
 /**
@@ -141,9 +190,26 @@ export default function decorate(block) {
   const { variants } = window;
   const galleryContainer = renderGallery(block, variants);
   const titleContainer = renderTitle(block);
+  const alertContainer = renderAlert(jsonLdData.offers);
+
+  const buyBox = document.createElement('div');
+  buyBox.classList.add('pdp-buy-box');
+
   const pricingContainer = renderPricing(block);
   const optionsContainer = renderOptions(block, variants);
   const addToCartContainer = renderAddToCart(block);
+  const compareContainer = renderCompare();
+  const freeShippingContainer = renderFreeShipping(jsonLdData.offers);
+  const shareContainer = renderShare();
+  buyBox.append(
+    pricingContainer,
+    optionsContainer || '',
+    addToCartContainer,
+    compareContainer,
+    freeShippingContainer || '',
+    shareContainer,
+  );
+
   const detailsContainer = renderDetails(block);
   const specifications = detailsContainer.querySelector('.specifications');
   const specsContainer = renderSpecs(specifications, jsonLdData);
@@ -154,16 +220,12 @@ export default function decorate(block) {
   renderReviews(block);
 
   block.append(
+    alertContainer || '',
     titleContainer,
     galleryContainer,
-    pricingContainer,
-    addToCartContainer,
+    buyBox,
     contentContainer,
     detailsContainer,
     specsContainer,
   );
-
-  if (optionsContainer) {
-    block.append(optionsContainer);
-  }
 }
