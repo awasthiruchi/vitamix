@@ -147,13 +147,7 @@ function renderFreeShipping(offers) {
 }
 
 function renderAlert(offers) {
-  if (
-    offers[0]
-    && (
-      offers[0].availability === 'https://schema.org/Discontinued' ||
-      offers[0].availability === 'https://schema.org/PreOrder'
-    )
-  ) {
+  if (offers[0] && (offers[0].availability === 'https://schema.org/Discontinued' || offers[0].availability === 'https://schema.org/PreOrder')) {
     const alertContainer = document.createElement('div');
     const text = offers[0].availability === 'https://schema.org/Discontinued' ? 'Retired Product' : 'Coming Soon';
     alertContainer.classList.add('pdp-alert');
