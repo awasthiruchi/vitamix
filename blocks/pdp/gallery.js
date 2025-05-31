@@ -32,7 +32,6 @@ export function attachImageListeners(galleryImages, selectedImageElement) {
  * @returns {Element} The gallery container element
  */
 export default function renderGallery(block, variants) {
-  console.log(variants);
   const galleryContainer = document.createElement('div');
   galleryContainer.classList.add('gallery');
 
@@ -63,8 +62,6 @@ export default function renderGallery(block, variants) {
 
     galleryContainer.append(galleryImages);
   }
-
-  console.log(galleryContainer);
 
   return galleryContainer;
 }
