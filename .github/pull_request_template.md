@@ -3,5 +3,5 @@ Please always provide the [GitHub issue(s)](../issues) your PR is for, as well a
 Fix #<gh-issue-id>
 
 Test URLs:
-- Before: https://main--vitamix--aemsites.aem.live/
-- After: https://<branch>--vitamix--aemsites.aem.live/
+- Before: https://main--vitamix--aemsites.aem.network/
+- After: https://<branch>--vitamix--aemsites.aem.network/
