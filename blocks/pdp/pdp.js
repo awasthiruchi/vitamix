@@ -146,10 +146,16 @@ function renderFreeShipping(offers) {
   return freeShippingContainer;
 }
 
-function renderAlert(offers) {
-  if (offers[0] && (offers[0].availability === 'https://schema.org/Discontinued' || offers[0].availability === 'https://schema.org/PreOrder')) {
+function renderAlert(product) {
+  const { offers } = product;
+  const { availability } = offers[0];
+  if (offers[0] && (
+    availability === 'https://schema.org/Discontinued'
+    || availability === 'https://schema.org/PreOrder'
+    || (product.custom && product.custom.retired === 'Yes')
+  )) {
     const alertContainer = document.createElement('div');
-    const text = offers[0].availability === 'https://schema.org/Discontinued' ? 'Retired Product' : 'Coming Soon';
+    const text = (availability === 'https://schema.org/Discontinued' || product.custom.retired === 'Yes') ? 'Retired Product' : 'Coming Soon';
     alertContainer.classList.add('pdp-alert');
     alertContainer.innerHTML = `
       <p>${text}</p>
@@ -190,7 +196,7 @@ export default function decorate(block) {
   const { variants } = window;
   const galleryContainer = renderGallery(block, variants);
   const titleContainer = renderTitle(block);
-  const alertContainer = renderAlert(jsonLdData.offers);
+  const alertContainer = renderAlert(jsonLdData);
 
   const buyBox = document.createElement('div');
   buyBox.classList.add('pdp-buy-box');
