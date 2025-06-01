@@ -98,7 +98,7 @@ async function renderReviews(block) {
   block.parentElement.append(bazaarvoiceContainer);
 }
 
-function renderFAQ(block) {
+function renderFAQ() {
   const faqContainer = document.createElement('div');
   faqContainer.classList.add('faq-container');
   faqContainer.innerHTML = `
@@ -107,7 +107,7 @@ function renderFAQ(block) {
     <li><a href="https://www.vitamix.com/us/en_us/owners-resources/product-support/faqs/">Frequently Asked Questions</a></li>
     <li><a href="https://www.vitamix.com/us/en_us/customer-service/contact-us/">Contact Us</a></li>
   </ul>`;
-  block.parentElement.append(faqContainer);
+  return faqContainer;
 }
 
 function renderCompare() {
@@ -159,6 +159,39 @@ function renderAlert(offers) {
   return null;
 }
 
+function renderRelatedProducts(product) {
+  const { crosssellSkus } = product.custom;
+  const relatedSkus = crosssellSkus ? crosssellSkus.split(',').map((sku) => sku.trim()) : [];
+  if (relatedSkus.length > 0) {
+    const sampleUrls = ['/us/en_us/products/propel-series-750', '/us/en_us/products/propel-series-510', '/us/en_us/products/ascent-x2', '/us/en_us/products/ascent-x3', '/us/en_us/products/ascent-x4'];
+    const relatedProducts = relatedSkus.map(
+      () => sampleUrls[Math.floor(Math.random() * sampleUrls.length)],
+    );
+    const relatedProductsContainer = document.createElement('div');
+    relatedProductsContainer.classList.add('pdp-related-products-container');
+    relatedProductsContainer.innerHTML = `
+      <h2>Related Products</h2>
+    `;
+    const ul = document.createElement('ul');
+    relatedProducts.forEach((url) => {
+      const li = document.createElement('li');
+      const fillProduct = async () => {
+        const resp = await fetch(`${url}.json`);
+        const json = await resp.json();
+        const title = json.name;
+        const image = new URL(json.images[0].url, window.location.href);
+        const price = json.price.final;
+        li.innerHTML = `<a href="${url}"><img src="${image}?width=750&#x26;format=webply&#x26;optimize=medium" alt="${title}" /><div><p>${title}</p><strong>$${price.toFixed(2)}</strong></div></a>`;
+      };
+      fillProduct();
+      ul.appendChild(li);
+    });
+    relatedProductsContainer.appendChild(ul);
+    return relatedProductsContainer;
+  }
+  return null;
+}
+
 function renderShare() {
   const shareContainer = document.createElement('div');
   shareContainer.classList.add('pdp-share-container');
@@ -191,6 +224,7 @@ export default function decorate(block) {
   const galleryContainer = renderGallery(block, variants);
   const titleContainer = renderTitle(block);
   const alertContainer = renderAlert(jsonLdData.offers);
+  const relatedProductsContainer = renderRelatedProducts(jsonLdData);
 
   const buyBox = document.createElement('div');
   buyBox.classList.add('pdp-buy-box');
@@ -216,7 +250,7 @@ export default function decorate(block) {
   specifications.remove();
 
   const contentContainer = renderContent();
-  renderFAQ(block);
+  const faqContainer = renderFAQ(block);
   renderReviews(block);
 
   block.append(
@@ -227,5 +261,7 @@ export default function decorate(block) {
     contentContainer,
     detailsContainer,
     specsContainer,
+    faqContainer,
+    relatedProductsContainer || '',
   );
 }
