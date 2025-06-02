@@ -155,7 +155,7 @@ function renderAlert(product) {
     || (product.custom && product.custom.retired)
   )) {
     const alertContainer = document.createElement('div');
-    const text = (availability === 'https://schema.org/Discontinued' || product.custom.retired === 'Yes') ? 'Retired Product' : 'Coming Soon';
+    const text = (availability === 'https://schema.org/Discontinued' || product.custom.retired) ? 'Retired Product' : 'Coming Soon';
     alertContainer.classList.add('pdp-alert');
     alertContainer.innerHTML = `
       <p>${text}</p>
