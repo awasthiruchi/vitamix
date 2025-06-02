@@ -152,7 +152,7 @@ function renderAlert(product) {
   if (offers[0] && (
     availability === 'https://schema.org/Discontinued'
     || availability === 'https://schema.org/PreOrder'
-    || (product.custom && product.custom.retired === 'Yes')
+    || (product.custom && product.custom.retired)
   )) {
     const alertContainer = document.createElement('div');
     const text = (availability === 'https://schema.org/Discontinued' || product.custom.retired === 'Yes') ? 'Retired Product' : 'Coming Soon';
