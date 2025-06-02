@@ -161,12 +161,8 @@ function renderAlert(offers) {
 
 function renderRelatedProducts(product) {
   const { crosssellSkus } = product.custom;
-  const relatedSkus = crosssellSkus ? crosssellSkus.split(',').map((sku) => sku.trim()) : [];
-  if (relatedSkus.length > 0) {
-    const sampleUrls = ['/us/en_us/products/propel-series-750', '/us/en_us/products/propel-series-510', '/us/en_us/products/ascent-x2', '/us/en_us/products/ascent-x3', '/us/en_us/products/ascent-x4'];
-    const relatedProducts = relatedSkus.map(
-      () => sampleUrls[Math.floor(Math.random() * sampleUrls.length)],
-    );
+  const relatedProducts = crosssellSkus || [];
+  if (relatedProducts.length > 0) {
     const relatedProductsContainer = document.createElement('div');
     relatedProductsContainer.classList.add('pdp-related-products-container');
     relatedProductsContainer.innerHTML = `
