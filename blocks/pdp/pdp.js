@@ -2,7 +2,7 @@ import { loadScript, toClassName, getMetadata } from '../../scripts/aem.js';
 import renderGallery from './gallery.js';
 import renderSpecs from './specification-tabs.js';
 import renderPricing from './pricing.js';
-import renderOptions from './options.js';
+import { renderOptions, onOptionChange } from './options.js';
 import { loadFragment } from '../fragment/fragment.js';
 
 const BV_PRODUCT_ID = getMetadata('reviewsId') || toClassName(getMetadata('sku')).replace(/-/g, '');
@@ -228,4 +228,12 @@ export default function decorate(block) {
     detailsContainer,
     specsContainer,
   );
+
+  const queryParams = new URLSearchParams(window.location.search);
+  if (queryParams.get('color')) {
+    const color = queryParams.get('color');
+    if (color) {
+      onOptionChange(block, variants, color);
+    }
+  }
 }
