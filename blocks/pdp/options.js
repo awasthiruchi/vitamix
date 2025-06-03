@@ -1,5 +1,6 @@
 import { attachImageListeners } from './gallery.js';
 import { toClassName } from '../../scripts/aem.js';
+import renderPricing from './pricing.js';
 
 /**
  * Handles the change of an option.
@@ -18,6 +19,13 @@ export function onOptionChange(block, variants, color) {
 
   const selectedOptionLabel = block.querySelector('.selected-option-label');
   const variant = variants.find((colorVariant) => colorVariant.options.color.replace(/\s+/g, '-').toLowerCase() === color);
+
+  // update pricing
+  const pricingContainer = renderPricing(block, variant);
+  if (pricingContainer) {
+    block.querySelector('.pricing').replaceWith(pricingContainer);
+  }
+
   const variantColor = variant.options.color;
   selectedOptionLabel.textContent = `Color: ${variantColor}`;
 
