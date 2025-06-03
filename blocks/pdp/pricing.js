@@ -30,12 +30,16 @@ function extractPricing(element) {
  * @param {Element} block - The PDP block element
  * @returns {Element} The pricing container element
  */
-export default function renderPricing(block) {
+export default function renderPricing(block, variant) {
   const pricingContainer = document.createElement('div');
   pricingContainer.classList.add('pricing');
 
   const pricingElement = block.querySelector('p:nth-of-type(1)');
-  const pricing = extractPricing(pricingElement);
+  const pricing = variant ? variant.price : extractPricing(pricingElement);
+  if (!pricing) {
+    return null;
+  }
+
   pricingElement.remove();
 
   const nowLabel = document.createElement('div');
