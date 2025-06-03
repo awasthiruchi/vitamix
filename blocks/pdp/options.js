@@ -7,7 +7,15 @@ import { toClassName } from '../../scripts/aem.js';
  * @param {Array} variants - The variants of the product
  * @param {string} color - The color of the selected option
  */
-function onOptionChange(block, variants, color) {
+export function onOptionChange(block, variants, color) {
+  if (variants[0].options.color.replace(/\s+/g, '-').toLowerCase() !== color) {
+    // eslint-disable-next-line no-restricted-globals
+    history.replaceState(null, '', `?color=${color}`);
+  } else {
+    // eslint-disable-next-line no-restricted-globals
+    history.replaceState(null, '', window.location.pathname);
+  }
+
   const selectedOptionLabel = block.querySelector('.selected-option-label');
   const variant = variants.find((colorVariant) => colorVariant.options.color.replace(/\s+/g, '-').toLowerCase() === color);
   const variantColor = variant.options.color;
@@ -45,7 +53,7 @@ function onOptionChange(block, variants, color) {
  * @param {Element} block - The PDP block element
  * @returns {Element} The options container element
  */
-export default function renderOptions(block, variants, customOptions) {
+export function renderOptions(block, variants, customOptions) {
   // if there are no variants, don't render anything
   if (!variants || variants.length === 0) {
     return;
