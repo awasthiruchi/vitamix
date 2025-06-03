@@ -53,7 +53,7 @@ export function onOptionChange(block, variants, color) {
  * @param {Element} block - The PDP block element
  * @returns {Element} The options container element
  */
-export function renderOptions(block, variants) {
+export function renderOptions(block, variants, customOptions) {
   // if there are no variants, don't render anything
   if (!variants || variants.length === 0) {
     return;
@@ -102,9 +102,30 @@ export function renderOptions(block, variants) {
   warrentyHeading.textContent = 'Warranty:';
   warrentyContainer.append(warrentyHeading);
 
-  const warrentyValue = document.createElement('div');
-  warrentyValue.textContent = '10 Year Standard Warranty (Free)';
-  warrentyContainer.append(warrentyValue);
+  customOptions.forEach((option, i) => {
+    const formatPrice = (price) => {
+      if (price) {
+        return `$${price.toFixed(2)}`;
+      }
+      return 'Free';
+    };
+    const warrentyValue = document.createElement('div');
+    warrentyValue.classList.add('pdp-warrenty-option');
+    warrentyValue.textContent = `${option.name} (${formatPrice(+option.price)})`;
+    if (customOptions.length > 1) {
+      const radio = document.createElement('input');
+      radio.type = 'radio';
+      radio.name = 'warranty';
+      radio.value = option.name;
+      if (i === 0) {
+        radio.checked = true;
+      }
+      warrentyValue.prepend(radio);
+    }
+    warrentyContainer.append(warrentyValue);
+  });
+
+  optionsContainer.append(warrentyContainer);
 
   const cookbookContainer = document.createElement('div');
   cookbookContainer.classList.add('cookbook');
