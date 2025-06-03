@@ -2,7 +2,7 @@ import { loadScript, toClassName, getMetadata } from '../../scripts/aem.js';
 import renderGallery from './gallery.js';
 import renderSpecs from './specification-tabs.js';
 import renderPricing from './pricing.js';
-import renderOptions from './options.js';
+import { renderOptions, onOptionChange } from './options.js';
 import { loadFragment } from '../fragment/fragment.js';
 
 const BV_PRODUCT_ID = getMetadata('reviewsId') || toClassName(getMetadata('sku')).replace(/-/g, '');
@@ -226,7 +226,7 @@ export default function decorate(block) {
   buyBox.classList.add('pdp-buy-box');
 
   const pricingContainer = renderPricing(block);
-  const optionsContainer = renderOptions(block, variants);
+  const optionsContainer = renderOptions(block, variants, jsonLdData.custom.options);
   const addToCartContainer = renderAddToCart(block);
   const compareContainer = renderCompare();
   const freeShippingContainer = renderFreeShipping(jsonLdData.offers);
@@ -260,4 +260,12 @@ export default function decorate(block) {
     faqContainer,
     relatedProductsContainer || '',
   );
+
+  const queryParams = new URLSearchParams(window.location.search);
+  if (queryParams.get('color')) {
+    const color = queryParams.get('color');
+    if (color) {
+      onOptionChange(block, variants, color);
+    }
+  }
 }
