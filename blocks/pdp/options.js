@@ -7,7 +7,15 @@ import { toClassName } from '../../scripts/aem.js';
  * @param {Array} variants - The variants of the product
  * @param {string} color - The color of the selected option
  */
-function onOptionChange(block, variants, color) {
+export function onOptionChange(block, variants, color) {
+  if (variants[0].options.color.replace(/\s+/g, '-').toLowerCase() !== color) {
+    // eslint-disable-next-line no-restricted-globals
+    history.replaceState(null, '', `?color=${color}`);
+  } else {
+    // eslint-disable-next-line no-restricted-globals
+    history.replaceState(null, '', window.location.pathname);
+  }
+
   const selectedOptionLabel = block.querySelector('.selected-option-label');
   const variant = variants.find((colorVariant) => colorVariant.options.color.replace(/\s+/g, '-').toLowerCase() === color);
   const variantColor = variant.options.color;
@@ -45,7 +53,7 @@ function onOptionChange(block, variants, color) {
  * @param {Element} block - The PDP block element
  * @returns {Element} The options container element
  */
-export default function renderOptions(block, variants) {
+export function renderOptions(block, variants, customOptions) {
   // if there are no variants, don't render anything
   if (!variants || variants.length === 0) {
     return;
@@ -94,9 +102,30 @@ export default function renderOptions(block, variants) {
   warrentyHeading.textContent = 'Warranty:';
   warrentyContainer.append(warrentyHeading);
 
-  const warrentyValue = document.createElement('div');
-  warrentyValue.textContent = '10 Year Standard Warranty (Free)';
-  warrentyContainer.append(warrentyValue);
+  customOptions.forEach((option, i) => {
+    const formatPrice = (price) => {
+      if (price) {
+        return `$${price.toFixed(2)}`;
+      }
+      return 'Free';
+    };
+    const warrentyValue = document.createElement('div');
+    warrentyValue.classList.add('pdp-warrenty-option');
+    warrentyValue.textContent = `${option.name} (${formatPrice(+option.price)})`;
+    if (customOptions.length > 1) {
+      const radio = document.createElement('input');
+      radio.type = 'radio';
+      radio.name = 'warranty';
+      radio.value = option.name;
+      if (i === 0) {
+        radio.checked = true;
+      }
+      warrentyValue.prepend(radio);
+    }
+    warrentyContainer.append(warrentyValue);
+  });
+
+  optionsContainer.append(warrentyContainer);
 
   const cookbookContainer = document.createElement('div');
   cookbookContainer.classList.add('cookbook');
