@@ -160,8 +160,8 @@ function renderAlert(offers) {
 }
 
 function renderRelatedProducts(product) {
-  const { crosssellSkus } = product.custom;
-  const relatedProducts = crosssellSkus || [];
+  const { relatedSkus } = product.custom;
+  const relatedProducts = relatedSkus || [];
   if (relatedProducts.length > 0) {
     const relatedProductsContainer = document.createElement('div');
     relatedProductsContainer.classList.add('pdp-related-products-container');
