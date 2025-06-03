@@ -225,7 +225,7 @@ export default function decorate(block) {
   const { variants } = window;
   const galleryContainer = renderGallery(block, variants);
   const titleContainer = renderTitle(block);
-  const alertContainer = renderAlert(jsonLdData.offers);
+  const alertContainer = renderAlert(jsonLdData);
   const relatedProductsContainer = renderRelatedProducts(jsonLdData);
 
   const buyBox = document.createElement('div');
