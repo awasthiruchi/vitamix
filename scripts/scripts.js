@@ -220,6 +220,11 @@ function parseVariants(sections) {
   });
 }
 
+export function checkOutOfStock(sku) {
+  const { availability } = window.jsonLdData.offers.find((offer) => offer.sku === sku);
+  return availability === 'https://schema.org/OutOfStock';
+}
+
 /**
  * Builds hero block and prepends to main in a new section.
  * @param {Element} main The container element
@@ -258,11 +263,16 @@ function buildPDPBlock(main) {
   const variantSections = Array.from(main.querySelectorAll(':scope > div'));
   window.variants = parseVariants(variantSections);
 
+  // Get the json-ld from the head and parse it
+  const jsonLd = document.head.querySelector('script[type="application/ld+json"]');
+  window.jsonLdData = jsonLd ? JSON.parse(jsonLd.textContent) : null;
+
   const navMeta = document.head.querySelector('meta[name="nav"]');
   if (!navMeta) {
     [
       ['nav', '/us/en_us/nav/nav'],
       ['footer', '/us/en_us/footer/footer'],
+      ['nav-banner', '/us/en_us/nav/nav-banner'],
     ].forEach(([name, content]) => {
       const meta = document.createElement('meta');
       meta.name = name;
@@ -558,8 +568,8 @@ async function loadEager(doc) {
 
   const main = doc.querySelector('main');
   if (main) {
-    await loadNavBanner(main);
     decorateMain(main);
+    await loadNavBanner(main);
     document.body.classList.add('appear');
     await loadSection(main.querySelector('.section'), waitForFirstImage);
   }
