@@ -262,7 +262,7 @@ function buildPDPBlock(main) {
 
   const isValidType = ['simple', 'configurable', 'bundle'].includes(type);
   if (isValidType) {
-    const lcpPictureSelector = type === 'simple'
+    const lcpPictureSelector = !main.querySelector('h2')
       ? 'picture:first-of-type'
       : 'div:nth-child(2) picture';
 
@@ -280,7 +280,7 @@ function buildPDPBlock(main) {
     lcp.append(selectedImage);
     lcp.remove();
 
-    if (type === 'simple') {
+    if (!main.querySelector('h2')) {
       lcpPicture.remove();
     }
 

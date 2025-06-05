@@ -157,8 +157,10 @@ function renderContent() {
   const fragmentPath = window.location.pathname.replace('/products/', '/products/fragments/');
   const insertFragment = async () => {
     const fragment = await loadFragment(fragmentPath);
-    while (fragment.firstChild) {
-      contentContainer.append(fragment.firstChild);
+    if (fragment) {
+      while (fragment.firstChild) {
+        contentContainer.append(fragment.firstChild);
+      }
     }
   };
   insertFragment();
@@ -212,7 +214,7 @@ function renderRelatedProducts(product) {
         const json = await resp.json();
         const title = json.name;
         const image = new URL(json.images[0].url, window.location.href);
-        const price = json.price.final;
+        const price = +json.price.final;
         li.innerHTML = `<a href="${url}"><img src="${image}?width=750&#x26;format=webply&#x26;optimize=medium" alt="${title}" /><div><p>${title}</p><strong>$${price.toFixed(2)}</strong></div></a>`;
       };
       fillProduct();
