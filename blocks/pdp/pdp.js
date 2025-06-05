@@ -71,6 +71,29 @@ function renderAddToCart() {
   // Add to Cart Button
   const addToCartButton = document.createElement('button');
   addToCartButton.textContent = 'Add to Cart';
+
+  addToCartButton.addEventListener('click', async () => {
+    // eslint-disable-next-line import/no-unresolved
+    const { default: addToCart } = await import('https://cart--vitamix--aemsites.aem.network/blocks/pdp/add-to-cart.js');
+
+    const { updateMagentoCacheSections, getMagentoCache } = await import('../../scripts/storage/util.js');
+
+    // Check cache and update if needed
+    const currentCache = getMagentoCache();
+    if (!currentCache?.customer) {
+      await updateMagentoCacheSections(['customer']);
+    }
+
+    // Temporary hooks to modify selected product for dev
+    if (!window.selectedSku) {
+      window.selectedSku = '067891';
+      window.selectedOptions = [];
+      window.selectedQuantity = 1;
+    }
+
+    addToCart(window.selectedSku, window.selectedOptions, window.selectedQuantity);
+  });
+
   quantityContainer.appendChild(addToCartButton);
 
   addToCartContainer.appendChild(quantityContainer);
