@@ -1,28 +1,52 @@
+import { buildCarousel } from '../../scripts/scripts.js';
+import { getMetadata } from '../../scripts/aem.js';
+
 /**
- * Attaches click listeners to each gallery image and assigns them to the .lcp-image.
- * @param {Element} galleryImages - The gallery images container element
- * @param {Element} selectedImageElement - The selected image element
+ * Accepts an element and returns clean <li> > <picture> structure.
+ * @param {HTMLElement} el - Wrapper element
+ * @param {string} source - Source of slide
+ * @returns {HTMLLIElement|null}
  */
-export function attachImageListeners(galleryImages, selectedImageElement) {
-  // Add click listener to each gallery image and assign to .lcp-image
-  // TODO: This is adding multiple listeners to the same element
-  galleryImages.querySelectorAll('picture').forEach((picture) => {
-    picture.addEventListener('click', () => {
-      // if the picture is already selected, do nothing
-      if (picture.classList.contains('selected')) return;
+export function buildSlide(el, source) {
+  const picture = el.tagName === 'PICTURE' ? el : el.querySelector('picture');
+  if (!picture) return null;
 
-      // remove selected class from all pictures
-      galleryImages.querySelectorAll('picture').forEach((galleryImage) => {
-        galleryImage.classList.remove('selected');
-      });
-      // add selected class to the clicked picture
-      picture.classList.add('selected');
+  const li = document.createElement('li');
+  if (source) li.dataset.source = source;
+  li.append(picture);
+  return li;
+}
 
-      // swap the selected picture with the .lcp-image
-      const currentImage = selectedImageElement.querySelector('picture');
-      currentImage.remove();
-      selectedImageElement.append(picture.cloneNode(true));
-    });
+/**
+ * Builds thumbnail images for the carousel nav buttons.
+ * @param {Element} carousel - Carousel container element.
+ */
+export function buildThumbnails(carousel) {
+  const imgs = carousel.querySelectorAll('li img');
+  const indices = carousel.querySelectorAll('nav li button');
+
+  // scroll selected thumbnail into view on selection
+  const observer = new MutationObserver(() => {
+    const selected = carousel.querySelector('nav li button[aria-selected="true"]');
+    if (selected) selected.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+  });
+
+  indices.forEach((btn, i) => {
+    const img = imgs[i];
+    if (!img) return;
+
+    const imgLi = img.closest('li');
+    const { source } = imgLi.dataset;
+
+    const thumb = img.cloneNode(true);
+    if (source) {
+      const btnLi = btn.closest('li');
+      btnLi.dataset.source = source;
+    }
+    btn.replaceChildren(thumb);
+
+    // track aria-selected updates
+    observer.observe(btn, { attributes: true, attributeFilter: ['aria-selected'] });
   });
 }
 
@@ -32,34 +56,54 @@ export function attachImageListeners(galleryImages, selectedImageElement) {
  * @returns {Element} The gallery container element
  */
 export default function renderGallery(block, variants) {
-  const galleryContainer = document.createElement('div');
-  galleryContainer.classList.add('gallery');
+  const gallery = document.createElement('div');
+  gallery.className = 'gallery';
+  const wrapper = document.createElement('ul');
+  gallery.append(wrapper);
 
-  const selectedImage = block.querySelector('.lcp-image');
-  galleryContainer.append(selectedImage);
+  // prioritize LCP image in gallery
+  const lcp = block.querySelector('.lcp-image');
+  let lcpSrc;
+  if (lcp) {
+    const lcpSlide = buildSlide(lcp, 'lcp');
+    if (lcpSlide) {
+      wrapper.prepend(lcpSlide);
+      lcpSrc = new URL(lcpSlide.querySelector('img').src).pathname;
+    }
+  }
 
   if (variants && variants.length > 0) {
     const defaultVariant = variants[0];
-    const galleryImages = document.createElement('div');
-    galleryImages.classList.add('gallery-images');
-    defaultVariant.images[0]?.classList.add('selected');
 
-    const images = block.querySelectorAll('.img-wrapper');
-    let firstVariantImages = defaultVariant.images;
+    // check if bundle (should skip variant images)
+    const bundle = getMetadata('type') === 'bundle';
+    let variantImages = bundle ? [] : defaultVariant.images || [];
+    variantImages = [...variantImages].map((v, i) => {
+      const clone = v.cloneNode(true);
+      clone.dataset.source = i ? 'variant' : 'lcp';
+      return clone;
+    });
 
-    const type = document.head.querySelector('meta[name="type"]')?.content;
-    if (type === 'bundle') {
-      firstVariantImages = [];
-    }
-    // Keep track of the default product images
-    window.defaultProductImages = Array.from(images).map((image) => image.cloneNode(true));
+    // grab fallback images
+    const fallbackImages = block.querySelectorAll('.img-wrapper');
 
-    galleryImages.append(...firstVariantImages, ...images);
+    // store clones for reset functionality
+    window.defaultProductImages = Array.from(fallbackImages).map((img) => img.cloneNode(true));
 
-    attachImageListeners(galleryImages, selectedImage);
-
-    galleryContainer.append(galleryImages);
+    // append slides from images
+    [...variantImages, ...fallbackImages].forEach((el) => {
+      const { source } = el.dataset;
+      const slide = buildSlide(el, source);
+      if (slide) {
+        const src = new URL(slide.querySelector('img').src).pathname;
+        // don't duplicate LCP image
+        if (src !== lcpSrc) wrapper.append(slide);
+      }
+    });
   }
 
-  return galleryContainer;
+  const carousel = buildCarousel(gallery);
+  buildThumbnails(carousel);
+
+  return carousel;
 }
