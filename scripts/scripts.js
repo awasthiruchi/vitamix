@@ -393,17 +393,17 @@ function decorateImages(main) {
  */
 function decorateEyebrows(main) {
   main.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((h) => {
-    const prev = h.previousElementSibling;
-    if (prev && prev.tagName === 'P') {
-      // ignore p tags sandwiched between h tags
-      const next = prev.nextElementSibling;
-      if (next && next.tagName.startsWith('H')) return;
+    const beforeH = h.previousElementSibling;
+    if (beforeH && beforeH.tagName === 'P') {
+      const beforeP = beforeH.previousElementSibling;
+      // ignore p tags sandwiched between headings
+      if (beforeP && beforeP.tagName.startsWith('H')) return;
       // ignore p tags with images or links
-      const disqualifiers = prev.querySelector('img, a[href]');
+      const disqualifiers = beforeH.querySelector('img, a[href]');
       if (disqualifiers) return;
 
-      prev.classList.add('eyebrow');
-      h.dataset.eyebrow = prev.textContent;
+      beforeH.classList.add('eyebrow');
+      h.dataset.eyebrow = beforeH.textContent.trim();
     }
   });
 }
