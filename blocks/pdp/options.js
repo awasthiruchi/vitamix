@@ -1,8 +1,7 @@
 import { buildSlide, buildThumbnails } from './gallery.js';
-import { rebuildIndices } from '../../scripts/scripts.js';
+import { rebuildIndices, checkOutOfStock } from '../../scripts/scripts.js';
 import { toClassName, getMetadata } from '../../scripts/aem.js';
 import renderPricing from './pricing.js';
-import { checkOutOfStock } from '../../scripts/scripts.js';
 
 /**
  * Handles the change of an option.
