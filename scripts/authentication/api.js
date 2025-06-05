@@ -1,5 +1,5 @@
-import { addMagentoCacheListener, getLoggedInFromLocalStorage, getMagentoCache } from '../storage/util.js';
-import { getConfigValue } from '../configs.js';
+/* eslint-disable import/prefer-default-export */
+import { addMagentoCacheListener, getLoggedInFromLocalStorage } from '../storage/util.js';
 
 export const authApi = {
   /**
@@ -31,7 +31,7 @@ export const authApi = {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Store: await getConfigValue('commerce-store-code'),
+        Store: 'en_us',
         'X-Requested-With': 'XMLHttpRequest',
       },
       credentials: 'include',
