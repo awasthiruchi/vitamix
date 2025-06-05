@@ -2,7 +2,7 @@ import { loadScript, toClassName, getMetadata } from '../../scripts/aem.js';
 import renderGallery from './gallery.js';
 import renderSpecs from './specification-tabs.js';
 import renderPricing from './pricing.js';
-import renderOptions from './options.js';
+import { renderOptions, onOptionChange } from './options.js';
 import { loadFragment } from '../fragment/fragment.js';
 
 const BV_PRODUCT_ID = getMetadata('reviewsId') || toClassName(getMetadata('sku')).replace(/-/g, '');
@@ -71,6 +71,29 @@ function renderAddToCart() {
   // Add to Cart Button
   const addToCartButton = document.createElement('button');
   addToCartButton.textContent = 'Add to Cart';
+
+  addToCartButton.addEventListener('click', async () => {
+    // eslint-disable-next-line import/no-unresolved
+    const { default: addToCart } = await import('https://cart--vitamix--aemsites.aem.network/blocks/pdp/add-to-cart.js');
+
+    const { updateMagentoCacheSections, getMagentoCache } = await import('../../scripts/storage/util.js');
+
+    // Check cache and update if needed
+    const currentCache = getMagentoCache();
+    if (!currentCache?.customer) {
+      await updateMagentoCacheSections(['customer']);
+    }
+
+    // Temporary hooks to modify selected product for dev
+    if (!window.selectedSku) {
+      window.selectedSku = '067891';
+      window.selectedOptions = [];
+      window.selectedQuantity = 1;
+    }
+
+    addToCart(window.selectedSku, window.selectedOptions, window.selectedQuantity);
+  });
+
   quantityContainer.appendChild(addToCartButton);
 
   addToCartContainer.appendChild(quantityContainer);
@@ -98,7 +121,7 @@ async function renderReviews(block) {
   block.parentElement.append(bazaarvoiceContainer);
 }
 
-function renderFAQ(block) {
+function renderFAQ() {
   const faqContainer = document.createElement('div');
   faqContainer.classList.add('faq-container');
   faqContainer.innerHTML = `
@@ -107,7 +130,7 @@ function renderFAQ(block) {
     <li><a href="https://www.vitamix.com/us/en_us/owners-resources/product-support/faqs/">Frequently Asked Questions</a></li>
     <li><a href="https://www.vitamix.com/us/en_us/customer-service/contact-us/">Contact Us</a></li>
   </ul>`;
-  block.parentElement.append(faqContainer);
+  return faqContainer;
 }
 
 function renderCompare() {
@@ -146,15 +169,50 @@ function renderFreeShipping(offers) {
   return freeShippingContainer;
 }
 
-function renderAlert(offers) {
-  if (offers[0] && (offers[0].availability === 'https://schema.org/Discontinued' || offers[0].availability === 'https://schema.org/PreOrder')) {
+function renderAlert(product) {
+  const { offers } = product;
+  const { availability } = offers[0];
+  if (offers[0] && (
+    availability === 'https://schema.org/Discontinued'
+    || availability === 'https://schema.org/PreOrder'
+    || (product.custom && product.custom.retired)
+  )) {
     const alertContainer = document.createElement('div');
-    const text = offers[0].availability === 'https://schema.org/Discontinued' ? 'Retired Product' : 'Coming Soon';
+    const text = (availability === 'https://schema.org/Discontinued' || product.custom.retired) ? 'Retired Product' : 'Coming Soon';
     alertContainer.classList.add('pdp-alert');
     alertContainer.innerHTML = `
       <p>${text}</p>
     `;
     return alertContainer;
+  }
+  return null;
+}
+
+function renderRelatedProducts(product) {
+  const { relatedSkus } = product.custom;
+  const relatedProducts = relatedSkus || [];
+  if (relatedProducts.length > 0) {
+    const relatedProductsContainer = document.createElement('div');
+    relatedProductsContainer.classList.add('pdp-related-products-container');
+    relatedProductsContainer.innerHTML = `
+      <h2>Related Products</h2>
+    `;
+    const ul = document.createElement('ul');
+    relatedProducts.forEach((url) => {
+      const li = document.createElement('li');
+      const fillProduct = async () => {
+        const resp = await fetch(`${url}.json`);
+        const json = await resp.json();
+        const title = json.name;
+        const image = new URL(json.images[0].url, window.location.href);
+        const price = json.price.final;
+        li.innerHTML = `<a href="${url}"><img src="${image}?width=750&#x26;format=webply&#x26;optimize=medium" alt="${title}" /><div><p>${title}</p><strong>$${price.toFixed(2)}</strong></div></a>`;
+      };
+      fillProduct();
+      ul.appendChild(li);
+    });
+    relatedProductsContainer.appendChild(ul);
+    return relatedProductsContainer;
   }
   return null;
 }
@@ -185,13 +243,14 @@ export default function decorate(block) {
   const { variants } = window;
   const galleryContainer = renderGallery(block, variants);
   const titleContainer = renderTitle(block);
-  const alertContainer = renderAlert(jsonLdData.offers);
+  const alertContainer = renderAlert(jsonLdData);
+  const relatedProductsContainer = renderRelatedProducts(jsonLdData);
 
   const buyBox = document.createElement('div');
   buyBox.classList.add('pdp-buy-box');
 
   const pricingContainer = renderPricing(block);
-  const optionsContainer = renderOptions(block, variants);
+  const optionsContainer = renderOptions(block, variants, jsonLdData.custom.options);
   const addToCartContainer = renderAddToCart(block);
   const compareContainer = renderCompare();
   const freeShippingContainer = renderFreeShipping(jsonLdData.offers);
@@ -211,7 +270,7 @@ export default function decorate(block) {
   specifications.remove();
 
   const contentContainer = renderContent();
-  renderFAQ(block);
+  const faqContainer = renderFAQ(block);
   renderReviews(block);
 
   block.append(
@@ -222,5 +281,15 @@ export default function decorate(block) {
     contentContainer,
     detailsContainer,
     specsContainer,
+    faqContainer,
+    relatedProductsContainer || '',
   );
+
+  const queryParams = new URLSearchParams(window.location.search);
+  if (queryParams.get('color')) {
+    const color = queryParams.get('color');
+    if (color) {
+      onOptionChange(block, variants, color);
+    }
+  }
 }

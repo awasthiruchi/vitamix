@@ -1,5 +1,6 @@
 @import url('./gallery.css');
 
+/* stylelint-disable no-descending-specificity */
 .pdp-wrapper {
   display: flex;
   flex-direction: column;
@@ -21,6 +22,7 @@
     "details"
     "specs"
     "faq"
+    "related"
     "reviews";
 }
 
@@ -326,6 +328,7 @@
       "content content"
       "details specs"
       "faq faq"
+      "related related"
       "reviews reviews"
   }
 }
@@ -520,4 +523,60 @@
   background-color: var(--color-gray-900);
   color: var(--color-white);
   text-align: center;
+}
+
+
+.pdp-related-products-container {
+  grid-area: related;
+  font-size: var(--body-size-l);
+}
+
+.pdp-related-products-container a {
+  text-decoration: none;
+}
+
+.pdp-related-products-container h4 {
+  font-size: var(--heading-size-l);
+  font-weight: var(--weight-medium);
+}
+
+.pdp-related-products-container ul {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(257px, 1fr));
+  gap: var(--spacing-s);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.pdp-related-products-container ul li {
+  margin: 0;
+  padding: 0;
+}
+
+.pdp-related-products-container ul li a {
+  display: flex;
+  gap: var(--spacing-s);
+}
+
+.pdp-related-products-container ul li img {
+  width: 140px;
+  height: auto;
+  object-fit: contain;
+}
+
+.pdp-warrenty-option {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-s);
+  margin: var(--spacing-s) 0;
+  font-size: var(--body-size-s);
+  font-weight: var(--weight-medium);
+  color: var(--color-text);
+}
+
+.pdp-warrenty-option input {
+  height: 24px;
+  width: 24px;
+  margin: 0;
 }
