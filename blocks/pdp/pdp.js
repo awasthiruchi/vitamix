@@ -2,8 +2,10 @@ import { loadScript, toClassName, getMetadata } from '../../scripts/aem.js';
 import renderGallery from './gallery.js';
 import renderSpecs from './specification-tabs.js';
 import renderPricing from './pricing.js';
+// eslint-disable-next-line import/no-cycle
 import { renderOptions, onOptionChange } from './options.js';
 import { loadFragment } from '../fragment/fragment.js';
+import { checkOutOfStock } from '../../scripts/scripts.js';
 
 const BV_PRODUCT_ID = getMetadata('reviewsId') || toClassName(getMetadata('sku')).replace(/-/g, '');
 
@@ -241,11 +243,7 @@ export default function decorate(block) {
     element.classList.remove('eyebrow');
   });
 
-  // Get the json-ld from the head and parse it
-  const jsonLd = document.head.querySelector('script[type="application/ld+json"]');
-  const jsonLdData = jsonLd ? JSON.parse(jsonLd.textContent) : null;
-
-  const { variants } = window;
+  const { jsonLdData, variants } = window;
   const galleryContainer = renderGallery(block, variants);
   const titleContainer = renderTitle(block);
   const alertContainer = renderAlert(jsonLdData);
@@ -297,4 +295,7 @@ export default function decorate(block) {
       onOptionChange(block, variants, color);
     }
   }
+
+  buyBox.dataset.sku = jsonLdData.offers[0].sku;
+  buyBox.dataset.oos = checkOutOfStock(jsonLdData.offers[0].sku);
 }
