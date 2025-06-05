@@ -1,5 +1,6 @@
-import { attachImageListeners } from './gallery.js';
-import { toClassName } from '../../scripts/aem.js';
+import { buildSlide, buildThumbnails } from './gallery.js';
+import { rebuildIndices } from '../../scripts/scripts.js';
+import { toClassName, getMetadata } from '../../scripts/aem.js';
 
 /**
  * Handles the change of an option.
@@ -10,34 +11,58 @@ import { toClassName } from '../../scripts/aem.js';
 function onOptionChange(block, variants, color) {
   const selectedOptionLabel = block.querySelector('.selected-option-label');
   const variant = variants.find((colorVariant) => colorVariant.options.color.replace(/\s+/g, '-').toLowerCase() === color);
+
   const variantColor = variant.options.color;
   selectedOptionLabel.textContent = `Color: ${variantColor}`;
 
-  const selectedImage = block.querySelector('.lcp-image');
-  const currentImage = selectedImage.querySelector('picture');
-  currentImage.remove();
-  selectedImage.append(variant.images[0].cloneNode(true));
-
-  // Update the gallery images
-  const galleryImages = block.querySelector('.gallery-images');
-  const currentVariantImages = block.querySelectorAll('.gallery-images > picture');
-  currentVariantImages.forEach((image) => {
-    image.remove();
+  // check if bundle (should skip variant images)
+  const bundle = getMetadata('type') === 'bundle';
+  let variantImages = bundle ? [] : variant.images || [];
+  variantImages = [...variantImages].map((v, i) => {
+    const clone = v.cloneNode(true);
+    clone.dataset.source = i ? 'variant' : 'lcp';
+    return clone;
   });
 
-  Array.from(variant.images).forEach((image) => {
-    galleryImages.prepend(image);
+  const gallery = block.querySelector('.gallery');
+  const [slides, nav] = gallery.querySelectorAll('ul');
+
+  // update LCP image(s)
+  const lcpSlide = slides.querySelector('[data-source="lcp"]');
+  const lcpButton = nav.querySelector('[data-source="lcp"] button');
+  if (lcpSlide && lcpButton) {
+    // measure current <picture> size
+    const oldPic = lcpSlide.querySelector('picture');
+    const { offsetHeight, offsetWidth } = oldPic;
+    const newPic = variantImages[0];
+    // temporarily set fixed dimensions to prevent layout shifts
+    newPic.style.height = `${offsetHeight}px`;
+    newPic.style.width = `${offsetWidth}px`;
+    lcpSlide.replaceChildren(newPic);
+    const newImg = newPic.querySelector('img');
+    // clear temporary inline styles once image loads
+    newImg.addEventListener('load', () => newPic.removeAttribute('style'));
+    lcpButton.replaceChildren(newImg.cloneNode(true));
+  }
+
+  // reset scroll position to the first slide
+  slides.scrollTo({ left: 0, behavior: 'smooth' });
+
+  // remove old variant slides and indices
+  [slides, nav].forEach((wrapper) => {
+    wrapper.querySelectorAll('[data-source="variant"]').forEach((v) => v.remove());
   });
 
-  // remove selected class from all pictures
-  galleryImages.querySelectorAll('picture').forEach((picture) => {
-    picture.classList.remove('selected');
+  // rebuild variant slides and insert after LCP
+  const lcpSibling = lcpSlide.nextElementSibling;
+  variantImages.slice(1).forEach((pic) => { // ignore first (LCP) image, handled previously
+    const slide = buildSlide(pic, 'variant');
+    if (slide) slides.insertBefore(slide, lcpSibling);
   });
 
-  // add selected class to the first image
-  galleryImages.querySelector('picture').classList.add('selected');
-
-  attachImageListeners(galleryImages, selectedImage);
+  // rebuild all indices
+  rebuildIndices(gallery);
+  buildThumbnails(gallery);
 }
 
 /**
