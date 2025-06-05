@@ -178,11 +178,6 @@ function renderShare() {
  * @param {Element} block - The PDP block element
  */
 export default function decorate(block) {
-  // remove eyebrow classes from all but the first eyebrow
-  [...block.querySelectorAll('p.eyebrow')].forEach((element) => {
-    element.classList.remove('eyebrow');
-  });
-
   // Get the json-ld from the head and parse it
   const jsonLd = document.head.querySelector('script[type="application/ld+json"]');
   const jsonLdData = jsonLd ? JSON.parse(jsonLd.textContent) : null;
