@@ -89,6 +89,33 @@ export function buildIcon(name, modifier) {
 }
 
 /**
+ * Builds a single index element for carousel navigation.
+ * @param {number} i - Index of the slide
+ * @param {HTMLElement} carousel - Carousel element
+ * @param {HTMLElement} indices - Container element for index buttons
+ * @param {number} [visibleSlides=1] - Number of slides visible at a time
+ * @returns {HTMLLIElement} Constructed carousel index
+ */
+function buildCarouselIndex(i, carousel, indices, visibleSlides = 1) {
+  const index = document.createElement('li');
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.setAttribute('aria-label', `Go to slide ${i + 1}`);
+  button.setAttribute('aria-selected', !i);
+  button.addEventListener('click', () => {
+    indices.querySelectorAll('button').forEach((b) => {
+      b.setAttribute('aria-selected', b === button);
+    });
+    carousel.scrollTo({
+      left: i * (carousel.clientWidth / visibleSlides),
+      behavior: 'smooth',
+    });
+  });
+  index.append(button);
+  return index;
+}
+
+/**
  * Builds and appends carousel index buttons for navigation.
  * @param {HTMLElement} carousel - Carousel element
  * @param {HTMLElement} indices - Container element where index buttons will be appended
@@ -98,23 +125,22 @@ function buildCarouselIndices(carousel, indices, visibleSlides = 1) {
   indices.innerHTML = '';
   const slides = [...carousel.children];
   slides.forEach((s, i) => {
-    const index = document.createElement('li');
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.setAttribute('aria-label', `Go to slide ${i + 1}`);
-    button.setAttribute('aria-selected', !i);
-    button.addEventListener('click', () => {
-      indices.querySelectorAll('button').forEach((b) => {
-        b.setAttribute('aria-selected', b === button);
-      });
-      carousel.scrollTo({
-        left: i * (carousel.clientWidth / visibleSlides),
-        behavior: 'smooth',
-      });
-    });
-    index.append(button);
+    const index = buildCarouselIndex(i, carousel, indices, visibleSlides);
     indices.append(index);
   });
+}
+
+/**
+ * Rebuilds carousel index buttons.
+ * @param {HTMLElement} carousel - Carousel element
+ */
+export function rebuildIndices(carousel) {
+  const slides = carousel.querySelector('ul');
+  const indices = carousel.querySelector('nav ul');
+  if (!slides || !indices) return;
+
+  const visibleSlides = parseInt(carousel.dataset.visibleSlides, 10) || 1;
+  buildCarouselIndices(slides, indices, visibleSlides);
 }
 
 /**
@@ -130,6 +156,7 @@ export function buildCarousel(container, visibleSlides = 1, pagination = true) {
   const slides = [...carousel.children];
   if (!slides || slides.length <= 0) return null;
   container.classList.add('carousel');
+  container.dataset.visibleSlides = visibleSlides;
 
   // build navigation
   const navEl = document.createElement('nav');
@@ -140,9 +167,9 @@ export function buildCarousel(container, visibleSlides = 1, pagination = true) {
   ['Previous', 'Next'].forEach((label, i) => {
     const button = document.createElement('button');
     button.type = 'button';
-    button.setAttribute('aria-label', `${label} frame`);
     button.className = `nav-arrow nav-arrow-${label.toLowerCase()}`;
-    // button.innerHTML = label === 'Previous' ? '&#xE959;' : '&#xe958;';
+    button.disabled = !i; // auto-disable first arrow
+    button.setAttribute('aria-label', `${label} frame`);
     button.addEventListener('click', () => {
       const slideWidth = carousel.scrollWidth / slides.length;
       carousel.scrollBy({
