@@ -1,3 +1,5 @@
+@import url('./gallery.css');
+
 /* stylelint-disable no-descending-specificity */
 .pdp-wrapper {
   display: flex;
@@ -358,35 +360,6 @@
 
 .gallery {
   grid-area: gallery;
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-l);
-}
-
-.lcp-image img {
-  width: 100%;
-  aspect-ratio: 1 / 1;
-}
-
-.gallery-images {
-  display: flex;
-  flex-flow: row wrap;
-  gap: var(--spacing-s);
-}
-
-.gallery-images img {
-  width: 58px;
-  height: 58px;
-  object-fit: cover;
-  cursor: pointer;
-}
-
-.gallery-images picture img {
-  border: 1px solid var(--color-gray-600);
-}
-
-.gallery-images picture.selected img {
-  border: 1px solid var(--color-text);
 }
 
 /** Pricing */

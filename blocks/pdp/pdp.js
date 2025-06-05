@@ -243,11 +243,6 @@ function renderShare() {
  * @param {Element} block - The PDP block element
  */
 export default function decorate(block) {
-  // remove eyebrow classes from all but the first eyebrow
-  [...block.querySelectorAll('p.eyebrow')].forEach((element) => {
-    element.classList.remove('eyebrow');
-  });
-
   const { jsonLdData, variants } = window;
   const galleryContainer = renderGallery(block, variants);
   const titleContainer = renderTitle(block);
