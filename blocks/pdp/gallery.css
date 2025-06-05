@@ -1,7 +1,7 @@
 .gallery.carousel {
   place-self: start center;
   max-width: 620px;
-  padding-bottom: 30px;
+  padding-bottom: 44px;
 }
 
 .gallery.carousel > ul > li {
@@ -60,21 +60,21 @@
   right: var(--spacing-60);
 }
 
-.gallery.carousel nav ul {
+.gallery.carousel nav [role='radiogroup'] {
   gap: 0;
   width: 100%;
   overflow-x: hidden;
 }
 
-.gallery.carousel nav ul button {
-  width: 18px;
-  height: 30px;
+.gallery.carousel nav [role='radiogroup'] button {
+  width: 44px;
+  height: 44px;
   line-height: 0;
   text-align: center;
   cursor: pointer;
 }
 
-.gallery.carousel nav ul button::after {
+.gallery.carousel nav [role='radiogroup'] button::after {
   content: '';
   display: inline-block;
   width: 6px;
@@ -85,12 +85,12 @@
   transition: border-color 0.2s, background-color 0.2s;
 }
 
-.gallery.carousel nav ul button[aria-checked='true']::after {
+.gallery.carousel nav [role='radiogroup'] button[aria-checked='true']::after {
   border-color: transparent;
   background-color: #ff5501;
 }
 
-.gallery.carousel nav ul button img {
+.gallery.carousel nav [role='radiogroup'] button img {
   display: none;
 }
 
@@ -112,27 +112,28 @@
     right: var(--spacing-100);
   }
 
-  .gallery.carousel nav ul {
+  .gallery.carousel nav [role='radiogroup'] {
     gap: var(--spacing-60);
     justify-content: flex-start;
   }
 
-  .gallery.carousel nav ul button {
+  .gallery.carousel nav [role='radiogroup'] button {
     width: 58px;
+    min-width: 58px;
     height: 58px;
     border: 1px solid var(--color-gray-500);
     transition: border-color 0.2s;
   }
 
-  .gallery.carousel nav ul button::after {
+  .gallery.carousel nav [role='radiogroup'] button::after {
     content: none;
   }
 
-  .gallery.carousel nav ul button[aria-checked='true'] {
+  .gallery.carousel nav [role='radiogroup'] button[aria-checked='true'] {
     border-color: var(--color-charcoal);
   }
 
-  .gallery.carousel nav ul button img {
+  .gallery.carousel nav [role='radiogroup'] button img {
     display: block;
   }
 }

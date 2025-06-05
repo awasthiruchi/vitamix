@@ -40,11 +40,12 @@ export function onOptionChange(block, variants, color) {
   });
 
   const gallery = block.querySelector('.gallery');
-  const [slides, nav] = gallery.querySelectorAll('ul');
+  const slides = gallery.querySelector('ul');
+  const nav = gallery.querySelector('[role="radiogroup"]');
 
   // update LCP image(s)
   const lcpSlide = slides.querySelector('[data-source="lcp"]');
-  const lcpButton = nav.querySelector('[data-source="lcp"] button');
+  const lcpButton = nav.querySelector('[data-source="lcp"]');
   if (lcpSlide && lcpButton) {
     // measure current <picture> size
     const oldPic = lcpSlide.querySelector('picture');

@@ -23,11 +23,11 @@ export function buildSlide(el, source) {
  */
 export function buildThumbnails(carousel) {
   const imgs = carousel.querySelectorAll('li img');
-  const indices = carousel.querySelectorAll('nav li button');
+  const indices = carousel.querySelectorAll('nav [role="radiogroup"] button');
 
   // scroll selected thumbnail into view on selection
   const observer = new MutationObserver(() => {
-    const selected = carousel.querySelector('nav li button[aria-checked="true"]');
+    const selected = carousel.querySelector('nav [role="radiogroup"] button[aria-checked="true"]');
     if (selected) selected.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
   });
 
@@ -39,10 +39,7 @@ export function buildThumbnails(carousel) {
     const { source } = imgLi.dataset;
 
     const thumb = img.cloneNode(true);
-    if (source) {
-      const btnLi = btn.closest('li');
-      btnLi.dataset.source = source;
-    }
+    if (source) btn.dataset.source = source;
     btn.replaceChildren(thumb);
 
     // track aria-checked updates

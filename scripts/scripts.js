@@ -97,22 +97,20 @@ export function buildIcon(name, modifier) {
  * @returns {HTMLLIElement} Constructed carousel index
  */
 function buildCarouselIndex(i, carousel, indices, visibleSlides = 1) {
-  const index = document.createElement('li');
-  const button = document.createElement('button');
-  button.type = 'button';
-  button.setAttribute('aria-label', `Go to slide ${i + 1}`);
-  button.setAttribute('aria-checked', !i);
-  button.setAttribute('role', 'radio');
-  button.addEventListener('click', () => {
+  const index = document.createElement('button');
+  index.type = 'button';
+  index.setAttribute('aria-label', `Go to slide ${i + 1}`);
+  index.setAttribute('aria-checked', !i);
+  index.setAttribute('role', 'radio');
+  index.addEventListener('click', () => {
     indices.querySelectorAll('button').forEach((b) => {
-      b.setAttribute('aria-checked', b === button);
+      b.setAttribute('aria-checked', b === index);
     });
     carousel.scrollTo({
       left: i * (carousel.clientWidth / visibleSlides),
       behavior: 'smooth',
     });
   });
-  index.append(button);
   return index;
 }
 
@@ -137,7 +135,7 @@ function buildCarouselIndices(carousel, indices, visibleSlides = 1) {
  */
 export function rebuildIndices(carousel) {
   const slides = carousel.querySelector('ul');
-  const indices = carousel.querySelector('nav ul');
+  const indices = carousel.querySelector('nav [role="radiogroup"]');
   if (!slides || !indices) return;
 
   const visibleSlides = parseInt(carousel.dataset.visibleSlides, 10) || 1;
@@ -183,7 +181,7 @@ export function buildCarousel(container, visibleSlides = 1, pagination = true) {
 
   if (pagination) {
     // build indices
-    const indices = document.createElement('ul');
+    const indices = document.createElement('div');
     indices.setAttribute('role', 'radiogroup');
     navEl.append(indices);
     buildCarouselIndices(carousel, indices, visibleSlides);
