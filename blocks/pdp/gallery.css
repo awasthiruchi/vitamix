@@ -85,7 +85,7 @@
   transition: border-color 0.2s, background-color 0.2s;
 }
 
-.gallery.carousel nav ul button[aria-selected='true']::after {
+.gallery.carousel nav ul button[aria-checked='true']::after {
   border-color: transparent;
   background-color: #ff5501;
 }
@@ -128,7 +128,7 @@
     content: none;
   }
 
-  .gallery.carousel nav ul button[aria-selected='true'] {
+  .gallery.carousel nav ul button[aria-checked='true'] {
     border-color: var(--color-charcoal);
   }
 

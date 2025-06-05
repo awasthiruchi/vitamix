@@ -101,10 +101,11 @@ function buildCarouselIndex(i, carousel, indices, visibleSlides = 1) {
   const button = document.createElement('button');
   button.type = 'button';
   button.setAttribute('aria-label', `Go to slide ${i + 1}`);
-  button.setAttribute('aria-selected', !i);
+  button.setAttribute('aria-checked', !i);
+  button.setAttribute('role', 'radio');
   button.addEventListener('click', () => {
     indices.querySelectorAll('button').forEach((b) => {
-      b.setAttribute('aria-selected', b === button);
+      b.setAttribute('aria-checked', b === button);
     });
     carousel.scrollTo({
       left: i * (carousel.clientWidth / visibleSlides),
@@ -183,6 +184,7 @@ export function buildCarousel(container, visibleSlides = 1, pagination = true) {
   if (pagination) {
     // build indices
     const indices = document.createElement('ul');
+    indices.setAttribute('role', 'radiogroup');
     navEl.append(indices);
     buildCarouselIndices(carousel, indices, visibleSlides);
 
@@ -190,7 +192,7 @@ export function buildCarousel(container, visibleSlides = 1, pagination = true) {
       const { scrollLeft, clientWidth } = carousel;
       const current = Math.round(scrollLeft / (clientWidth * visibleSlides));
       [...indices.querySelectorAll('button')].forEach((btn, i) => {
-        btn.setAttribute('aria-selected', i === current);
+        btn.setAttribute('aria-checked', i === current);
       });
     });
   }

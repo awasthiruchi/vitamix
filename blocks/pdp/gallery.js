@@ -27,7 +27,7 @@ export function buildThumbnails(carousel) {
 
   // scroll selected thumbnail into view on selection
   const observer = new MutationObserver(() => {
-    const selected = carousel.querySelector('nav li button[aria-selected="true"]');
+    const selected = carousel.querySelector('nav li button[aria-checked="true"]');
     if (selected) selected.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
   });
 
@@ -45,8 +45,8 @@ export function buildThumbnails(carousel) {
     }
     btn.replaceChildren(thumb);
 
-    // track aria-selected updates
-    observer.observe(btn, { attributes: true, attributeFilter: ['aria-selected'] });
+    // track aria-checked updates
+    observer.observe(btn, { attributes: true, attributeFilter: ['aria-checked'] });
   });
 }
 
