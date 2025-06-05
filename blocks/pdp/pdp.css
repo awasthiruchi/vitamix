@@ -589,6 +589,7 @@
 .pdp-related-products-container ul li img {
   width: 140px;
   height: auto;
+  object-fit: contain;
 }
 
 .pdp-warrenty-option {
