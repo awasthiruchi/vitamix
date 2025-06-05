@@ -247,6 +247,11 @@ function parseVariants(sections) {
   });
 }
 
+export function checkOutOfStock(sku) {
+  const { availability } = window.jsonLdData.offers.find((offer) => offer.sku === sku);
+  return availability === 'https://schema.org/OutOfStock';
+}
+
 /**
  * Builds hero block and prepends to main in a new section.
  * @param {Element} main The container element
@@ -285,11 +290,16 @@ function buildPDPBlock(main) {
   const variantSections = Array.from(main.querySelectorAll(':scope > div'));
   window.variants = parseVariants(variantSections);
 
+  // Get the json-ld from the head and parse it
+  const jsonLd = document.head.querySelector('script[type="application/ld+json"]');
+  window.jsonLdData = jsonLd ? JSON.parse(jsonLd.textContent) : null;
+
   const navMeta = document.head.querySelector('meta[name="nav"]');
   if (!navMeta) {
     [
       ['nav', '/us/en_us/nav/nav'],
       ['footer', '/us/en_us/footer/footer'],
+      ['nav-banner', '/us/en_us/nav/nav-banner'],
     ].forEach(([name, content]) => {
       const meta = document.createElement('meta');
       meta.name = name;
@@ -420,17 +430,17 @@ function decorateImages(main) {
  */
 function decorateEyebrows(main) {
   main.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((h) => {
-    const prev = h.previousElementSibling;
-    if (prev && prev.tagName === 'P') {
-      // ignore p tags sandwiched between h tags
-      const next = prev.nextElementSibling;
-      if (next && next.tagName.startsWith('H')) return;
+    const beforeH = h.previousElementSibling;
+    if (beforeH && beforeH.tagName === 'P') {
+      const beforeP = beforeH.previousElementSibling;
+      // ignore p tags sandwiched between headings
+      if (beforeP && beforeP.tagName.startsWith('H')) return;
       // ignore p tags with images or links
-      const disqualifiers = prev.querySelector('img, a[href]');
+      const disqualifiers = beforeH.querySelector('img, a[href]');
       if (disqualifiers) return;
 
-      prev.classList.add('eyebrow');
-      h.dataset.eyebrow = prev.textContent;
+      beforeH.classList.add('eyebrow');
+      h.dataset.eyebrow = beforeH.textContent.trim();
     }
   });
 }
@@ -585,8 +595,8 @@ async function loadEager(doc) {
 
   const main = doc.querySelector('main');
   if (main) {
-    await loadNavBanner(main);
     decorateMain(main);
+    await loadNavBanner(main);
     document.body.classList.add('appear');
     await loadSection(main.querySelector('.section'), waitForFirstImage);
   }

@@ -2,8 +2,10 @@ import { loadScript, toClassName, getMetadata } from '../../scripts/aem.js';
 import renderGallery from './gallery.js';
 import renderSpecs from './specification-tabs.js';
 import renderPricing from './pricing.js';
+// eslint-disable-next-line import/no-cycle
 import { renderOptions, onOptionChange } from './options.js';
 import { loadFragment } from '../fragment/fragment.js';
+import { checkOutOfStock } from '../../scripts/scripts.js';
 
 const BV_PRODUCT_ID = getMetadata('reviewsId') || toClassName(getMetadata('sku')).replace(/-/g, '');
 
@@ -46,7 +48,7 @@ function renderDetails(block) {
  * Renders the add to cart section of the PDP block.
  * @returns {Element} The add to cart container element
  */
-function renderAddToCart() {
+function renderAddToCart(custom) {
   const addToCartContainer = document.createElement('div');
   addToCartContainer.classList.add('add-to-cart');
 
@@ -59,8 +61,8 @@ function renderAddToCart() {
   quantityContainer.classList.add('quantity-container');
   const quantitySelect = document.createElement('select');
 
-  // eslint-disable-next-line no-plusplus
-  for (let i = 1; i <= 3; i++) {
+  const maxQuantity = custom.maxCartQty ? +custom.maxCartQty : 5;
+  for (let i = 1; i <= maxQuantity; i += 1) {
     const option = document.createElement('option');
     option.value = i;
     option.textContent = i;
@@ -175,10 +177,10 @@ function renderAlert(product) {
   if (offers[0] && (
     availability === 'https://schema.org/Discontinued'
     || availability === 'https://schema.org/PreOrder'
-    || (product.custom && product.custom.retired)
+    || (product.custom && product.custom.retired === 'Yes')
   )) {
     const alertContainer = document.createElement('div');
-    const text = (availability === 'https://schema.org/Discontinued' || product.custom.retired) ? 'Retired Product' : 'Coming Soon';
+    const text = (availability === 'https://schema.org/Discontinued' || product.custom.retired === 'Yes') ? 'Retired Product' : 'Coming Soon';
     alertContainer.classList.add('pdp-alert');
     alertContainer.innerHTML = `
       <p>${text}</p>
@@ -236,11 +238,7 @@ function renderShare() {
  * @param {Element} block - The PDP block element
  */
 export default function decorate(block) {
-  // Get the json-ld from the head and parse it
-  const jsonLd = document.head.querySelector('script[type="application/ld+json"]');
-  const jsonLdData = jsonLd ? JSON.parse(jsonLd.textContent) : null;
-
-  const { variants } = window;
+  const { jsonLdData, variants } = window;
   const galleryContainer = renderGallery(block, variants);
   const titleContainer = renderTitle(block);
   const alertContainer = renderAlert(jsonLdData);
@@ -251,7 +249,7 @@ export default function decorate(block) {
 
   const pricingContainer = renderPricing(block);
   const optionsContainer = renderOptions(block, variants, jsonLdData.custom.options);
-  const addToCartContainer = renderAddToCart(block);
+  const addToCartContainer = renderAddToCart(jsonLdData.custom);
   const compareContainer = renderCompare();
   const freeShippingContainer = renderFreeShipping(jsonLdData.offers);
   const shareContainer = renderShare();
@@ -292,4 +290,7 @@ export default function decorate(block) {
       onOptionChange(block, variants, color);
     }
   }
+
+  buyBox.dataset.sku = jsonLdData.offers[0].sku;
+  buyBox.dataset.oos = checkOutOfStock(jsonLdData.offers[0].sku);
 }

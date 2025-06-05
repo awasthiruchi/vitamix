@@ -2,6 +2,7 @@ import { buildSlide, buildThumbnails } from './gallery.js';
 import { rebuildIndices } from '../../scripts/scripts.js';
 import { toClassName, getMetadata } from '../../scripts/aem.js';
 import renderPricing from './pricing.js';
+import { checkOutOfStock } from '../../scripts/scripts.js';
 
 /**
  * Handles the change of an option.
@@ -20,6 +21,12 @@ export function onOptionChange(block, variants, color) {
 
   const selectedOptionLabel = block.querySelector('.selected-option-label');
   const variant = variants.find((colorVariant) => colorVariant.options.color.replace(/\s+/g, '-').toLowerCase() === color);
+
+  const { sku } = variant;
+  const oos = checkOutOfStock(sku);
+  const buyBox = block.querySelector('.pdp-buy-box');
+  buyBox.dataset.oos = oos;
+  buyBox.dataset.sku = sku;
 
   // update pricing
   const pricingContainer = renderPricing(block, variant);
@@ -105,13 +112,17 @@ export function renderOptions(block, variants, customOptions) {
 
   const colors = variants.map((variant) => toClassName(variant.options.color));
 
-  const colorOptions = colors.map((color) => {
+  const colorOptions = colors.map((color, index) => {
+    const { sku } = variants[index];
     const colorOption = document.createElement('div');
-    colorOption.classList.add('color-swatch');
+    colorOption.classList.add('pdp-color-swatch');
 
     const colorSwatch = document.createElement('div');
-    colorSwatch.classList.add('color-inner');
+    colorSwatch.classList.add('pdp-color-inner');
     colorSwatch.style.backgroundColor = `var(--color-${color})`;
+    if (checkOutOfStock(sku)) {
+      colorSwatch.classList.add('pdp-color-swatch-oos');
+    }
     colorOption.append(colorSwatch);
 
     colorOption.addEventListener('click', () => {
@@ -122,11 +133,15 @@ export function renderOptions(block, variants, customOptions) {
   });
 
   const colorOptionsContainer = document.createElement('div');
-  colorOptionsContainer.classList.add('color-options');
+  colorOptionsContainer.classList.add('pdp-color-options');
   colorOptionsContainer.append(...colorOptions);
   selectionContainer.append(colorOptionsContainer);
 
   optionsContainer.append(selectionContainer);
+  const oosMessage = document.createElement('div');
+  oosMessage.classList.add('pdp-oos-message');
+  oosMessage.textContent = 'This color is temporarily out of stock.';
+  optionsContainer.append(oosMessage);
 
   const warrentyContainer = document.createElement('div');
   warrentyContainer.classList.add('warranty');

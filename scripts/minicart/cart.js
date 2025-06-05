@@ -297,7 +297,7 @@ export async function addToCart(sku, options, quantity) {
       addProductsToCartMutation,
       variables,
       false,
-      true,
+      false,
     );
     handleCartErrors(errors);
 
