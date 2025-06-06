@@ -22,7 +22,12 @@ function renderTitle(block) {
   reviewsPlaceholder.classList.add('pdp-reviews-summary-placeholder');
   reviewsPlaceholder.innerHTML = `<div data-bv-show="rating_summary" data-bv-product-id="${BV_PRODUCT_ID}">`;
 
+  const collectionContainer = document.createElement('p');
+  collectionContainer.classList.add('pdp-collection-placeholder');
+  collectionContainer.textContent = `${getMetadata('collection') || ''}`;
+
   titleContainer.append(
+    collectionContainer,
     block.querySelector('h1:first-of-type'),
     reviewsPlaceholder,
   );
@@ -152,8 +157,10 @@ function renderContent() {
   const fragmentPath = window.location.pathname.replace('/products/', '/products/fragments/');
   const insertFragment = async () => {
     const fragment = await loadFragment(fragmentPath);
-    while (fragment.firstChild) {
-      contentContainer.append(fragment.firstChild);
+    if (fragment) {
+      while (fragment.firstChild) {
+        contentContainer.append(fragment.firstChild);
+      }
     }
   };
   insertFragment();
@@ -207,7 +214,7 @@ function renderRelatedProducts(product) {
         const json = await resp.json();
         const title = json.name;
         const image = new URL(json.images[0].url, window.location.href);
-        const price = json.price.final;
+        const price = +json.price.final;
         li.innerHTML = `<a href="${url}"><img src="${image}?width=750&#x26;format=webply&#x26;optimize=medium" alt="${title}" /><div><p>${title}</p><strong>$${price.toFixed(2)}</strong></div></a>`;
       };
       fillProduct();

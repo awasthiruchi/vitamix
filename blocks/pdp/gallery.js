@@ -69,6 +69,14 @@ export default function renderGallery(block, variants) {
     }
   }
 
+  if (variants && variants.length === 0) {
+    const fallbackImages = block.querySelectorAll('.img-wrapper');
+    [...fallbackImages].forEach((el) => {
+      const slide = buildSlide(el, 'lcp');
+      if (slide) wrapper.append(slide);
+    });
+  }
+
   if (variants && variants.length > 0) {
     const defaultVariant = variants[0];
 
@@ -83,7 +91,6 @@ export default function renderGallery(block, variants) {
 
     // grab fallback images
     const fallbackImages = block.querySelectorAll('.img-wrapper');
-
     // store clones for reset functionality
     window.defaultProductImages = Array.from(fallbackImages).map((img) => img.cloneNode(true));
 

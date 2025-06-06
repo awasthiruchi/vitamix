@@ -611,3 +611,11 @@
   width: 24px;
   margin: 0;
 }
+
+.pdp p + h1 {
+  margin-top: 0;
+}
+
+main .section > div.pdp-wrapper {
+  margin-top: 0;
+}
