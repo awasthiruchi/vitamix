@@ -167,7 +167,6 @@ function renderContent() {
     if (fragment) {
       while (fragment.firstChild) {
         contentContainer.append(fragment.firstChild);
-        fragment.firstChild.remove();
       }
     }
   };
