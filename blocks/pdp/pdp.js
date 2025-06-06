@@ -22,7 +22,12 @@ function renderTitle(block) {
   reviewsPlaceholder.classList.add('pdp-reviews-summary-placeholder');
   reviewsPlaceholder.innerHTML = `<div data-bv-show="rating_summary" data-bv-product-id="${BV_PRODUCT_ID}">`;
 
+  const collectionContainer = document.createElement('p');
+  collectionContainer.classList.add('pdp-collection-placeholder');
+  collectionContainer.textContent = `${getMetadata('collection') || ''}`;
+
   titleContainer.append(
+    collectionContainer,
     block.querySelector('h1:first-of-type'),
     reviewsPlaceholder,
   );
