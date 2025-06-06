@@ -22,12 +22,7 @@ function renderTitle(block) {
   reviewsPlaceholder.classList.add('pdp-reviews-summary-placeholder');
   reviewsPlaceholder.innerHTML = `<div data-bv-show="rating_summary" data-bv-product-id="${BV_PRODUCT_ID}">`;
 
-  const collectionContainer = document.createElement('p');
-  collectionContainer.classList.add('pdp-collection-placeholder');
-  collectionContainer.textContent = `${getMetadata('collection') || ''}`;
-
   titleContainer.append(
-    collectionContainer,
     block.querySelector('h1:first-of-type'),
     reviewsPlaceholder,
   );
@@ -43,8 +38,12 @@ function renderTitle(block) {
 function renderDetails(block) {
   const detailsContainer = document.createElement('div');
   detailsContainer.classList.add('details');
-
   detailsContainer.append(...block.children);
+  if (detailsContainer.querySelector('h3')) {
+    const h2 = document.createElement('h2');
+    h2.textContent = 'About';
+    detailsContainer.prepend(h2);
+  }
 
   return detailsContainer;
 }
@@ -60,11 +59,14 @@ function renderAddToCart(custom) {
   // Quantity Label
   const quantityLabel = document.createElement('label');
   quantityLabel.textContent = 'Quantity:';
+  quantityLabel.classList.add('pdp-quantity-label');
+  quantityLabel.htmlFor = 'pdp-quantity-select';
   addToCartContainer.appendChild(quantityLabel);
 
   const quantityContainer = document.createElement('div');
   quantityContainer.classList.add('quantity-container');
   const quantitySelect = document.createElement('select');
+  quantitySelect.id = 'pdp-quantity-select';
 
   const maxQuantity = custom.maxCartQty ? +custom.maxCartQty : 5;
   for (let i = 1; i <= maxQuantity; i += 1) {
@@ -157,10 +159,8 @@ function renderContent() {
   const fragmentPath = window.location.pathname.replace('/products/', '/products/fragments/');
   const insertFragment = async () => {
     const fragment = await loadFragment(fragmentPath);
-    if (fragment) {
-      while (fragment.firstChild) {
-        contentContainer.append(fragment.firstChild);
-      }
+    while (fragment.firstChild) {
+      contentContainer.append(fragment.firstChild);
     }
   };
   insertFragment();
@@ -214,7 +214,7 @@ function renderRelatedProducts(product) {
         const json = await resp.json();
         const title = json.name;
         const image = new URL(json.images[0].url, window.location.href);
-        const price = +json.price.final;
+        const price = json.price.final;
         li.innerHTML = `<a href="${url}"><img src="${image}?width=750&#x26;format=webply&#x26;optimize=medium" alt="${title}" /><div><p>${title}</p><strong>$${price.toFixed(2)}</strong></div></a>`;
       };
       fillProduct();
