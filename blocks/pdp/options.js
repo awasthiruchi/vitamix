@@ -57,14 +57,15 @@ export function onOptionChange(block, variants, color) {
     const oldPic = lcpSlide.querySelector('picture');
     const { offsetHeight, offsetWidth } = oldPic;
     const newPic = variantImages[0];
-    // temporarily set fixed dimensions to prevent layout shifts
-    newPic.style.height = `${offsetHeight}px`;
-    newPic.style.width = `${offsetWidth}px`;
-    lcpSlide.replaceChildren(newPic);
-    const newImg = newPic.querySelector('img');
-    // clear temporary inline styles once image loads
-    newImg.addEventListener('load', () => newPic.removeAttribute('style'));
-    lcpButton.replaceChildren(newImg.cloneNode(true));
+    if (newPic) {
+      // temporarily set fixed dimensions to prevent layout shifts
+      newPic.style.height = `${offsetHeight}px`;
+      newPic.style.width = `${offsetWidth}px`;
+      lcpSlide.replaceChildren(newPic);
+      const newImg = newPic.querySelector('img');
+      // clear temporary inline styles once image loads
+      newImg.addEventListener('load', () => newPic.removeAttribute('style'));
+    }
   }
 
   // reset scroll position to the first slide

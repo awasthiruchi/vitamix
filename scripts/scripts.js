@@ -264,11 +264,7 @@ function buildPDPBlock(main) {
 
   const isValidType = ['simple', 'configurable', 'bundle'].includes(type);
   if (isValidType) {
-    const lcpPictureSelector = !main.querySelector('h2')
-      ? 'picture:first-of-type'
-      : 'div:nth-child(2) picture';
-
-    const lcpPicture = main.querySelector(lcpPictureSelector);
+    const lcpPicture = main.querySelector('div:nth-child(2) picture') || main.querySelector('picture:first-of-type');
     const lcpImage = lcpPicture?.querySelector('img');
     if (lcpImage) {
       lcpImage.loading = 'eager';
