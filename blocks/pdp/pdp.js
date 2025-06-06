@@ -164,8 +164,11 @@ function renderContent() {
   const fragmentPath = window.location.pathname.replace('/products/', '/products/fragments/');
   const insertFragment = async () => {
     const fragment = await loadFragment(fragmentPath);
-    while (fragment.firstChild) {
-      contentContainer.append(fragment.firstChild);
+    if (fragment) {
+      while (fragment.firstChild) {
+        contentContainer.append(fragment.firstChild);
+        fragment.firstChild.remove();
+      }
     }
   };
   insertFragment();
