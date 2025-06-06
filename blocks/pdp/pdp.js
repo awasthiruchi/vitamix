@@ -43,8 +43,12 @@ function renderTitle(block) {
 function renderDetails(block) {
   const detailsContainer = document.createElement('div');
   detailsContainer.classList.add('details');
-
   detailsContainer.append(...block.children);
+  if (detailsContainer.querySelector('h3')) {
+    const h2 = document.createElement('h2');
+    h2.textContent = 'About';
+    detailsContainer.prepend(h2);
+  }
 
   return detailsContainer;
 }
@@ -60,11 +64,14 @@ function renderAddToCart(custom) {
   // Quantity Label
   const quantityLabel = document.createElement('label');
   quantityLabel.textContent = 'Quantity:';
+  quantityLabel.classList.add('pdp-quantity-label');
+  quantityLabel.htmlFor = 'pdp-quantity-select';
   addToCartContainer.appendChild(quantityLabel);
 
   const quantityContainer = document.createElement('div');
   quantityContainer.classList.add('quantity-container');
   const quantitySelect = document.createElement('select');
+  quantitySelect.id = 'pdp-quantity-select';
 
   const maxQuantity = custom.maxCartQty ? +custom.maxCartQty : 5;
   for (let i = 1; i <= maxQuantity; i += 1) {
