@@ -624,3 +624,15 @@
 main .section > div.pdp-wrapper {
   margin-top: 0;
 }
+
+.pdp-questions-container img.icon {
+  width: 1.5em;
+  height: 1.5em;
+}
+
+.pdp-questions-container a {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-s);
+  margin-top: var(--spacing-s);
+}
