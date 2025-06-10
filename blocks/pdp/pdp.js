@@ -98,14 +98,11 @@ function renderAddToCart(custom) {
       await updateMagentoCacheSections(['customer']);
     }
 
-    // Temporary hooks to modify selected product for dev
-    if (!window.selectedSku) {
-      window.selectedSku = '067891';
-      window.selectedOptions = [];
-      window.selectedQuantity = 1;
-    }
+    const { sku, options } = window.selectedVariant;
+    const quantity = document.querySelector('.quantity-container select')?.value || 1;
 
-    addToCart(window.selectedSku, window.selectedOptions, window.selectedQuantity);
+    const filteredOptions = options.uid ? [options.uid] : [];
+    addToCart(sku, filteredOptions, quantity);
   });
 
   quantityContainer.appendChild(addToCartButton);
@@ -298,11 +295,12 @@ export default function decorate(block) {
   );
 
   const queryParams = new URLSearchParams(window.location.search);
-  if (queryParams.get('color')) {
-    const color = queryParams.get('color');
-    if (color) {
-      onOptionChange(block, variants, color);
-    }
+  const color = queryParams.get('color');
+
+  if (color) {
+    onOptionChange(block, variants, color);
+  } else if (variants.length > 0) {
+    [window.selectedVariant] = variants;
   }
 
   buyBox.dataset.sku = jsonLdData.offers[0].sku;

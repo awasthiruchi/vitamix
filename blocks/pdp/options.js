@@ -86,6 +86,8 @@ export function onOptionChange(block, variants, color) {
   // rebuild all indices
   rebuildIndices(gallery);
   buildThumbnails(gallery);
+
+  window.selectedVariant = variant;
 }
 
 /**
