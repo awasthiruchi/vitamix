@@ -564,7 +564,16 @@
   grid-area: alert;
   background-color: var(--color-gray-900);
   color: var(--color-white);
+  font-weight: 700;
   text-align: center;
+}
+
+.pdp-alert.pdp-promo-alert {
+  background-color: var(--color-deep-rust);
+}
+
+.pdp-alert.pdp-promo-alert p {
+  color: var(--color-white);
 }
 
 
