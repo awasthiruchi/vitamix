@@ -159,8 +159,22 @@ function renderCompare() {
   compareContainer.innerHTML = `
     <div>
       <button class="pdp-compare-button">Compare</button>
-      <a href="https://www.vitamix.com/us/en_us/catalog/product_compare/index/" title="View Comparison" class="comparelistlink">View Comparison List.</a>
+      <a href="/us/en_us/catalog/product_compare/index/" title="View Comparison" class="comparelistlink">View Comparison List.</a>
     </div>`;
+
+  const compareButton = compareContainer.querySelector('.pdp-compare-button');
+  compareButton.addEventListener('click', () => {
+    fetch('/us/en_us/catalog/product_compare/add/', {
+      headers: {
+        'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        'x-requested-with': 'XMLHttpRequest',
+      },
+      body: `product=${getMetadata('entityId')}&uenc=${encodeURIComponent(window.location.href)}`,
+      method: 'POST',
+      credentials: 'include',
+    });
+  });
+
   return compareContainer;
 }
 
