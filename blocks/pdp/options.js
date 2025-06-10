@@ -83,12 +83,10 @@ export function onOptionChange(block, variants, color) {
     if (slide) slides.insertBefore(slide, lcpSibling);
   });
 
-  attachImageListeners(galleryImages, selectedImage);
-
   // rebuild all indices
   rebuildIndices(gallery);
   buildThumbnails(gallery);
-  
+
   window.selectedVariant = variant;
 }
 
