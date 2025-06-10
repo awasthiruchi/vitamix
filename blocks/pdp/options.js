@@ -54,6 +54,8 @@ export function onOptionChange(block, variants, color) {
   galleryImages.querySelector('picture').classList.add('selected');
 
   attachImageListeners(galleryImages, selectedImage);
+
+  window.selectedVariant = variant;
 }
 
 /**

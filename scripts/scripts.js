@@ -197,14 +197,17 @@ function parseVariants(sections) {
 
     if (metadataDiv) {
       metadataDiv.querySelectorAll('div').forEach((meta) => {
-        const key = meta.children[0]?.textContent.trim();
-        const value = meta.children[1]?.textContent.trim();
+        const [keyNode, valueNode, uidNode] = meta.children;
+        const key = keyNode?.textContent.trim();
+        const value = valueNode?.textContent.trim();
+        const uid = uidNode?.textContent.trim();
+
         if (key && value) {
-          if (key === 'sku') {
-            metadata[key] = value;
-          } else {
-            options[key] = value;
-          }
+          (key === 'sku' ? metadata : options)[key] = value;
+        }
+
+        if (uid) {
+          options.uid = uid;
         }
       });
     }
