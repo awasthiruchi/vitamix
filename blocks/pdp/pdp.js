@@ -192,20 +192,11 @@ function renderFreeShipping(offers) {
 }
 
 function renderAlert(product) {
-  const { offers } = product;
-  const { availability } = offers[0];
   /* retired and coming soon */
-  if (offers[0] && (
-    availability === 'https://schema.org/Discontinued'
-    || availability === 'https://schema.org/PreOrder'
-    || (product.custom && product.custom.retired === 'Yes')
-  )) {
+  if (product.custom && product.custom.retired === 'Yes') {
     const alertContainer = document.createElement('div');
-    const text = (availability === 'https://schema.org/Discontinued' || product.custom.retired === 'Yes') ? 'Retired Product' : 'Coming Soon';
     alertContainer.classList.add('pdp-alert');
-    alertContainer.innerHTML = `
-      <p>${text}</p>
-    `;
+    alertContainer.innerHTML = '<p>Retired Product</p>';
     return alertContainer;
   }
 
@@ -215,9 +206,7 @@ function renderAlert(product) {
     const alertContainer = document.createElement('div');
     alertContainer.classList.add('pdp-alert');
     alertContainer.classList.add('pdp-promo-alert');
-    alertContainer.innerHTML = `
-      <p>${promo}</p>
-    `;
+    alertContainer.innerHTML = `<p>${promo}</p>`;
     return alertContainer;
   }
   return null;
