@@ -120,12 +120,12 @@ function createResourcesContent(resources) {
   });
 
   const questions = document.createElement('div');
-  questions.classList.add('questions-container');
+  questions.classList.add('pdp-questions-container');
   questions.innerHTML = `
     <h3>Have a question?</h3>
     <p>Contact customer service!</p>
-    <a href="mailto:service@vitamix.com">service@vitamix.com</a>
-    <p>1.800.848.2649</p>
+    <a href="mailto:service@vitamix.com"><img class="icon" src="/icons/email.svg" alt="Email">service@vitamix.com</a>
+    <a href="tel:18008482649"><img class="icon" src="/icons/phone.svg" alt="Phone">1.800.848.2649</a>
   `;
 
   container.append(questions);

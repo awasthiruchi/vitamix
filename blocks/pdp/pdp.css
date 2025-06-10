@@ -1,3 +1,5 @@
+@import url('./gallery.css');
+
 /* stylelint-disable no-descending-specificity */
 .pdp-wrapper {
   display: flex;
@@ -61,13 +63,13 @@
   color: var(--color-text);
 }
 
-.color-options {
+.pdp-color-options {
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
 }
 
-.color-swatch {
+.pdp-color-swatch {
   width: 24px;
   height: 24px;
   border: 1px solid #333f48;
@@ -79,11 +81,85 @@
   cursor: pointer;
 }
 
-.color-inner {
+.pdp-color-inner {
   width: 16px;
   height: 16px;
   border: 1px solid #333f48;
   border-radius: 50%;
+  position: relative;
+}
+
+/* product swatches colors */
+.pdp .pdp-color-swatch {
+  --color-matte-navy: #00263e;
+  --color-black: #000;
+  --color-red: #c03;
+  --color-brushed-stainless: #b0b3b7;
+  --color-brushed-stainless-metal-finish: #b5aa9d;
+  --color-white: #fff;
+  --color-slate: #666;
+  --color-grey: #e5e4e2;
+  --color-platinum: #e5e4e2;
+  --color-black-stainless-metal-finish: #161616;
+  --color-copper-metal-finish: #f2a57e;
+  --color-pearl-gray: #858583;
+  --color-graphite: #414141;
+  --color-candy-apple: #c00310;
+  --color-onyx: #353935;
+  --color-ruby: #e01160;
+  --color-orange: #ffa600;
+  --color-cinnamon: #d2691e;
+  --color-turquoise: #30d5c7;
+  --color-espresso: #67564e;
+  --color-cobalt: #0047ab;
+  --color-black-diamond: #928b8b;
+  --color-cream: #fffdd0;
+  --color-sour-apple-green: #e3edb5;
+  --color-purple: #800080;
+  --color-yellow: #f7f700;
+  --color-blue: #1131d4;
+  --color-1100001: #100;
+  --color-1100002: #100;
+  --color-graphite-metal-finish: #606060;
+  --color-candy-apple-red: #c00310;
+  --color-reflection: #f2a57e;
+  --color-color-not-available: ;
+  --color-abalone-grey: #3b363b;
+  --color-shadow-black: #000;
+  --color-polar-white: #fff;
+  --color-nano-gray: #5b6770;
+  --color-midnight-blue: #00263e;
+  --color-brushed-gold: #ccba78;
+}
+
+.pdp-color-swatch-oos.pdp-color-inner::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: -webkit-gradient(linear, left top, right bottom, 
+  color-stop(0%, #fff0),
+  color-stop(42%, #fff0), 
+  color-stop(43%, #fff), 
+  color-stop(46%, #fff), 
+  color-stop(47%, #ff5216), 
+  color-stop(53%, #ff5216), 
+  color-stop(54%, #fff), 
+  color-stop(57%, #fff), 
+  color-stop(58%, #fff0), 
+  color-stop(100%, #fff0)
+  );
+}
+
+.pdp-oos-message {
+  display: none;
+  color: var(--color-red);
+}
+
+[data-oos="true"] .pdp-oos-message {
+  display: block;
 }
 
 .warranty {
@@ -180,12 +256,17 @@
 
 .tabs {
   display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   gap: 16px;
   background-color: var(--color-gray-300);
 }
 
-.details .tabs {
-  flex-direction: column;
+@media (width >= 900px) {
+  .tabs {
+    flex-direction: unset;
+    align-items: center;
+  }
 }
 
 .tab {
@@ -284,35 +365,6 @@
 
 .gallery {
   grid-area: gallery;
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-l);
-}
-
-.lcp-image img {
-  width: 100%;
-  aspect-ratio: 1 / 1;
-}
-
-.gallery-images {
-  display: flex;
-  flex-flow: row wrap;
-  gap: var(--spacing-s);
-}
-
-.gallery-images img {
-  width: 58px;
-  height: 58px;
-  object-fit: cover;
-  cursor: pointer;
-}
-
-.gallery-images picture img {
-  border: 1px solid var(--color-gray-600);
-}
-
-.gallery-images picture.selected img {
-  border: 1px solid var(--color-text);
 }
 
 /** Pricing */
@@ -431,49 +483,6 @@
   grid-area: reviews;
 }
 
-/* product swatches colors */
-.pdp .color-swatch {
-  --color-matte-navy: #00263e;
-  --color-black: #000;
-  --color-red: #c03;
-  --color-brushed-stainless: #b0b3b7;
-  --color-brushed-stainless-metal-finish: #b5aa9d;
-  --color-white: #fff;
-  --color-slate: #666;
-  --color-grey: #e5e4e2;
-  --color-platinum: #e5e4e2;
-  --color-black-stainless-metal-finish: #161616;
-  --color-copper-metal-finish: #f2a57e;
-  --color-pearl-gray: #858583;
-  --color-graphite: #414141;
-  --color-candy-apple: #c00310;
-  --color-onyx: #353935;
-  --color-ruby: #e01160;
-  --color-orange: #ffa600;
-  --color-cinnamon: #d2691e;
-  --color-turquoise: #30d5c7;
-  --color-espresso: #67564e;
-  --color-cobalt: #0047ab;
-  --color-black-diamond: #928b8b;
-  --color-cream: #fffdd0;
-  --color-sour-apple-green: #e3edb5;
-  --color-purple: #800080;
-  --color-yellow: #f7f700;
-  --color-blue: #1131d4;
-  --color-1100001: #100;
-  --color-1100002: #100;
-  --color-graphite-metal-finish: #606060;
-  --color-candy-apple-red: #c00310;
-  --color-reflection: #f2a57e;
-  --color-color-not-available: ;
-  --color-abalone-grey: #3b363b;
-  --color-shadow-black: #000;
-  --color-polar-white: #fff;
-  --color-nano-gray: #5b6770;
-  --color-midnight-blue: #00263e;
-  --color-brushed-gold: #ccba78;
-}
-
 .pdp-payments-placeholder {
   margin-top: var(--spacing-m);
   font-size: var(--body-size-s);
@@ -526,7 +535,7 @@
   align-items: center;
   gap: var(--spacing-s);
   font-size: var(--body-size-s);
-  color: var(--color-gray-800);
+  color: var(--color-charcoal);
   margin-top: var(--spacing-s);
   border-top: 1px solid var(--color-gray-400);
   border-bottom: 1px solid var(--color-gray-400);
@@ -606,4 +615,24 @@
   height: 24px;
   width: 24px;
   margin: 0;
+}
+
+.pdp p + h1 {
+  margin-top: 0;
+}
+
+main .section > div.pdp-wrapper {
+  margin-top: 0;
+}
+
+.pdp-questions-container img.icon {
+  width: 1.5em;
+  height: 1.5em;
+}
+
+.pdp-questions-container a {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-s);
+  margin-top: var(--spacing-s);
 }

@@ -89,6 +89,32 @@ export function buildIcon(name, modifier) {
 }
 
 /**
+ * Builds a single index element for carousel navigation.
+ * @param {number} i - Index of the slide
+ * @param {HTMLElement} carousel - Carousel element
+ * @param {HTMLElement} indices - Container element for index buttons
+ * @param {number} [visibleSlides=1] - Number of slides visible at a time
+ * @returns {HTMLLIElement} Constructed carousel index
+ */
+function buildCarouselIndex(i, carousel, indices, visibleSlides = 1) {
+  const index = document.createElement('button');
+  index.type = 'button';
+  index.setAttribute('aria-label', `Go to slide ${i + 1}`);
+  index.setAttribute('aria-checked', !i);
+  index.setAttribute('role', 'radio');
+  index.addEventListener('click', () => {
+    indices.querySelectorAll('button').forEach((b) => {
+      b.setAttribute('aria-checked', b === index);
+    });
+    carousel.scrollTo({
+      left: i * (carousel.clientWidth / visibleSlides),
+      behavior: 'smooth',
+    });
+  });
+  return index;
+}
+
+/**
  * Builds and appends carousel index buttons for navigation.
  * @param {HTMLElement} carousel - Carousel element
  * @param {HTMLElement} indices - Container element where index buttons will be appended
@@ -98,23 +124,22 @@ function buildCarouselIndices(carousel, indices, visibleSlides = 1) {
   indices.innerHTML = '';
   const slides = [...carousel.children];
   slides.forEach((s, i) => {
-    const index = document.createElement('li');
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.setAttribute('aria-label', `Go to slide ${i + 1}`);
-    button.setAttribute('aria-selected', !i);
-    button.addEventListener('click', () => {
-      indices.querySelectorAll('button').forEach((b) => {
-        b.setAttribute('aria-selected', b === button);
-      });
-      carousel.scrollTo({
-        left: i * (carousel.clientWidth / visibleSlides),
-        behavior: 'smooth',
-      });
-    });
-    index.append(button);
+    const index = buildCarouselIndex(i, carousel, indices, visibleSlides);
     indices.append(index);
   });
+}
+
+/**
+ * Rebuilds carousel index buttons.
+ * @param {HTMLElement} carousel - Carousel element
+ */
+export function rebuildIndices(carousel) {
+  const slides = carousel.querySelector('ul');
+  const indices = carousel.querySelector('nav [role="radiogroup"]');
+  if (!slides || !indices) return;
+
+  const visibleSlides = parseInt(carousel.dataset.visibleSlides, 10) || 1;
+  buildCarouselIndices(slides, indices, visibleSlides);
 }
 
 /**
@@ -130,6 +155,7 @@ export function buildCarousel(container, visibleSlides = 1, pagination = true) {
   const slides = [...carousel.children];
   if (!slides || slides.length <= 0) return null;
   container.classList.add('carousel');
+  container.dataset.visibleSlides = visibleSlides;
 
   // build navigation
   const navEl = document.createElement('nav');
@@ -140,9 +166,9 @@ export function buildCarousel(container, visibleSlides = 1, pagination = true) {
   ['Previous', 'Next'].forEach((label, i) => {
     const button = document.createElement('button');
     button.type = 'button';
-    button.setAttribute('aria-label', `${label} frame`);
     button.className = `nav-arrow nav-arrow-${label.toLowerCase()}`;
-    // button.innerHTML = label === 'Previous' ? '&#xE959;' : '&#xe958;';
+    button.disabled = !i; // auto-disable first arrow
+    button.setAttribute('aria-label', `${label} frame`);
     button.addEventListener('click', () => {
       const slideWidth = carousel.scrollWidth / slides.length;
       carousel.scrollBy({
@@ -155,7 +181,8 @@ export function buildCarousel(container, visibleSlides = 1, pagination = true) {
 
   if (pagination) {
     // build indices
-    const indices = document.createElement('ul');
+    const indices = document.createElement('div');
+    indices.setAttribute('role', 'radiogroup');
     navEl.append(indices);
     buildCarouselIndices(carousel, indices, visibleSlides);
 
@@ -163,7 +190,7 @@ export function buildCarousel(container, visibleSlides = 1, pagination = true) {
       const { scrollLeft, clientWidth } = carousel;
       const current = Math.round(scrollLeft / (clientWidth * visibleSlides));
       [...indices.querySelectorAll('button')].forEach((btn, i) => {
-        btn.setAttribute('aria-selected', i === current);
+        btn.setAttribute('aria-checked', i === current);
       });
     });
   }
@@ -223,6 +250,13 @@ function parseVariants(sections) {
   });
 }
 
+// eslint-disable-next-line no-unused-vars
+export function checkOutOfStock(sku) {
+  // const { availability } = window.jsonLdData.offers.find((offer) => offer.sku === sku);
+  const availability = 'https://schema.org/InStock';
+  return availability === 'https://schema.org/OutOfStock';
+}
+
 /**
  * Builds hero block and prepends to main in a new section.
  * @param {Element} main The container element
@@ -233,11 +267,7 @@ function buildPDPBlock(main) {
 
   const isValidType = ['simple', 'configurable', 'bundle'].includes(type);
   if (isValidType) {
-    const lcpPictureSelector = type === 'simple'
-      ? 'picture:first-of-type'
-      : 'div:nth-child(2) picture';
-
-    const lcpPicture = main.querySelector(lcpPictureSelector);
+    const lcpPicture = main.querySelector('div:nth-child(2) picture') || main.querySelector('picture:first-of-type');
     const lcpImage = lcpPicture?.querySelector('img');
     if (lcpImage) {
       lcpImage.loading = 'eager';
@@ -251,7 +281,7 @@ function buildPDPBlock(main) {
     lcp.append(selectedImage);
     lcp.remove();
 
-    if (type === 'simple') {
+    if (!main.querySelector('h2')) {
       lcpPicture.remove();
     }
 
@@ -261,11 +291,16 @@ function buildPDPBlock(main) {
   const variantSections = Array.from(main.querySelectorAll(':scope > div'));
   window.variants = parseVariants(variantSections);
 
+  // Get the json-ld from the head and parse it
+  const jsonLd = document.head.querySelector('script[type="application/ld+json"]');
+  window.jsonLdData = jsonLd ? JSON.parse(jsonLd.textContent) : null;
+
   const navMeta = document.head.querySelector('meta[name="nav"]');
   if (!navMeta) {
     [
       ['nav', '/us/en_us/nav/nav'],
       ['footer', '/us/en_us/footer/footer'],
+      ['nav-banner', '/us/en_us/nav/nav-banner'],
     ].forEach(([name, content]) => {
       const meta = document.createElement('meta');
       meta.name = name;
@@ -396,17 +431,17 @@ function decorateImages(main) {
  */
 function decorateEyebrows(main) {
   main.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((h) => {
-    const prev = h.previousElementSibling;
-    if (prev && prev.tagName === 'P') {
-      // ignore p tags sandwiched between h tags
-      const next = prev.nextElementSibling;
-      if (next && next.tagName.startsWith('H')) return;
+    const beforeH = h.previousElementSibling;
+    if (beforeH && beforeH.tagName === 'P') {
+      const beforeP = beforeH.previousElementSibling;
+      // ignore p tags sandwiched between headings
+      if (beforeP && beforeP.tagName.startsWith('H')) return;
       // ignore p tags with images or links
-      const disqualifiers = prev.querySelector('img, a[href]');
+      const disqualifiers = beforeH.querySelector('img, a[href]');
       if (disqualifiers) return;
 
-      prev.classList.add('eyebrow');
-      h.dataset.eyebrow = prev.textContent;
+      beforeH.classList.add('eyebrow');
+      h.dataset.eyebrow = beforeH.textContent.trim();
     }
   });
 }
@@ -561,8 +596,8 @@ async function loadEager(doc) {
 
   const main = doc.querySelector('main');
   if (main) {
-    await loadNavBanner(main);
     decorateMain(main);
+    await loadNavBanner(main);
     document.body.classList.add('appear');
     await loadSection(main.querySelector('.section'), waitForFirstImage);
   }

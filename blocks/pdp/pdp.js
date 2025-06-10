@@ -2,8 +2,10 @@ import { loadScript, toClassName, getMetadata } from '../../scripts/aem.js';
 import renderGallery from './gallery.js';
 import renderSpecs from './specification-tabs.js';
 import renderPricing from './pricing.js';
+// eslint-disable-next-line import/no-cycle
 import { renderOptions, onOptionChange } from './options.js';
 import { loadFragment } from '../fragment/fragment.js';
+import { checkOutOfStock } from '../../scripts/scripts.js';
 
 const BV_PRODUCT_ID = getMetadata('reviewsId') || toClassName(getMetadata('sku')).replace(/-/g, '');
 
@@ -20,7 +22,12 @@ function renderTitle(block) {
   reviewsPlaceholder.classList.add('pdp-reviews-summary-placeholder');
   reviewsPlaceholder.innerHTML = `<div data-bv-show="rating_summary" data-bv-product-id="${BV_PRODUCT_ID}">`;
 
+  const collectionContainer = document.createElement('p');
+  collectionContainer.classList.add('pdp-collection-placeholder');
+  collectionContainer.textContent = `${getMetadata('collection') || ''}`;
+
   titleContainer.append(
+    collectionContainer,
     block.querySelector('h1:first-of-type'),
     reviewsPlaceholder,
   );
@@ -36,8 +43,12 @@ function renderTitle(block) {
 function renderDetails(block) {
   const detailsContainer = document.createElement('div');
   detailsContainer.classList.add('details');
-
   detailsContainer.append(...block.children);
+  if (detailsContainer.querySelector('h3')) {
+    const h2 = document.createElement('h2');
+    h2.textContent = 'About';
+    detailsContainer.prepend(h2);
+  }
 
   return detailsContainer;
 }
@@ -46,21 +57,24 @@ function renderDetails(block) {
  * Renders the add to cart section of the PDP block.
  * @returns {Element} The add to cart container element
  */
-function renderAddToCart() {
+function renderAddToCart(custom) {
   const addToCartContainer = document.createElement('div');
   addToCartContainer.classList.add('add-to-cart');
 
   // Quantity Label
   const quantityLabel = document.createElement('label');
   quantityLabel.textContent = 'Quantity:';
+  quantityLabel.classList.add('pdp-quantity-label');
+  quantityLabel.htmlFor = 'pdp-quantity-select';
   addToCartContainer.appendChild(quantityLabel);
 
   const quantityContainer = document.createElement('div');
   quantityContainer.classList.add('quantity-container');
   const quantitySelect = document.createElement('select');
+  quantitySelect.id = 'pdp-quantity-select';
 
-  // eslint-disable-next-line no-plusplus
-  for (let i = 1; i <= 3; i++) {
+  const maxQuantity = custom.maxCartQty ? +custom.maxCartQty : 5;
+  for (let i = 1; i <= maxQuantity; i += 1) {
     const option = document.createElement('option');
     option.value = i;
     option.textContent = i;
@@ -147,8 +161,10 @@ function renderContent() {
   const fragmentPath = window.location.pathname.replace('/products/', '/products/fragments/');
   const insertFragment = async () => {
     const fragment = await loadFragment(fragmentPath);
-    while (fragment.firstChild) {
-      contentContainer.append(fragment.firstChild);
+    if (fragment) {
+      while (fragment.firstChild) {
+        contentContainer.append(fragment.firstChild);
+      }
     }
   };
   insertFragment();
@@ -172,10 +188,10 @@ function renderAlert(product) {
   if (offers[0] && (
     availability === 'https://schema.org/Discontinued'
     || availability === 'https://schema.org/PreOrder'
-    || (product.custom && product.custom.retired)
+    || (product.custom && product.custom.retired === 'Yes')
   )) {
     const alertContainer = document.createElement('div');
-    const text = (availability === 'https://schema.org/Discontinued' || product.custom.retired) ? 'Retired Product' : 'Coming Soon';
+    const text = (availability === 'https://schema.org/Discontinued' || product.custom.retired === 'Yes') ? 'Retired Product' : 'Coming Soon';
     alertContainer.classList.add('pdp-alert');
     alertContainer.innerHTML = `
       <p>${text}</p>
@@ -202,7 +218,7 @@ function renderRelatedProducts(product) {
         const json = await resp.json();
         const title = json.name;
         const image = new URL(json.images[0].url, window.location.href);
-        const price = json.price.final;
+        const price = +json.price.final;
         li.innerHTML = `<a href="${url}"><img src="${image}?width=750&#x26;format=webply&#x26;optimize=medium" alt="${title}" /><div><p>${title}</p><strong>$${price.toFixed(2)}</strong></div></a>`;
       };
       fillProduct();
@@ -233,16 +249,7 @@ function renderShare() {
  * @param {Element} block - The PDP block element
  */
 export default function decorate(block) {
-  // remove eyebrow classes from all but the first eyebrow
-  [...block.querySelectorAll('p.eyebrow')].forEach((element) => {
-    element.classList.remove('eyebrow');
-  });
-
-  // Get the json-ld from the head and parse it
-  const jsonLd = document.head.querySelector('script[type="application/ld+json"]');
-  const jsonLdData = jsonLd ? JSON.parse(jsonLd.textContent) : null;
-
-  const { variants } = window;
+  const { jsonLdData, variants } = window;
   const galleryContainer = renderGallery(block, variants);
   const titleContainer = renderTitle(block);
   const alertContainer = renderAlert(jsonLdData);
@@ -253,7 +260,7 @@ export default function decorate(block) {
 
   const pricingContainer = renderPricing(block);
   const optionsContainer = renderOptions(block, variants, jsonLdData.custom.options);
-  const addToCartContainer = renderAddToCart(block);
+  const addToCartContainer = renderAddToCart(jsonLdData.custom);
   const compareContainer = renderCompare();
   const freeShippingContainer = renderFreeShipping(jsonLdData.offers);
   const shareContainer = renderShare();
@@ -295,4 +302,7 @@ export default function decorate(block) {
   } else if (variants.length > 0) {
     [window.selectedVariant] = variants;
   }
+
+  buyBox.dataset.sku = jsonLdData.offers[0].sku;
+  buyBox.dataset.oos = checkOutOfStock(jsonLdData.offers[0].sku);
 }
