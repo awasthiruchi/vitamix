@@ -249,3 +249,52 @@ body.modal-open {
     margin-top: var(--spacing-100);
   }
 }
+
+/* add to comparsion list modal */
+.modal#compare dialog {
+  max-width: 450px;
+  background-color: var(--color-background);
+  color: var(--color-gray-900);
+  font-size: var(--body-size-s);
+  font-weight: bold;
+  text-align: center;
+  box-shadow: var(--shadow-default);
+}
+
+.modal#compare dialog::backdrop {
+  background-color: var(--overlay-lighter);
+}
+
+.modal#compare dialog .close-button {
+  background-color: var(--color-charcoal);
+  border-radius: 50%;
+  border: 12px solid var(--color-background);
+}
+
+.modal#compare .close-button .icon.icon-close::before,
+.modal#compare .close-button .icon.icon-close::after {
+  width: 16px;
+}
+
+.modal#compare dialog .product {
+  font-size: var(--body-size-m);
+}
+
+.modal#compare dialog .button-wrapper {
+  justify-content: center;
+}
+
+.modal#compare dialog .button {
+  border: 0;
+  padding: 0;
+  background-color: transparent;
+  color: var(--color-blue);
+  font-size: unset;
+  text-transform: unset;
+}
+
+@media (width >= 900px) {
+  .modal#compare dialog .modal-content {
+    margin-bottom: 44px;
+  }
+}

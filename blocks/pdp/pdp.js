@@ -6,6 +6,7 @@ import renderPricing from './pricing.js';
 import { renderOptions, onOptionChange } from './options.js';
 import { loadFragment } from '../fragment/fragment.js';
 import { checkOutOfStock } from '../../scripts/scripts.js';
+import { openModal } from '../modal/modal.js';
 
 const BV_PRODUCT_ID = getMetadata('reviewsId') || toClassName(getMetadata('sku')).replace(/-/g, '');
 
@@ -172,6 +173,18 @@ function renderCompare() {
       body: `product=${getMetadata('entityId')}&uenc=${encodeURIComponent(window.location.href)}`,
       method: 'POST',
       credentials: 'include',
+    }).then((resp) => {
+      if (resp.ok) {
+        openModal('/us/en_us/products/modals/compare').then((modal) => {
+          if (modal) {
+            const content = modal.querySelector('.default-content-wrapper');
+            const product = document.createElement('p');
+            product.className = 'product';
+            product.textContent = document.querySelector('h1').textContent;
+            content.prepend(product);
+          }
+        });
+      }
     });
   });
 
