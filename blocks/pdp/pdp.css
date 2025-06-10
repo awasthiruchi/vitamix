@@ -209,6 +209,12 @@
   background-color: #2B333A;
 }
 
+.add-to-cart button[aria-disabled="true"] {
+  background-color: #40596b;
+  border: 1px solid #40596b;
+  cursor: not-allowed;
+}
+
 .details {
   grid-area: details;
   gap: var(--spacing-xl);

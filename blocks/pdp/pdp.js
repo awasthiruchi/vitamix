@@ -87,8 +87,7 @@ function renderAddToCart(custom) {
   addToCartButton.textContent = 'Add to Cart';
 
   addToCartButton.addEventListener('click', async () => {
-    // eslint-disable-next-line import/no-unresolved
-    const { default: addToCart } = await import('https://cart--vitamix--aemsites.aem.network/blocks/pdp/add-to-cart.js');
+    const { cartApi } = await import('../../scripts/minicart/api.js');
 
     const { updateMagentoCacheSections, getMagentoCache } = await import('../../scripts/storage/util.js');
 
@@ -98,11 +97,21 @@ function renderAddToCart(custom) {
       await updateMagentoCacheSections(['customer']);
     }
 
-    const { sku, options } = window.selectedVariant;
+    addToCartButton.textContent = 'Adding...';
+    addToCartButton.setAttribute('aria-disabled', 'true');
+
     const quantity = document.querySelector('.quantity-container select')?.value || 1;
 
-    const filteredOptions = options.uid ? [options.uid] : [];
-    addToCart(sku, filteredOptions, quantity);
+    const { sku, options } = window.selectedVariant
+      ? window.selectedVariant
+      : { sku: getMetadata('sku'), options: [] };
+
+    const filteredOptions = options?.uid ? [options.uid] : [];
+
+    await cartApi.addToCart(sku, filteredOptions, quantity);
+
+    // Open cart page
+    window.location.href = '/us/en_us/checkout/cart/';
   });
 
   quantityContainer.appendChild(addToCartButton);
