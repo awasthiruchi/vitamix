@@ -562,7 +562,7 @@
 
 .pdp-alert {
   grid-area: alert;
-  background-color: var(--color-gray-900);
+  background-color: var(--color-charcoal);
   color: var(--color-white);
   font-weight: 700;
   text-align: center;
