@@ -26,7 +26,6 @@ export function buildSlide(el, source) {
     a.className = 'video-wrapper';
     a.textContent = '';
     if (picture) a.append(picture);
-    a.append(document.createElement('button'));
     a.addEventListener('click', (e) => {
       e.preventDefault();
       const video = embedYoutube(new URL(a.href), true, false);
@@ -63,6 +62,9 @@ export function buildThumbnails(carousel) {
 
     const thumb = img.cloneNode(true);
     if (source) btn.dataset.source = source;
+    if (img.closest('a.video-wrapper')) {
+      btn.classList.add('video-thumbnail');
+    }
     btn.replaceChildren(thumb);
 
     // track aria-checked updates
