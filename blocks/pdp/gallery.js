@@ -1,5 +1,15 @@
 import { buildCarousel } from '../../scripts/scripts.js';
 import { getMetadata } from '../../scripts/aem.js';
+import { embedYoutube } from '../video/video.js';
+
+/**
+ * Checks if a link is a YouTube video.
+ * @param {HTMLElement} el - Link element
+ * @returns {boolean}
+ */
+function isVideo(el) {
+  return el.href.startsWith('https://www.youtube.com/watch?v=') || el.href.startsWith('https://youtu.be/');
+}
 
 /**
  * Accepts an element and returns clean <li> > <picture> structure.
@@ -11,9 +21,22 @@ export function buildSlide(el, source) {
   const picture = el.tagName === 'PICTURE' ? el : el.querySelector('picture');
   if (!picture) return null;
 
+  const a = el.querySelector('a');
+  if (a && isVideo(a)) {
+    a.className = 'video-wrapper';
+    a.textContent = '';
+    if (picture) a.append(picture);
+    a.append(document.createElement('button'));
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      const video = embedYoutube(new URL(a.href), true, false);
+      a.replaceWith(video);
+    });
+  }
+
   const li = document.createElement('li');
   if (source) li.dataset.source = source;
-  li.append(picture);
+  li.append(a || picture);
   return li;
 }
 
@@ -89,13 +112,21 @@ export default function renderGallery(block, variants) {
       return clone;
     });
 
+    block.querySelectorAll('.button-wrapper a').forEach((el) => {
+      if (isVideo(el)) {
+        el.closest('.button-wrapper').className = 'video-wrapper';
+      }
+    });
+
     // grab fallback images
     const fallbackImages = block.querySelectorAll('.img-wrapper');
+    const fallbackVideos = block.querySelectorAll('.video-wrapper');
+
     // store clones for reset functionality
     window.defaultProductImages = Array.from(fallbackImages).map((img) => img.cloneNode(true));
 
     // append slides from images
-    [...variantImages, ...fallbackImages].forEach((el) => {
+    [...variantImages, ...fallbackImages, ...fallbackVideos].forEach((el) => {
       const { source } = el.dataset;
       const slide = buildSlide(el, source);
       if (slide) {

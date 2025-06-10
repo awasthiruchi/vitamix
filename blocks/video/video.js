@@ -6,7 +6,7 @@
 
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-function embedYoutube(url, autoplay, background) {
+export function embedYoutube(url, autoplay, background) {
   const usp = new URLSearchParams(url.search);
   let suffix = '';
   if (background || autoplay) {
