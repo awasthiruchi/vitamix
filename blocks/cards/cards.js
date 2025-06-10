@@ -1,8 +1,20 @@
 import { createOptimizedPicture } from '../../scripts/aem.js';
 
+/**
+ * Returns the largest factor of given n among bewteen 1 and 4.
+ * @param {number} n - Number to find largest factor for
+ * @returns {number|undefined} Largest factor
+ */
+function getLargestFactor(n) {
+  return [4, 3, 2, 1].find((f) => n % f === 0) || 1;
+}
+
 export default function decorate(block) {
   // replace default div structure with ordered list
   const ul = document.createElement('ul');
+  const cardsPerRow = getLargestFactor(block.children.length);
+  ul.classList.add(`rows-${cardsPerRow}`);
+
   [...block.children].forEach((row) => {
     // move all children from row into list item
     const li = document.createElement('li');
@@ -32,7 +44,23 @@ export default function decorate(block) {
 
   // decorate variant specifics
   const variants = [...block.classList].filter((c) => c !== 'block' && c !== 'cards');
-  if (variants.includes('knockout') || variants.includes('articles')) {
+  if (!variants.length) {
+    // default card styling
+    ul.querySelectorAll('li .card-body').forEach((body) => {
+      const link = body.querySelector('a[href]');
+      if (link) {
+        const content = body.textContent.trim();
+        // link is the only content
+        if (link.textContent.trim() === content) {
+          link.removeAttribute('class');
+          link.parentElement.classList.remove('button-wrapper');
+          variants.push('linked');
+          block.classList.add('linked');
+        }
+      }
+    });
+  }
+  if (variants.includes('knockout') || variants.includes('articles') || variants.includes('linked')) {
     ul.querySelectorAll('li').forEach((li) => {
       const as = li.querySelectorAll('a');
       // setup full card click if there's one link or all links have same href
