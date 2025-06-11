@@ -89,14 +89,48 @@ export function buildIcon(name, modifier) {
 }
 
 /**
+ * Get horizontal gap between carousel items.
+ * @param {HTMLElement} carousel - Carousel element
+ * @returns {number} Gap size in pixels
+ */
+function getGapSize(carousel) {
+  const styles = getComputedStyle(carousel);
+  const gap = styles.gap || styles.columnGap;
+  return parseFloat(gap) || 0;
+}
+
+/**
+ * Calculates total width of single slide (including gap to next slide).
+ * @param {HTMLElement} carousel - Carousel element
+ * @returns {number} Slide width, including the gap, in pixels
+ */
+function getSlideWidth(carousel) {
+  const slide = carousel.querySelector('li');
+  return slide ? slide.offsetWidth + getGapSize(carousel) : 0;
+}
+
+/**
+ * Determines how many slides are currently visible in carousel viewport.
+ * @param {HTMLElement} container - Container element
+ * @returns {number} Number of fully visible slides
+ */
+function getVisibleSlides(container) {
+  const carousel = container.querySelector('ul');
+  const slide = carousel.querySelector('li');
+  if (!carousel || !slide) return 1;
+
+  const slideWidthWithGap = slide.offsetWidth + getGapSize(carousel);
+  return Math.max(1, Math.round(carousel.clientWidth / slideWidthWithGap));
+}
+
+/**
  * Builds a single index element for carousel navigation.
  * @param {number} i - Index of the slide
  * @param {HTMLElement} carousel - Carousel element
  * @param {HTMLElement} indices - Container element for index buttons
- * @param {number} [visibleSlides=1] - Number of slides visible at a time
  * @returns {HTMLLIElement} Constructed carousel index
  */
-function buildCarouselIndex(i, carousel, indices, visibleSlides = 1) {
+function buildCarouselIndex(i, carousel, indices) {
   const index = document.createElement('button');
   index.type = 'button';
   index.setAttribute('aria-label', `Go to slide ${i + 1}`);
@@ -107,7 +141,7 @@ function buildCarouselIndex(i, carousel, indices, visibleSlides = 1) {
       b.setAttribute('aria-checked', b === index);
     });
     carousel.scrollTo({
-      left: i * (carousel.clientWidth / visibleSlides),
+      left: i * getSlideWidth(carousel),
       behavior: 'smooth',
     });
   });
@@ -118,13 +152,12 @@ function buildCarouselIndex(i, carousel, indices, visibleSlides = 1) {
  * Builds and appends carousel index buttons for navigation.
  * @param {HTMLElement} carousel - Carousel element
  * @param {HTMLElement} indices - Container element where index buttons will be appended
- * @param {number} [visibleSlides=1] - Number of slides visible at a time
  */
-function buildCarouselIndices(carousel, indices, visibleSlides = 1) {
+function buildCarouselIndices(carousel, indices) {
   indices.innerHTML = '';
   const slides = [...carousel.children];
   slides.forEach((s, i) => {
-    const index = buildCarouselIndex(i, carousel, indices, visibleSlides);
+    const index = buildCarouselIndex(i, carousel, indices);
     indices.append(index);
   });
 }
@@ -138,24 +171,21 @@ export function rebuildIndices(carousel) {
   const indices = carousel.querySelector('nav [role="radiogroup"]');
   if (!slides || !indices) return;
 
-  const visibleSlides = parseInt(carousel.dataset.visibleSlides, 10) || 1;
-  buildCarouselIndices(slides, indices, visibleSlides);
+  buildCarouselIndices(slides, indices);
 }
 
 /**
  * Initializes and builds a scrollable carousel with navigation controls.
  * @param {HTMLElement} container - Container element that wraps the carousel `<ul>`.
- * @param {number} [visibleSlides=1] - Number of slides visible at a time.
  * @param {boolean} [pagination=true] - Whether to display pagination indicators.
  * @returns {HTMLElement} Carousel container.
  */
-export function buildCarousel(container, visibleSlides = 1, pagination = true) {
+export function buildCarousel(container, pagination = true) {
   const carousel = container.querySelector('ul');
   if (!carousel) return null;
   const slides = [...carousel.children];
   if (!slides || slides.length <= 0) return null;
   container.classList.add('carousel');
-  container.dataset.visibleSlides = visibleSlides;
 
   // build navigation
   const navEl = document.createElement('nav');
@@ -170,9 +200,10 @@ export function buildCarousel(container, visibleSlides = 1, pagination = true) {
     button.disabled = !i; // auto-disable first arrow
     button.setAttribute('aria-label', `${label} frame`);
     button.addEventListener('click', () => {
-      const slideWidth = carousel.scrollWidth / slides.length;
+      const slideWidth = getSlideWidth(carousel);
+      const visible = getVisibleSlides(container);
       carousel.scrollBy({
-        left: !i ? -slideWidth * visibleSlides : slideWidth * visibleSlides,
+        left: !i ? -slideWidth * visible : slideWidth * visible,
         behavior: 'smooth',
       });
     });
@@ -184,11 +215,11 @@ export function buildCarousel(container, visibleSlides = 1, pagination = true) {
     const indices = document.createElement('div');
     indices.setAttribute('role', 'radiogroup');
     navEl.append(indices);
-    buildCarouselIndices(carousel, indices, visibleSlides);
+    buildCarouselIndices(carousel, indices);
 
     carousel.addEventListener('scroll', () => {
-      const { scrollLeft, clientWidth } = carousel;
-      const current = Math.round(scrollLeft / (clientWidth * visibleSlides));
+      const { scrollLeft } = carousel;
+      const current = Math.round(scrollLeft / getSlideWidth(carousel));
       [...indices.querySelectorAll('button')].forEach((btn, i) => {
         btn.setAttribute('aria-checked', i === current);
       });
@@ -197,20 +228,27 @@ export function buildCarousel(container, visibleSlides = 1, pagination = true) {
 
   // enable scroll
   carousel.addEventListener('scroll', () => {
-    const { scrollLeft } = carousel;
-    const slideWidth = carousel.scrollWidth / slides.length;
     const prev = container.querySelector('.nav-arrow-previous');
     const next = container.querySelector('.nav-arrow-next');
     [prev, next].forEach((b) => {
       b.disabled = false;
     });
+    const { scrollLeft } = carousel;
+    const slideWidth = getSlideWidth(carousel);
+    const visible = getVisibleSlides(container);
     const current = Math.round(scrollLeft / slideWidth);
     if (current < 1) prev.disabled = true;
-    else if (current >= (slides.length - visibleSlides)) next.disabled = true;
+    else if (current >= slides.length - visible) next.disabled = true;
   });
 
-  // if only one frame, hide navigation
-  if (slides.length <= visibleSlides) navEl.style.visibility = 'hidden';
+  // hide nav if all slides are visible
+  const observer = new ResizeObserver(() => {
+    const visible = getVisibleSlides(container);
+    if (slides.length <= visible) navEl.style.visibility = 'hidden';
+    else navEl.removeAttribute('style');
+  });
+  observer.observe(carousel);
+
   return container;
 }
 
