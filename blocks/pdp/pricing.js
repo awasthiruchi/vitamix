@@ -3,7 +3,7 @@
  * @param {Element} element - The element containing the pricing information.
  * @returns {Object} An object containing the final price and regular price.
  */
-function extractPricing(element) {
+export function extractPricing(element) {
   if (!element) return null;
 
   const pricingText = element.textContent.trim();
