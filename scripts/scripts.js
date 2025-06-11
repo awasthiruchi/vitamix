@@ -502,14 +502,29 @@ function decorateDisclaimers(main) {
 function decorateSectionBackgrounds(main) {
   main.querySelectorAll('.section.banner[data-background]').forEach((section) => {
     const { background } = section.dataset;
-    const backgroundPicture = createOptimizedPicture(background, '', false, [
-      { media: '(min-width: 800px)', width: '2880' },
-      { width: '1600' },
-    ]);
-    backgroundPicture.classList.add('section-background-image');
-    section.prepend(backgroundPicture);
-    const text = section.textContent.trim();
-    if (text) section.classList.add('overlay');
+    try {
+      const { href, pathname } = new URL(background);
+      if (pathname.endsWith('.mp4')) {
+        const wrapper = document.createElement('p');
+        const videoLink = document.createElement('a');
+        videoLink.href = href;
+        wrapper.prepend(videoLink);
+        section.prepend(wrapper);
+        const video = buildVideo(section);
+        video.classList.add('section-background-video');
+      } else {
+        const backgroundPicture = createOptimizedPicture(href, '', false, [
+          { media: '(min-width: 800px)', width: '2880' },
+          { width: '1600' },
+        ]);
+        backgroundPicture.classList.add('section-background-image');
+        section.prepend(backgroundPicture);
+      }
+      const text = section.textContent.trim();
+      if (text) section.classList.add('overlay');
+    } catch (e) {
+      // do nothing
+    }
   });
 
   main.querySelectorAll('.section.light, .section.dark').forEach((section) => {

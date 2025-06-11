@@ -184,12 +184,14 @@ main .section[data-background] {
   position: relative;
 }
 
-main .section[data-background] picture.section-background-image {
+main .section[data-background] picture.section-background-image,
+main .section[data-background] .section-background-video {
   position: absolute;
   inset: 0;
 }
 
-main .section[data-background] picture.section-background-image img {
+main .section[data-background] picture.section-background-image img,
+main .section[data-background] video.section-background-video {
   width: 100%;
   height: 100%;
   object-fit: cover;
