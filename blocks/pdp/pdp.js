@@ -64,6 +64,7 @@ function renderAddToCart(block, custom) {
     findLocallyContainer.innerHTML = `
       <a class="button emphasis pdp-find-locally-button" href="https://www.vitamix.com/us/en_us/where-to-buy?productFamily=&productType=HH">Find Locally</a>
     `;
+    block.classList.add('pdp-find-locally');
     return findLocallyContainer;
   }
 
