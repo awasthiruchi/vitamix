@@ -42,6 +42,13 @@ export default function renderPricing(block, variant) {
 
   pricingElement.remove();
 
+  if (pricing.regular && pricing.regular > pricing.final) {
+    const nowLabel = document.createElement('div');
+    nowLabel.className = 'pricing-now';
+    nowLabel.textContent = 'Now';
+    pricingContainer.appendChild(nowLabel);
+  }
+
   const finalPrice = document.createElement('div');
   finalPrice.className = 'pricing-final';
   finalPrice.textContent = `$${pricing.final.toFixed(2)}`;
