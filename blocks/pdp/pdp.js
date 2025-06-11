@@ -206,6 +206,7 @@ function renderAlert(block, product) {
     const alertContainer = document.createElement('div');
     alertContainer.classList.add('pdp-alert');
     alertContainer.innerHTML = '<p>Retired Product</p>';
+    block.classList.add('pdp-retired');
     return alertContainer;
   }
   /* promos */

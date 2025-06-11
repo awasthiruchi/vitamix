@@ -661,3 +661,7 @@ main .section > div.pdp-wrapper {
   gap: var(--spacing-s);
   margin-top: var(--spacing-s);
 }
+
+.pdp.block.pdp-retired .add-to-cart, .pdp.block.pdp-retired .pricing, .pdp.block.pdp-retired .options {
+  display: none;
+}
