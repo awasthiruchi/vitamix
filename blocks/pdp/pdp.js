@@ -6,6 +6,7 @@ import renderPricing, { extractPricing } from './pricing.js';
 import { renderOptions, onOptionChange } from './options.js';
 import { loadFragment } from '../fragment/fragment.js';
 import { checkOutOfStock } from '../../scripts/scripts.js';
+import { openModal } from '../modal/modal.js';
 
 const BV_PRODUCT_ID = getMetadata('reviewsId') || toClassName(getMetadata('sku')).replace(/-/g, '');
 
@@ -159,8 +160,34 @@ function renderCompare() {
   compareContainer.innerHTML = `
     <div>
       <button class="pdp-compare-button">Compare</button>
-      <a href="https://www.vitamix.com/us/en_us/catalog/product_compare/index/" title="View Comparison" class="comparelistlink">View Comparison List.</a>
+      <a href="/us/en_us/catalog/product_compare/index/" title="View Comparison" class="comparelistlink">View Comparison List.</a>
     </div>`;
+
+  const compareButton = compareContainer.querySelector('.pdp-compare-button');
+  compareButton.addEventListener('click', () => {
+    fetch('/us/en_us/catalog/product_compare/add/', {
+      headers: {
+        'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        'x-requested-with': 'XMLHttpRequest',
+      },
+      body: `product=${getMetadata('entityId')}&uenc=${encodeURIComponent(window.location.href)}`,
+      method: 'POST',
+      credentials: 'include',
+    }).then((resp) => {
+      if (resp.ok) {
+        openModal('/us/en_us/products/modals/compare').then((modal) => {
+          if (modal) {
+            const content = modal.querySelector('.default-content-wrapper');
+            const product = document.createElement('p');
+            product.className = 'product';
+            product.textContent = document.querySelector('h1').textContent;
+            content.prepend(product);
+          }
+        });
+      }
+    });
+  });
+
   return compareContainer;
 }
 
