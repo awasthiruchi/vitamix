@@ -1,12 +1,18 @@
 import { createOptimizedPicture } from '../../scripts/aem.js';
 
 /**
- * Returns the largest factor of given n among bewteen 1 and 4.
+ * Returns the largest factor of given n among between 1 and 4.
  * @param {number} n - Number to find largest factor for
- * @returns {number|undefined} Largest factor
+ * @returns {number} Largest factor
  */
 function getLargestFactor(n) {
-  return [4, 3, 2, 1].find((f) => n % f === 0) || 1;
+  // try to find a factor of 4, 3, or 2
+  const factor = [4, 3, 2].find((f) => n % f === 0);
+  if (factor) return factor;
+
+  // otherwise, set default factor
+  if (n > 4) return n % 2 === 0 ? 4 : 3;
+  return 1;
 }
 
 export default function decorate(block) {
