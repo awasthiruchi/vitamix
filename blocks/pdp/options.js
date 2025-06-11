@@ -171,9 +171,16 @@ export function renderOptions(block, variants, customOptions) {
         radio.checked = true;
       }
       warrentyValue.prepend(radio);
+
+      radio.addEventListener('change', () => {
+        window.selectedWarranty = option;
+      });
     }
     warrentyContainer.append(warrentyValue);
   });
+
+  // set default warranty
+  [window.selectedWarranty] = customOptions;
 
   optionsContainer.append(warrentyContainer);
 
