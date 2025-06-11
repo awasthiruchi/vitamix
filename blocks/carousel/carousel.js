@@ -67,6 +67,12 @@ function autoRotate(carousel, interval = 6000) {
 
 export default function decorate(block) {
   const variants = [...block.classList].filter((c) => c !== 'block' && c !== 'carousel');
+  const indicatedSlides = variants.find((v) => v.startsWith('slides-'));
+  if (indicatedSlides) {
+    block.parentElement.classList.add('items');
+    block.classList.add('items');
+    variants.push('items');
+  }
 
   const rows = [...block.children];
   block.innerHTML = '';
@@ -116,7 +122,7 @@ export default function decorate(block) {
     wrapper.append(slide);
   });
 
-  const carousel = buildCarousel(block, 1, false);
+  const carousel = buildCarousel(block, false);
   if (staticContent) carousel.parentElement.prepend(staticContent);
 
   if (carousel) block.replaceWith(carousel);

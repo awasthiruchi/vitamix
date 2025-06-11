@@ -649,6 +649,7 @@ input[type='radio'] {
 .carousel nav {
   position: absolute;
   inset: 0;
+  pointer-events: none;
 }
 
 .carousel nav button {
@@ -658,6 +659,7 @@ input[type='radio'] {
   padding: 0;
   background-color: transparent;
   box-shadow: none;
+  pointer-events: auto;
 }
 
 .carousel nav button.nav-arrow {
