@@ -332,7 +332,7 @@
 }
 
 .cards.knockout > ul li:hover picture img {
-  transform: translateY(-1ch);
+  transform: translateY(-0.5ch);
 }
 
 @media (width >= 600px) {
@@ -369,6 +369,7 @@
   }
 
   .cards.knockout picture img {
+    max-height: 151px;
     max-width: 151px;
   }
 }
