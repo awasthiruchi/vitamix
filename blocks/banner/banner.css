@@ -390,6 +390,6 @@
 
 @media (width >= 1000px) {
   .banner.split > div > div:not([class]) {
-    padding: var(--spacing-800);
+    padding: var(--spacing-900) var(--spacing-800);
   }
 }
