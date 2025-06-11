@@ -665,3 +665,7 @@ main .section > div.pdp-wrapper {
 .pdp.block.pdp-retired .add-to-cart, .pdp.block.pdp-retired .pricing, .pdp.block.pdp-retired .options {
   display: none;
 }
+
+.pdp.block.pdp-find-dealer .pricing, .pdp.block.pdp-find-dealer .options {
+  display: none;
+}
