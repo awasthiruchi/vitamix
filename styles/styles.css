@@ -158,6 +158,15 @@ main > .section > div {
   padding: 0 var(--horizontal-spacing);
 }
 
+/* page theme */
+.text-center .default-content-wrapper {
+  text-align: center;
+}
+
+.text-center .default-content-wrapper .button-wrapper {
+  justify-content: center;
+}
+
 /* section metadata */
 main .section[data-collapse='top'],
 main .section[data-collapse='both'] {
