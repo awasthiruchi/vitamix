@@ -108,8 +108,9 @@ function renderAddToCart(custom) {
       : { sku: getMetadata('sku'), options: [] };
 
     const filteredOptions = options?.uid ? [options.uid] : [];
+    const customizableOptions = window.selectedWarranty ? [window.selectedWarranty] : [];
 
-    await cartApi.addToCart(sku, filteredOptions, quantity);
+    await cartApi.addToCart(sku, filteredOptions, customizableOptions, quantity);
 
     // Open cart page
     window.location.href = '/us/en_us/checkout/cart/';
