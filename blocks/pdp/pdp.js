@@ -293,6 +293,12 @@ export default function decorate(block) {
   const faqContainer = renderFAQ(block);
   renderReviews(block);
 
+  /* remove buttons styling from details */
+  detailsContainer.querySelectorAll('.button').forEach((button) => {
+    button.classList.remove('button');
+    button.parentElement.classList.remove('button-wrapper');
+  });
+
   block.append(
     alertContainer || '',
     titleContainer,
