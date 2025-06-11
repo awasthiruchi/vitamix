@@ -58,6 +58,15 @@ function renderDetails(block) {
  * @returns {Element} The add to cart container element
  */
 function renderAddToCart(custom) {
+  if (getMetadata('findLocally') === 'Yes') {
+    const findLocallyContainer = document.createElement('div');
+    findLocallyContainer.classList.add('add-to-cart');
+    findLocallyContainer.innerHTML = `
+      <a class="button emphasis pdp-find-locally-button" href="https://www.vitamix.com/us/en_us/where-to-buy?productFamily=&productType=HH">Find Locally</a>
+    `;
+    return findLocallyContainer;
+  }
+
   const addToCartContainer = document.createElement('div');
   addToCartContainer.classList.add('add-to-cart');
 

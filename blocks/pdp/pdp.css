@@ -215,6 +215,16 @@
   cursor: not-allowed;
 }
 
+a.button.pdp-find-locally-button {
+  width: 100%;
+  max-width: 350px;
+  font-weight: var(--weight-light);
+  background-color: var(--color-charcoal);
+  border: none;
+  border-radius: 4px;
+  text-transform: none;
+}
+
 .details {
   grid-area: details;
   gap: var(--spacing-xl);
