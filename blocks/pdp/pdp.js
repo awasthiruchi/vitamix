@@ -1,7 +1,7 @@
 import { loadScript, toClassName, getMetadata } from '../../scripts/aem.js';
 import renderGallery from './gallery.js';
 import renderSpecs from './specification-tabs.js';
-import renderPricing from './pricing.js';
+import renderPricing, { extractPricing } from './pricing.js';
 // eslint-disable-next-line import/no-cycle
 import { renderOptions, onOptionChange } from './options.js';
 import { loadFragment } from '../fragment/fragment.js';
@@ -191,7 +191,7 @@ function renderFreeShipping(offers) {
   return freeShippingContainer;
 }
 
-function renderAlert(product) {
+function renderAlert(block, product) {
   /* retired and coming soon */
   if (product.custom && product.custom.retired === 'Yes') {
     const alertContainer = document.createElement('div');
@@ -199,7 +199,6 @@ function renderAlert(product) {
     alertContainer.innerHTML = '<p>Retired Product</p>';
     return alertContainer;
   }
-
   /* promos */
   const promo = getMetadata('promoButton');
   if (promo) {
@@ -209,6 +208,18 @@ function renderAlert(product) {
     alertContainer.innerHTML = `<p>${promo}</p>`;
     return alertContainer;
   }
+
+  /* save now */
+  const pricingElement = block.querySelector('p:nth-of-type(1)');
+  const pricing = extractPricing(pricingElement);
+  if (pricing.regular && pricing.regular > pricing.final) {
+    const alertContainer = document.createElement('div');
+    alertContainer.classList.add('pdp-alert');
+    alertContainer.classList.add('pdp-promo-alert');
+    alertContainer.innerHTML = '<p>Save Now!</p>';
+    return alertContainer;
+  }
+
   return null;
 }
 
@@ -263,7 +274,7 @@ export default function decorate(block) {
   const { jsonLdData, variants } = window;
   const galleryContainer = renderGallery(block, variants);
   const titleContainer = renderTitle(block);
-  const alertContainer = renderAlert(jsonLdData);
+  const alertContainer = renderAlert(block, jsonLdData);
   const relatedProductsContainer = renderRelatedProducts(jsonLdData);
 
   const buyBox = document.createElement('div');

@@ -3,7 +3,7 @@
  * @param {Element} element - The element containing the pricing information.
  * @returns {Object} An object containing the final price and regular price.
  */
-function extractPricing(element) {
+export function extractPricing(element) {
   if (!element) return null;
 
   const pricingText = element.textContent.trim();
@@ -41,6 +41,13 @@ export default function renderPricing(block, variant) {
   }
 
   pricingElement.remove();
+
+  if (pricing.regular && pricing.regular > pricing.final) {
+    const nowLabel = document.createElement('div');
+    nowLabel.className = 'pricing-now';
+    nowLabel.textContent = 'Now';
+    pricingContainer.appendChild(nowLabel);
+  }
 
   const finalPrice = document.createElement('div');
   finalPrice.className = 'pricing-final';

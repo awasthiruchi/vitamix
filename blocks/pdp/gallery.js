@@ -114,9 +114,14 @@ export default function renderGallery(block, variants) {
       return clone;
     });
 
-    block.querySelectorAll('.button-wrapper a').forEach((el) => {
+    [...block.querySelectorAll('.button-wrapper a')].forEach((el) => {
       if (isVideo(el)) {
-        el.closest('.button-wrapper').className = 'video-wrapper';
+        const parent = el.parentElement;
+        const div = document.createElement('div');
+        div.className = 'video-wrapper';
+        div.append(el.previousElementSibling);
+        div.append(el);
+        parent.append(div);
       }
     });
 
