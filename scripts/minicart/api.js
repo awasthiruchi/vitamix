@@ -88,14 +88,14 @@ class Store {
 export const store = new Store();
 
 export const cartApi = {
-  addToCart: async (sku, options, quantity) => {
+  addToCart: async (sku, options, customizableOptions, quantity) => {
     const { addToCart } = await import('./cart.js');
     // const { showCart } = await import('./Minicart.js');
     if (!store.getCartId()) {
       console.debug('Cannot add item to cart, need to create a new cart first.');
       await updateMagentoCacheSections(['cart', 'customer', 'side-by-side']);
     }
-    await addToCart(sku, options, quantity);
+    await addToCart(sku, options, customizableOptions, quantity);
     // showCart();
   },
   toggleCart: async () => {

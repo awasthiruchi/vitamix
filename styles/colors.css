@@ -19,8 +19,9 @@
   --color-chili: #e03b24;
   --color-deep-rust: #a94f11;
   --color-yellow: #fc0;
-  --color-green: #64a338;
   --color-asparagus: #799a3c;
+  --color-green: #64a338;
+  --color-xanadu: #5e7d61;
   --color-moss: #59632c;
   --color-robin: #3dcbda;
   --color-blue: #1b64b4;
@@ -35,6 +36,7 @@
   
   /* overlays */;
   --overlay-light: rgba(255 255 255 / 95%);
+  --overlay-lighter: rgba(255 255 255 / 50%);
   --overlay-charcoal: rgba(51 63 72 / 35%);
   --overlay-charcoal-dark: rgba(51 63 72 / 60%);
 }

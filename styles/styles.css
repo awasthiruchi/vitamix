@@ -56,7 +56,7 @@
   --spacing-xxs: var(--spacing-20);
 
   /* shadows */
-  --shadow-default: 0 1px 6px 0 var(--color-shadow);
+  --shadow-default: rgba(0 0 0 / 35%) 0 0 12px 2px;
   --shadow-hover: 0 2px 8px 0 var(--color-shadow);
   --shadow-dragged: 0 3px 12px 0 var(--color-shadow);
 
@@ -156,6 +156,15 @@ main > .section {
 main > .section > div {
   margin: var(--horizontal-spacing) auto;
   padding: 0 var(--horizontal-spacing);
+}
+
+/* page theme */
+.text-center .default-content-wrapper {
+  text-align: center;
+}
+
+.text-center .default-content-wrapper .button-wrapper {
+  justify-content: center;
 }
 
 /* section metadata */
@@ -649,6 +658,7 @@ input[type='radio'] {
 .carousel nav {
   position: absolute;
   inset: 0;
+  pointer-events: none;
 }
 
 .carousel nav button {
@@ -658,6 +668,7 @@ input[type='radio'] {
   padding: 0;
   background-color: transparent;
   box-shadow: none;
+  pointer-events: auto;
 }
 
 .carousel nav button.nav-arrow {
