@@ -102,17 +102,19 @@ function renderAddToCart(custom) {
     addToCartButton.setAttribute('aria-disabled', 'true');
 
     const quantity = document.querySelector('.quantity-container select')?.value || 1;
+    const sku = getMetadata('sku');
 
-    const { sku, options } = window.selectedVariant
-      ? window.selectedVariant
-      : { sku: getMetadata('sku'), options: [] };
+    const selectedOptions = [];
 
-    const filteredOptions = options?.uid ? [options.uid] : [];
-    const customizableOptions = window.selectedWarranty?.uid
-      ? [window.selectedWarranty.uid]
-      : [];
+    if (window.selectedVariant?.options?.uid) {
+      selectedOptions.push(window.selectedVariant.options.uid);
+    }
 
-    await cartApi.addToCart(sku, filteredOptions, customizableOptions, quantity);
+    if (window.selectedWarranty?.uid) {
+      selectedOptions.push(window.selectedWarranty.uid);
+    }
+
+    await cartApi.addToCart(sku, selectedOptions, quantity);
 
     // Open cart page
     window.location.href = '/us/en_us/checkout/cart/';
