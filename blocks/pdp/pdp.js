@@ -108,7 +108,7 @@ function renderAddToCart(custom) {
       : { sku: getMetadata('sku'), options: [] };
 
     const filteredOptions = options?.uid ? [options.uid] : [];
-    const customizableOptions = window.selectedWarranty ? [window.selectedWarranty] : [];
+    const customizableOptions = window.selectedWarranty?.uid ? [window.selectedWarranty.uid] : [];
 
     await cartApi.addToCart(sku, filteredOptions, customizableOptions, quantity);
 
