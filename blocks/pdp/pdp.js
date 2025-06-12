@@ -109,7 +109,7 @@ function renderAddToCart(custom) {
 
     const filteredOptions = options?.uid ? [options.uid] : [];
     const customizableOptions = window.selectedWarranty?.uid
-      ? [{ uid: window.selectedWarranty.uid }]
+      ? [window.selectedWarranty.uid]
       : [];
 
     await cartApi.addToCart(sku, filteredOptions, customizableOptions, quantity);
