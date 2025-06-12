@@ -59,7 +59,7 @@ function renderDetails(block) {
  * @returns {Element} The add to cart container element
  */
 function renderAddToCart(block, custom) {
-  if (getMetadata('findLocally') === 'Yes') {
+  if (getMetadata('findLocally') === 'Yes' || (getMetadata('findDealer') === 'Yes' && getMetadata('commercial') !== 'Yes')) {
     const findLocallyContainer = document.createElement('div');
     findLocallyContainer.classList.add('add-to-cart');
     findLocallyContainer.innerHTML = `
@@ -70,14 +70,14 @@ function renderAddToCart(block, custom) {
   }
 
   if (getMetadata('findDealer') === 'Yes') {
-    const findLocallyContainer = document.createElement('div');
-    findLocallyContainer.classList.add('add-to-cart');
-    findLocallyContainer.innerHTML = `
+    const findDealerContainer = document.createElement('div');
+    findDealerContainer.classList.add('add-to-cart');
+    findDealerContainer.innerHTML = `
       <a class="button emphasis pdp-find-locally-button" href="https://www.vitamix.com/us/en_us/where-to-buy?productFamily=2205202&productType=COMM">Find Dealer</a>
       <p><a href="https://www.vitamix.com/us/en_us/commercial/resources/consult-an-expert">Have a question? Consult an expert.</a></p>
     `;
     block.classList.add('pdp-find-dealer');
-    return findLocallyContainer;
+    return findDealerContainer;
   }
 
   const addToCartContainer = document.createElement('div');
