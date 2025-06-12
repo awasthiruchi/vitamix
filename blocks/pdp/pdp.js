@@ -135,6 +135,10 @@ function renderAddToCart(block, custom) {
       selectedOptions.push(window.selectedWarranty.uid);
     }
 
+    if (custom.requiredBundleOptions) {
+      selectedOptions.push(...custom.requiredBundleOptions);
+    }
+
     await cartApi.addToCart(sku, selectedOptions, quantity);
 
     // Open cart page
