@@ -281,7 +281,7 @@ export function updateCartFromLocalStorage(options) {
   done();
 }
 
-export async function addToCart(sku, options, customizableOptions, quantity) {
+export async function addToCart(sku, options, quantity) {
   const done = waitForCart();
   try {
     const variables = {
@@ -290,7 +290,6 @@ export async function addToCart(sku, options, customizableOptions, quantity) {
         sku,
         quantity,
         selected_options: options,
-        entered_options: customizableOptions,
       }],
     };
 
