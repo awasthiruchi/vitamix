@@ -59,7 +59,7 @@ function renderDetails(block) {
  * @returns {Element} The add to cart container element
  */
 function renderAddToCart(block, custom) {
-  if (getMetadata('findLocally') === 'Yes' || (getMetadata('findDealer') === 'Yes' && getMetadata('commercial') !== 'Yes') || checkOutOfStock(getMetadata('sku'))) {
+  if (getMetadata('findLocally') === 'Yes' || (getMetadata('findDealer') === 'Yes' && getMetadata('commercial') !== 'Yes')) {
     const findLocallyContainer = document.createElement('div');
     findLocallyContainer.classList.add('add-to-cart');
     findLocallyContainer.innerHTML = `
