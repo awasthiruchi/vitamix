@@ -20,6 +20,7 @@
 
   /* letter spacing */
   --letter-spacing-m: 0.14em;
+  --letter-spacing-s: 0.083em;
 
   /* font weights */
   --weight-medium: 500;
