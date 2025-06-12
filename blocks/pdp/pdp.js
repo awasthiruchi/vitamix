@@ -58,7 +58,28 @@ function renderDetails(block) {
  * Renders the add to cart section of the PDP block.
  * @returns {Element} The add to cart container element
  */
-function renderAddToCart(custom) {
+function renderAddToCart(block, custom) {
+  if (getMetadata('findLocally') === 'Yes') {
+    const findLocallyContainer = document.createElement('div');
+    findLocallyContainer.classList.add('add-to-cart');
+    findLocallyContainer.innerHTML = `
+      <a class="button emphasis pdp-find-locally-button" href="https://www.vitamix.com/us/en_us/where-to-buy?productFamily=&productType=HH">Find Locally</a>
+    `;
+    block.classList.add('pdp-find-locally');
+    return findLocallyContainer;
+  }
+
+  if (getMetadata('findDealer') === 'Yes') {
+    const findLocallyContainer = document.createElement('div');
+    findLocallyContainer.classList.add('add-to-cart');
+    findLocallyContainer.innerHTML = `
+      <a class="button emphasis pdp-find-locally-button" href="https://www.vitamix.com/us/en_us/where-to-buy?productFamily=2205202&productType=COMM">Find Dealer</a>
+      <p><a href="https://www.vitamix.com/us/en_us/commercial/resources/consult-an-expert">Have a question? Consult an expert.</a></p>
+    `;
+    block.classList.add('pdp-find-dealer');
+    return findLocallyContainer;
+  }
+
   const addToCartContainer = document.createElement('div');
   addToCartContainer.classList.add('add-to-cart');
 
@@ -227,6 +248,7 @@ function renderAlert(block, product) {
     const alertContainer = document.createElement('div');
     alertContainer.classList.add('pdp-alert');
     alertContainer.innerHTML = '<p>Retired Product</p>';
+    block.classList.add('pdp-retired');
     return alertContainer;
   }
   /* promos */
@@ -312,7 +334,7 @@ export default function decorate(block) {
 
   const pricingContainer = renderPricing(block);
   const optionsContainer = renderOptions(block, variants, jsonLdData.custom.options);
-  const addToCartContainer = renderAddToCart(jsonLdData.custom);
+  const addToCartContainer = renderAddToCart(block, jsonLdData.custom);
   const compareContainer = renderCompare();
   const freeShippingContainer = renderFreeShipping(jsonLdData.offers);
   const shareContainer = renderShare();

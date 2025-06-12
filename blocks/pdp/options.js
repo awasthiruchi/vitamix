@@ -145,6 +145,9 @@ export function renderOptions(block, variants, customOptions) {
   oosMessage.textContent = 'This color is temporarily out of stock.';
   optionsContainer.append(oosMessage);
 
+  // eslint-disable-next-line consistent-return
+  if (getMetadata('findLocally') === 'Yes') return optionsContainer;
+
   const warrentyContainer = document.createElement('div');
   warrentyContainer.classList.add('warranty');
 
