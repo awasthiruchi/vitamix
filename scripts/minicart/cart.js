@@ -290,7 +290,7 @@ export async function addToCart(sku, options, customizableOptions, quantity) {
         sku,
         quantity,
         selected_options: options,
-        customizable_options: customizableOptions,
+        entered_options: customizableOptions,
       }],
     };
 
