@@ -169,8 +169,13 @@ export async function updateMagentoCacheSections(sections) {
   let updatedSections = null;
   try {
     const loginAbortController = new AbortController();
+
+    const pathSegments = window.location.pathname.split('/').filter(Boolean);
+    const locale = pathSegments[0] || 'us'; // fallback to 'us' if not found
+    const language = pathSegments[1] || 'en_us'; // fallback to 'en_us' if not found
+
     setTimeout(() => loginAbortController.abort('Section data took too long to respond.'), 10000);
-    result = await fetch(`/us/en_us/customer/section/load/?sections=${encodeURIComponent(sections.join(','))}&force_new_section_timestamp=false`, {
+    result = await fetch(`/${locale}/${language}/customer/section/load/?sections=${encodeURIComponent(sections.join(','))}&force_new_section_timestamp=false`, {
       signal: loginAbortController.signal,
       headers: {
         accept: 'application/json, text/javascript, */*; q=0.01',
