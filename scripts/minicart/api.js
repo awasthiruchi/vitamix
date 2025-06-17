@@ -103,6 +103,8 @@ export const cartApi = {
     // toggle();
   },
 
+  resetCart: () => store.resetCart(),
+
   /**
    * resolve any drift between localStorage/sessionStorage and true commerce session
    *

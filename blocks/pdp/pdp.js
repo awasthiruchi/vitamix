@@ -109,18 +109,29 @@ function renderAddToCart(block, custom) {
   addToCartButton.textContent = 'Add to Cart';
 
   addToCartButton.addEventListener('click', async () => {
+    addToCartButton.textContent = 'Adding...';
+    addToCartButton.setAttribute('aria-disabled', 'true');
+
     const { cartApi } = await import('../../scripts/minicart/api.js');
 
     const { updateMagentoCacheSections, getMagentoCache } = await import('../../scripts/storage/util.js');
+
+    const queryParams = new URLSearchParams(window.location.search);
+    const reset = queryParams.get('reset');
+    if (reset) {
+      cartApi.resetCart();
+    }
+
+    const drift = queryParams.get('drift');
+    if (drift) {
+      await cartApi.resolveDrift(1000, true);
+    }
 
     // Check cache and update if needed
     const currentCache = getMagentoCache();
     if (!currentCache?.customer) {
       await updateMagentoCacheSections(['customer']);
     }
-
-    addToCartButton.textContent = 'Adding...';
-    addToCartButton.setAttribute('aria-disabled', 'true');
 
     const quantity = document.querySelector('.quantity-container select')?.value || 1;
     const sku = getMetadata('sku');
