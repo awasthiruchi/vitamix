@@ -116,17 +116,6 @@ function renderAddToCart(block, custom) {
 
     const { updateMagentoCacheSections, getMagentoCache } = await import('../../scripts/storage/util.js');
 
-    const queryParams = new URLSearchParams(window.location.search);
-    const reset = queryParams.get('reset');
-    if (reset) {
-      cartApi.resetCart();
-    }
-
-    const drift = queryParams.get('drift');
-    if (drift) {
-      await cartApi.resolveDrift(1000, true);
-    }
-
     // Check cache and update if needed
     const currentCache = getMagentoCache();
     if (!currentCache?.customer) {
