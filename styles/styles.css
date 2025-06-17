@@ -63,7 +63,7 @@
   /* widths and heights */
   --header-height: 68px;
   --horizontal-spacing: var(--spacing-400);
-  --site-width: 1440px;
+  --site-width: 2000px;
 }
 
 @media (width >= 900px) {
@@ -107,7 +107,6 @@ html {
 body {
   display: none;
   margin: 0;
-  background-color: var(--color-gray-400);
   color: var(--color-text);
   font-family: var(--body-font-family);
   font-size: var(--body-size-m);
