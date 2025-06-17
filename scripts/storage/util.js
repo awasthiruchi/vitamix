@@ -170,7 +170,7 @@ export async function updateMagentoCacheSections(sections) {
   try {
     const loginAbortController = new AbortController();
     setTimeout(() => loginAbortController.abort('Section data took too long to respond.'), 10000);
-    result = await fetch(`/customer/section/load/?sections=${encodeURIComponent(sections.join(','))}&force_new_section_timestamp=false`, {
+    result = await fetch(`/us/en_us/customer/section/load/?sections=${encodeURIComponent(sections.join(','))}&force_new_section_timestamp=false`, {
       signal: loginAbortController.signal,
       headers: {
         accept: 'application/json, text/javascript, */*; q=0.01',
