@@ -572,8 +572,13 @@ function autolinkModals(doc) {
 
 async function decorateFragmentPreviews() {
   const params = new URLSearchParams(window.location.search);
-  if (params.get('reloadFragment')) {
-    const resp = await fetch(`${params.get('reloadFragment')}.plain.html`, {
+  const fragmentPath = params.get('reloadFragment');
+  if (fragmentPath && fragmentPath.length < 200) {
+    const isValid = /^[a-zA-Z0-9-_/]+$/.test(fragmentPath);
+    if (!isValid) return;
+    const url = new URL(fragmentPath, window.location);
+    const { pathname } = url;
+    const resp = await fetch(`${pathname}.plain.html`, {
       cache: 'reload',
     });
     await resp.text();
