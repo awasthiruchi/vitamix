@@ -570,12 +570,20 @@ function autolinkModals(doc) {
   });
 }
 
+function decorateFragmentPreviews() {
+  const path = window.location.pathname;
+  if (path.includes('/nav/') || path.includes('/footer/') || path.includes('/fragments/')) {
+    document.body.classList.add('fragment-preview');
+  }
+}
+
 /**
  * Decorates the main element.
  * @param {Element} main The main element
  */
 // eslint-disable-next-line import/prefer-default-export
 export function decorateMain(main) {
+  decorateFragmentPreviews();
   decorateIcons(main);
   decorateImages(main);
   buildAutoBlocks(main);
