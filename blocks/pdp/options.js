@@ -95,7 +95,8 @@ export function onOptionChange(block, variants, color) {
  * @param {Element} block - The PDP block element
  * @returns {Element} The options container element
  */
-export function renderOptions(block, variants, customOptions) {
+export function renderOptions(block, variants, custom) {
+  const { options, findLocally } = custom;
   // if there are no variants, don't render anything
   if (!variants || variants.length === 0) {
     return;
@@ -146,7 +147,7 @@ export function renderOptions(block, variants, customOptions) {
   optionsContainer.append(oosMessage);
 
   // eslint-disable-next-line consistent-return
-  if (getMetadata('findLocally') === 'Yes') return optionsContainer;
+  if (findLocally === 'Yes') return optionsContainer;
 
   const warrentyContainer = document.createElement('div');
   warrentyContainer.classList.add('warranty');
@@ -155,7 +156,7 @@ export function renderOptions(block, variants, customOptions) {
   warrentyHeading.textContent = 'Warranty:';
   warrentyContainer.append(warrentyHeading);
 
-  customOptions.forEach((option, i) => {
+  options.forEach((option, i) => {
     const formatPrice = (price) => {
       if (price) {
         return `$${price.toFixed(2)}`;
@@ -165,7 +166,7 @@ export function renderOptions(block, variants, customOptions) {
     const warrentyValue = document.createElement('div');
     warrentyValue.classList.add('pdp-warrenty-option');
     warrentyValue.textContent = `${option.name} (${formatPrice(+option.price)})`;
-    if (customOptions.length > 1) {
+    if (options.length > 1) {
       const radio = document.createElement('input');
       radio.type = 'radio';
       radio.name = 'warranty';
@@ -183,7 +184,7 @@ export function renderOptions(block, variants, customOptions) {
   });
 
   // set default warranty
-  [window.selectedWarranty] = customOptions;
+  [window.selectedWarranty] = options;
 
   optionsContainer.append(warrentyContainer);
 
