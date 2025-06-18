@@ -45,12 +45,9 @@ function renderDetails(block) {
   const detailsContainer = document.createElement('div');
   detailsContainer.classList.add('details');
   detailsContainer.append(...block.children);
-  if (detailsContainer.querySelector('h3')) {
-    const h2 = document.createElement('h2');
-    h2.textContent = 'About';
-    detailsContainer.prepend(h2);
-  }
-
+  const h2 = document.createElement('h2');
+  h2.textContent = 'About';
+  detailsContainer.prepend(h2);
   return detailsContainer;
 }
 
