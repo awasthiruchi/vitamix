@@ -140,12 +140,12 @@ function createResourcesContent(resources) {
  * @param {Object} data - The JSON-LD object containing custom data.
  * @returns {HTMLDivElement} The content container for the tab.
  */
-function createTabContent(tab, specifications, standardWarranty, data) {
+function createTabContent(tab, specifications, standardWarranty, custom) {
+  const { resources } = custom;
   const content = document.createElement('div');
   content.classList.add('tab-content');
   content.id = tab.id;
 
-  const { custom } = data;
   switch (tab.id) {
     case 'specifications':
       if (specifications) {
@@ -158,8 +158,8 @@ function createTabContent(tab, specifications, standardWarranty, data) {
       }
       break;
     case 'resources':
-      if (custom.resources) {
-        content.appendChild(createResourcesContent(custom.resources));
+      if (resources) {
+        content.appendChild(createResourcesContent(resources));
       }
       break;
     default:
@@ -213,12 +213,13 @@ function initializeTabs(container) {
  * @param {Object} data - The JSON-LD object containing custom data.
  * @returns {Element} The specifications container element
  */
-export default function renderSpecs(specifications, data) {
-  const standardWarranty = data.custom.options?.find((option) => option.name.includes('Standard Warranty'));
+export default function renderSpecs(specifications, custom) {
+  const { options, resources } = custom;
+  const standardWarranty = options?.find((option) => option.name.includes('Standard Warranty'));
   const tabs = [
     { id: 'specifications', label: 'Specifications', show: !!specifications },
     { id: 'warranty', label: 'Warranty', show: !!standardWarranty },
-    { id: 'resources', label: 'Resources', show: !!data.custom.resources },
+    { id: 'resources', label: 'Resources', show: !!resources },
   ].filter((tab) => tab.show);
 
   // if there are no tabs, don't render anything
@@ -236,7 +237,7 @@ export default function renderSpecs(specifications, data) {
   contents.classList.add('tab-contents');
 
   tabs.forEach((tab) => {
-    const content = createTabContent(tab, specifications, standardWarranty, data);
+    const content = createTabContent(tab, specifications, standardWarranty, custom);
     contents.appendChild(content);
   });
 

@@ -8,24 +8,23 @@ import { loadFragment } from '../fragment/fragment.js';
 import { checkOutOfStock } from '../../scripts/scripts.js';
 import { openModal } from '../modal/modal.js';
 
-const BV_PRODUCT_ID = getMetadata('reviewsId') || toClassName(getMetadata('sku')).replace(/-/g, '');
-
 /**
  * Renders the title section of the PDP block.
  * @param {Element} block - The PDP block element
  * @returns {Element} The title container element
  */
-function renderTitle(block) {
+function renderTitle(block, custom, reviewsId) {
   const titleContainer = document.createElement('div');
   titleContainer.classList.add('title');
 
   const reviewsPlaceholder = document.createElement('div');
   reviewsPlaceholder.classList.add('pdp-reviews-summary-placeholder');
-  reviewsPlaceholder.innerHTML = `<div data-bv-show="rating_summary" data-bv-product-id="${BV_PRODUCT_ID}">`;
+  reviewsPlaceholder.innerHTML = `<div data-bv-show="rating_summary" data-bv-product-id="${reviewsId}">`;
 
+  const { collection } = custom;
   const collectionContainer = document.createElement('p');
   collectionContainer.classList.add('pdp-collection-placeholder');
-  collectionContainer.textContent = `${getMetadata('collection') || ''}`;
+  collectionContainer.textContent = `${collection || ''}`;
 
   titleContainer.append(
     collectionContainer,
@@ -56,7 +55,8 @@ function renderDetails(block) {
  * @returns {Element} The add to cart container element
  */
 function renderAddToCart(block, custom) {
-  if (getMetadata('findLocally') === 'Yes' || (getMetadata('findDealer') === 'Yes' && getMetadata('commercial') !== 'Yes') || checkOutOfStock(window.jsonLdData.offers[0].sku)) {
+  const { findLocally, findDealer, commercial } = custom;
+  if (findLocally === 'Yes' || (findDealer === 'Yes' && commercial !== 'Yes') || checkOutOfStock(window.jsonLdData.offers[0].sku)) {
     const findLocallyContainer = document.createElement('div');
     findLocallyContainer.classList.add('add-to-cart');
     findLocallyContainer.innerHTML = `
@@ -66,7 +66,7 @@ function renderAddToCart(block, custom) {
     return findLocallyContainer;
   }
 
-  if (getMetadata('findDealer') === 'Yes') {
+  if (findDealer === 'Yes') {
     const findDealerContainer = document.createElement('div');
     findDealerContainer.classList.add('add-to-cart');
     findDealerContainer.innerHTML = `
@@ -154,11 +154,11 @@ function renderAddToCart(block, custom) {
  * @param {Element} block - The PDP block element
  */
 // eslint-disable-next-line no-unused-vars
-async function renderReviews(block) {
+async function renderReviews(block, reviewsId) {
   // TODO: Add Bazaarvoice reviews
   const bazaarvoiceContainer = document.createElement('div');
   bazaarvoiceContainer.classList.add('pdp-reviews-container');
-  bazaarvoiceContainer.innerHTML = `<div data-bv-show="reviews" data-bv-product-id="${BV_PRODUCT_ID}"></div>`;
+  bazaarvoiceContainer.innerHTML = `<div data-bv-show="reviews" data-bv-product-id="${reviewsId}"></div>`;
 
   setTimeout(async () => {
     await loadScript('https://apps.bazaarvoice.com/deployments/vitamix/main_site/production/en_US/bv.js');
@@ -181,7 +181,8 @@ function renderFAQ() {
   return faqContainer;
 }
 
-function renderCompare() {
+function renderCompare(custom) {
+  const { entityId } = custom;
   const compareContainer = document.createElement('div');
   compareContainer.classList.add('pdp-compare-container');
   compareContainer.innerHTML = `
@@ -197,7 +198,7 @@ function renderCompare() {
         'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
         'x-requested-with': 'XMLHttpRequest',
       },
-      body: `product=${getMetadata('entityId')}&uenc=${encodeURIComponent(window.location.href)}`,
+      body: `product=${entityId}&uenc=${encodeURIComponent(window.location.href)}`,
       method: 'POST',
       credentials: 'include',
     }).then((resp) => {
@@ -245,9 +246,9 @@ function renderFreeShipping(offers) {
   return freeShippingContainer;
 }
 
-function renderAlert(block, product) {
+function renderAlert(block, custom) {
   /* retired and coming soon */
-  if (product.custom && product.custom.retired === 'Yes') {
+  if (custom && custom.retired === 'Yes') {
     const alertContainer = document.createElement('div');
     alertContainer.classList.add('pdp-alert');
     alertContainer.innerHTML = '<p>Retired Product</p>';
@@ -255,12 +256,12 @@ function renderAlert(block, product) {
     return alertContainer;
   }
   /* promos */
-  const promo = getMetadata('promoButton');
-  if (promo) {
+  const { promoButton } = custom;
+  if (promoButton) {
     const alertContainer = document.createElement('div');
     alertContainer.classList.add('pdp-alert');
     alertContainer.classList.add('pdp-promo-alert');
-    alertContainer.innerHTML = `<p>${promo}</p>`;
+    alertContainer.innerHTML = `<p>${promoButton}</p>`;
     return alertContainer;
   }
 
@@ -278,8 +279,8 @@ function renderAlert(block, product) {
   return null;
 }
 
-function renderRelatedProducts(product) {
-  const { relatedSkus } = product.custom;
+function renderRelatedProducts(custom) {
+  const { relatedSkus } = custom;
   const relatedProducts = relatedSkus || [];
   if (relatedProducts.length > 0) {
     const relatedProductsContainer = document.createElement('div');
@@ -327,19 +328,22 @@ function renderShare() {
  */
 export default function decorate(block) {
   const { jsonLdData, variants } = window;
+  const { custom, offers } = jsonLdData;
+
+  const reviewsId = custom.reviewsId || toClassName(getMetadata('sku')).replace(/-/g, '');
   const galleryContainer = renderGallery(block, variants);
-  const titleContainer = renderTitle(block);
-  const alertContainer = renderAlert(block, jsonLdData);
-  const relatedProductsContainer = renderRelatedProducts(jsonLdData);
+  const titleContainer = renderTitle(block, custom, reviewsId);
+  const alertContainer = renderAlert(block, custom);
+  const relatedProductsContainer = renderRelatedProducts(custom);
 
   const buyBox = document.createElement('div');
   buyBox.classList.add('pdp-buy-box');
 
   const pricingContainer = renderPricing(block);
-  const optionsContainer = renderOptions(block, variants, jsonLdData.custom.options);
-  const addToCartContainer = renderAddToCart(block, jsonLdData.custom);
-  const compareContainer = renderCompare();
-  const freeShippingContainer = renderFreeShipping(jsonLdData.offers);
+  const optionsContainer = renderOptions(block, variants, custom);
+  const addToCartContainer = renderAddToCart(block, custom);
+  const compareContainer = renderCompare(custom);
+  const freeShippingContainer = renderFreeShipping(offers);
   const shareContainer = renderShare();
   buyBox.append(
     pricingContainer,
@@ -352,12 +356,13 @@ export default function decorate(block) {
 
   const detailsContainer = renderDetails(block);
   const specifications = detailsContainer.querySelector('.specifications');
-  const specsContainer = renderSpecs(specifications, jsonLdData);
+  const specsContainer = renderSpecs(specifications, custom);
   specifications.remove();
 
   const contentContainer = renderContent();
   const faqContainer = renderFAQ(block);
-  renderReviews(block);
+
+  renderReviews(block, reviewsId);
 
   /* remove buttons styling from details */
   detailsContainer.querySelectorAll('.button').forEach((button) => {
@@ -386,6 +391,6 @@ export default function decorate(block) {
     [window.selectedVariant] = variants;
   }
 
-  buyBox.dataset.sku = jsonLdData.offers[0].sku;
-  buyBox.dataset.oos = checkOutOfStock(jsonLdData.offers[0].sku);
+  buyBox.dataset.sku = offers[0].sku;
+  buyBox.dataset.oos = checkOutOfStock(offers[0].sku);
 }
