@@ -570,10 +570,21 @@ function autolinkModals(doc) {
   });
 }
 
-function decorateFragmentPreviews() {
+async function decorateFragmentPreviews() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('reloadFragment')) {
+    const resp = await fetch(`${params.get('reloadFragment')}.plain.html`, {
+      cache: 'reload',
+    });
+    await resp.text();
+  }
   const path = window.location.pathname;
   if (path.includes('/nav/') || path.includes('/footer/') || path.includes('/fragments/') || path.includes('/modals/')) {
-    document.body.classList.add('fragment-preview');
+    if (window.location.search.includes('dapreview=on')) {
+      document.body.classList.add('fragment-preview');
+    } else {
+      window.location.href = `/us/en_us/why-vitamix?reloadFragment=${path}`;
+    }
   }
 }
 
