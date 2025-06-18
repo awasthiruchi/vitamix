@@ -572,7 +572,7 @@ function autolinkModals(doc) {
 
 function decorateFragmentPreviews() {
   const path = window.location.pathname;
-  if (path.includes('/nav/') || path.includes('/footer/') || path.includes('/fragments/')) {
+  if (path.includes('/nav/') || path.includes('/footer/') || path.includes('/fragments/') || path.includes('/modals/')) {
     document.body.classList.add('fragment-preview');
   }
 }
