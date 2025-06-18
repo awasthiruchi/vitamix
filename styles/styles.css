@@ -734,3 +734,25 @@ input[type='radio'] {
   margin: 0;
   padding: 0;
 }
+
+body.fragment-preview > header,
+body.fragment-preview > footer,
+body.fragment-preview > main > aside.nav-banner
+{
+  display: none;
+}
+
+body.fragment-preview {
+  margin: 32px;
+  padding: 32px;
+  border: 1px solid var(--color-gray-900);
+  border-radius: var(--rounding-l);
+}
+
+body.fragment-preview::before {
+  content: 'Fragment Preview (to see in context, navigate to containing page)';
+  display: block;
+  margin-bottom: 16px;
+  font-size: 16px;
+  font-weight: bold;
+}

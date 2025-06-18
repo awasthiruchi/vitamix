@@ -570,12 +570,36 @@ function autolinkModals(doc) {
   });
 }
 
+async function decorateFragmentPreviews() {
+  const params = new URLSearchParams(window.location.search);
+  const fragmentPath = params.get('reloadFragment');
+  if (fragmentPath && fragmentPath.length < 200) {
+    const isValid = /^[a-zA-Z0-9-_/]+$/.test(fragmentPath);
+    if (!isValid) return;
+    const url = new URL(fragmentPath, window.location);
+    const { pathname } = url;
+    const resp = await fetch(`${pathname}.plain.html`, {
+      cache: 'reload',
+    });
+    await resp.text();
+  }
+  const path = window.location.pathname;
+  if (path.includes('/nav/') || path.includes('/footer/') || path.includes('/fragments/') || path.includes('/modals/')) {
+    if (window.location.search.includes('dapreview=on')) {
+      document.body.classList.add('fragment-preview');
+    } else {
+      window.location.href = `/us/en_us/why-vitamix?reloadFragment=${path}`;
+    }
+  }
+}
+
 /**
  * Decorates the main element.
  * @param {Element} main The main element
  */
 // eslint-disable-next-line import/prefer-default-export
 export function decorateMain(main) {
+  decorateFragmentPreviews();
   decorateIcons(main);
   decorateImages(main);
   buildAutoBlocks(main);
