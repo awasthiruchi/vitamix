@@ -410,6 +410,11 @@ export function buildVideo(el) {
   return null;
 }
 
+function decorateFullWidthBlocks(main) {
+  const fullWidth = main.querySelectorAll('div.full-width');
+  fullWidth.forEach((block) => block.parentElement.classList.add('full-width'));
+}
+
 /**
  * Decorates links with appropriate classes to style them as buttons
  * @param {HTMLElement} main The main container element
@@ -583,6 +588,7 @@ export function decorateMain(main) {
   decorateSectionAnchors(main);
   decorateSectionBackgrounds(main);
   decorateBlocks(main);
+  decorateFullWidthBlocks(main);
   decorateButtons(main);
   decorateEyebrows(main);
   decorateDisclaimers(main);
