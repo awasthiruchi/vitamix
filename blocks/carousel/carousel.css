@@ -8,6 +8,20 @@
   border-radius: var(--rounding-m);
 }
 
+/* linked content */
+.carousel.block .linked {
+  cursor: pointer;
+}
+
+.carousel.block .linked a {
+  text-decoration: none;
+}
+
+.carousel.linked ul > li .slide-body {
+  align-self: center;
+  text-transform: uppercase;
+}
+
 /* visible slides */
 .carousel-wrapper.items {
   --carousel-gap: 26px;
@@ -70,7 +84,8 @@
 }
 
 /* square variant */
-.carousel.square img {
+.carousel.square img,
+.carousel.buy-now img {
   aspect-ratio: 1 / 1;
   object-fit: cover;
 }
@@ -498,5 +513,68 @@
   .carousel.expansion ul > li div img {
     width: clamp(265px, 25vw, 374px);
     height: clamp(265px, 25vw, 374px);
+  }
+}
+
+/* buy now variant */
+.carousel.buy-now h3 {
+  font-size: var(--title-size-s);
+}
+
+@media (width >= 800px) {
+  .carousel.buy-now h3 {
+    font-size: var(--title-size-xxxl);
+  }
+
+  .carousel.buy-now .slide-image {
+    position: relative;
+    border-radius: var(--rounding-m);
+    overflow: hidden;
+  }
+
+  .carousel.buy-now .slide-image picture::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    transition: background-color 0.3s;
+    z-index: 1;
+  }
+
+  .carousel.buy-now .slide-image picture::after {
+    content: 'Buy Now';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    padding: var(--spacing-100) var(--spacing-500);
+    background-color: var(--color-red);
+    color: var(--color-white);
+    font-size: var(--body-size-s);
+    text-align: center;
+    text-transform: uppercase;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 2;
+  }
+
+  .carousel.buy-now .slide-image img {
+    object-fit: cover;
+    transition: transform 0.3s;
+  }
+
+  .carousel.buy-now li:hover .slide-image picture::before {
+    background-color: var(--overlay-charcoal-dark);
+  }
+
+  .carousel.buy-now li:hover .slide-image picture::after {
+    opacity: 1;
+  }
+
+  .carousel.buy-now li:hover .slide-image img {
+    transform: scale(1.05);
   }
 }
