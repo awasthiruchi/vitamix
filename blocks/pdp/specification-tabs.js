@@ -48,12 +48,16 @@ function createSpecificationsContent(specifications) {
 function createWarrantyContent(warranty, customWarranty) {
   const div = document.createElement('div');
   div.innerHTML = customWarranty;
-  div.innerHTML = div.textContent;
   const p = div.querySelector('p');
   const lines = p.innerHTML.split('<br>');
 
-  const titleText = lines[0].trim();
-  const text = lines.slice(1).join('<br>').trim();
+  let titleText = '';
+  if (lines[0].length < 100) {
+    titleText = lines[0].trim();
+    lines.shift();
+  }
+
+  const text = lines.join('<br>').trim();
 
   const titleElement = document.createElement('h3');
   titleElement.classList.add('warranty-title');
@@ -154,7 +158,7 @@ function createTabContent(tab, specifications, standardWarranty, custom) {
       break;
     case 'warranty':
       if (custom.warranty) {
-        // content.appendChild(createWarrantyContent(standardWarranty, custom.warranty));
+        content.appendChild(createWarrantyContent(standardWarranty, custom.warranty));
       }
       break;
     case 'resources':
