@@ -48,7 +48,6 @@ function createSpecificationsContent(specifications) {
 function createWarrantyContent(warranty, customWarranty) {
   const div = document.createElement('div');
   div.innerHTML = customWarranty;
-  div.innerHTML = div.textContent;
   const p = div.querySelector('p');
   const lines = p.innerHTML.split('<br>');
 
