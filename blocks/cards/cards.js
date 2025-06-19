@@ -49,6 +49,7 @@ export default function decorate(block) {
   ));
 
   // decorate variant specifics
+  const clickable = ['knockout', 'articles', 'linked', 'overlay'];
   const variants = [...block.classList].filter((c) => c !== 'block' && c !== 'cards');
   if (!variants.length) {
     // default card styling
@@ -66,7 +67,8 @@ export default function decorate(block) {
       }
     });
   }
-  if (variants.includes('knockout') || variants.includes('articles') || variants.includes('linked')) {
+
+  if (clickable.some((v) => variants.includes(v))) {
     ul.querySelectorAll('li').forEach((li) => {
       const as = li.querySelectorAll('a');
       // setup full card click if there's one link or all links have same href
