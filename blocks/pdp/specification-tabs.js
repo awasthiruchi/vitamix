@@ -52,8 +52,13 @@ function createWarrantyContent(warranty, customWarranty) {
   const p = div.querySelector('p');
   const lines = p.innerHTML.split('<br>');
 
-  const titleText = lines[0].trim();
-  const text = lines.slice(1).join('<br>').trim();
+  let titleText = '';
+  if (lines[0].length < 100) {
+    titleText = lines[0].trim();
+    lines.shift();
+  }
+
+  const text = lines.join('<br>').trim();
 
   const titleElement = document.createElement('h3');
   titleElement.classList.add('warranty-title');
