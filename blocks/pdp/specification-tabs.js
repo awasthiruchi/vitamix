@@ -158,7 +158,7 @@ function createTabContent(tab, specifications, standardWarranty, custom) {
       break;
     case 'warranty':
       if (custom.warranty) {
-        // content.appendChild(createWarrantyContent(standardWarranty, custom.warranty));
+        content.appendChild(createWarrantyContent(standardWarranty, custom.warranty));
       }
       break;
     case 'resources':
