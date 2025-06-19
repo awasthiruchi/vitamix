@@ -87,7 +87,7 @@
 @media (width >= 1000px) {
   .cards.articles > ul {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--spacing-700);
     padding: 0 var(--spacing-300);
   }
@@ -148,7 +148,7 @@
 
   .cards.grid ul.rows-2,
   .cards.grid ul.rows-4 {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .cards.grid ul.rows-2 > li,
@@ -192,11 +192,11 @@
   }
 
   .cards.grid ul.rows-3 {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .cards.grid ul.rows-4 {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
   .cards.grid ul.rows-1 > li,
@@ -278,7 +278,7 @@
 
 .cards.knockout > ul.rows-2,
 .cards.knockout > ul.rows-4 {
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .cards.knockout > ul.rows-2 > li:nth-child(2n),
@@ -302,6 +302,7 @@
   max-width: 200px;
   border: 1px solid var(--color-gray-300);
   padding: var(--spacing-100);
+  background-color: var(--color-background);
   transition: border-color 0.2s;
   z-index: 1;
 }
@@ -337,7 +338,7 @@
 
 @media (width >= 600px) {
   .cards.knockout > ul.rows-3 {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .cards.knockout > ul.rows-3 > li:nth-child(n + 4) {
@@ -384,7 +385,7 @@
   }
 
   .cards.knockout > ul.rows-4 {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
   .cards.knockout ul.rows-4 > li,
@@ -407,7 +408,7 @@
 
 .cards.linked ul > li {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   align-items: center;
   border-top: 1px solid var(--color-gray-500);
   padding: var(--spacing-80) 0;
@@ -431,7 +432,7 @@
 
 @media (width >= 800px) {
   .cards.linked ul {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: var(--spacing-100);
   }
 
@@ -454,11 +455,98 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 100%;
     background-color: var(--color-gray-200);
   }
 
   .cards.linked ul > li .card-image img {
     width: 100%;
     max-height: unset;
+  }
+}
+
+/* overlay variant */
+.cards-wrapper.overlay {
+  padding: 0;
+}
+
+.cards.overlay,
+.cards.overlay a {
+  color: var(--color-white);
+}
+
+.cards.overlay a {
+  text-decoration: none;
+}
+
+.cards.overlay .eyebrow {
+  color: var(--color-gray-600);
+}
+
+.cards.overlay h2 {
+  font-family: var(--body-font-family);
+}
+
+.cards.overlay > ul {
+  gap: var(--spacing-60);
+}
+
+.cards.overlay > ul > li {
+  display: flex;
+  align-items: flex-end;
+  position: relative;
+  min-height: 400px;
+}
+
+.cards.overlay > ul > li::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: var(--shadow-100);
+  transition: background 0.3s;
+}
+
+.cards.overlay > ul > li.card-click:hover::after {
+  background-color: var(--shadow-200);
+}
+
+.cards.overlay > ul > li.card-click a::after {
+  content: '▸';
+  margin-left: var(--spacing-40);
+  font-size: 0.75em;
+}
+
+.cards.overlay > ul > li .card-image {
+  position: absolute;
+  inset: 0;
+}
+
+.cards.overlay > ul > li .card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cards.overlay > ul > li .card-body {
+  position: relative;
+  width: 100%;
+  padding: var(--horizontal-spacing);
+  padding-bottom: var(--spacing-600);
+  text-align: center;
+  z-index: 1;
+}
+
+@media (width >= 800px) {
+  .cards.overlay h2 {
+    font-size: var(--heading-size-xxl);
+  }
+
+  .cards.overlay > ul {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .cards.overlay > ul > li .card-body {
+    padding: var(--spacing-200);
+    padding-bottom: var(--spacing-600);
   }
 }
