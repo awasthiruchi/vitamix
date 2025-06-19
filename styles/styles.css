@@ -157,6 +157,10 @@ main > .section > div {
   padding: 0 var(--horizontal-spacing);
 }
 
+main > .section > div.full-width {
+  padding: 0;
+}
+
 /* page theme */
 .text-center .default-content-wrapper {
   text-align: center;
@@ -164,6 +168,26 @@ main > .section > div {
 
 .text-center .default-content-wrapper .button-wrapper {
   justify-content: center;
+}
+
+/* section templates */
+@media (width >= 1000px) {
+  main .section[data-template='columns'] {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    align-items: center;
+    gap: var(--horizontal-spacing);
+    padding: 0 var(--horizontal-spacing);
+  }
+
+  main > .section[data-template='columns'] > div {
+    padding: 0;
+    text-align: left;
+  }
+
+  main > .section[data-template='columns'] > div .button-wrapper {
+    justify-content: flex-start;
+  }
 }
 
 /* section metadata */
@@ -185,7 +209,16 @@ main .section.dark {
 }
 
 main .section.light {
-  background-color: var(--color-gray-100);
+  background-color: var(--color-gray-200);
+}
+
+main .section.dark {
+  background-color: var(--color-charcoal);
+  color: var(--color-white);
+}
+
+main .section.dark .eyebrow {
+  color: var(--color-gray-500);
 }
 
 main .section[data-background] {
@@ -356,6 +389,7 @@ h6 {
   font-size: var(--heading-size-xs);
 }
 
+/* stylelint-disable-next-line no-descending-specificity */
 .eyebrow {
   margin-bottom: var(--spacing-60);
   color: var(--color-red);
