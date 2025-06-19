@@ -107,8 +107,27 @@ export default function decorate(block) {
     const slide = document.createElement('li');
     [...s].forEach((cell) => {
       buildVideo(cell);
+      if (cell.children.length === 1 && cell.querySelector('picture')) { // single picture element
+        cell.className = 'slide-image';
+      } else { // default, all other cells
+        cell.className = 'slide-body';
+      }
+
       slide.append(cell);
     });
+
+    // check for linked content
+    const as = slide.querySelectorAll('a[href]');
+    if (variants.includes('linked') || (as && as.length === 1)) {
+      const a = as[0];
+      // if only link is not a button
+      if (variants.includes('linked') || !a.className) {
+        a.removeAttribute('class');
+        a.parentElement.classList.remove('button-wrapper');
+        slide.classList.add('linked');
+        slide.addEventListener('click', () => a.click());
+      }
+    }
 
     // add expansion autotimer
     if (variants.includes('expansion')) {
