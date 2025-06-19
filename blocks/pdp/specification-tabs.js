@@ -45,41 +45,42 @@ function createSpecificationsContent(specifications) {
  * @returns {HTMLDivElement} The warranty content container.
  */
 // eslint-disable-next-line no-unused-vars
-function createWarrantyContent(warranty) {
+function createWarrantyContent(warranty, customWarranty) {
+  const div = document.createElement('div');
+  div.innerHTML = customWarranty;
+  div.innerHTML = div.textContent;
+  const p = div.querySelector('p');
+  const lines = p.innerHTML.split('<br>');
+
+  const titleText = lines[0].trim();
+  const text = lines.slice(1).join('<br>').trim();
+
+  const titleElement = document.createElement('h3');
+  titleElement.classList.add('warranty-title');
+
   // TOOO: Assumes 10-year warranty
   const container = document.createElement('div');
   container.classList.add('warranty-container');
 
-  const warrantyImage = createOptimizedPicture(`/blocks/pdp/${warranty.sku}.png`, warranty.name, false);
-  warrantyImage.classList.add('warranty-icon');
+  if (warranty && warranty.sku) {
+    const warrantyImage = createOptimizedPicture(`/blocks/pdp/${warranty.sku}.png`, warranty.name, false);
+    warrantyImage.classList.add('warranty-icon');
+    container.append(warrantyImage);
+  }
 
   const details = document.createElement('div');
   details.classList.add('warranty-details');
 
   const title = document.createElement('h3');
   title.classList.add('warranty-title');
-  title.textContent = warranty.name;
+  title.textContent = titleText;
 
   const paragraph = document.createElement('p');
   paragraph.classList.add('warranty-text');
-  paragraph.textContent = 'We stand behind the quality of our machines with full warranties, covering parts, performance, labor, and two-way shipping at no cost to you.';
+  paragraph.innerHTML = text;
 
-  const link = document.createElement('a');
-
-  // TODO: Might want to make a little more robust...
-  if (warranty.sku.includes('10')) {
-    link.href = 'https://www.vitamix.com/us/en_us/shop/10-year-warranty';
-  } else if (warranty.sku.includes('7')) {
-    link.href = 'https://www.vitamix.com/us/en_us/shop/7-year-warranty';
-  } else if (warranty.sku.includes('3')) {
-    link.href = 'https://www.vitamix.com/us/en_us/shop/3-year-warranty';
-  }
-
-  link.textContent = 'Read the Warranty.';
-  link.classList.add('warranty-link');
-
-  details.append(title, paragraph, link);
-  container.append(warrantyImage, details);
+  details.append(title, paragraph);
+  container.append(details);
   return container;
 }
 
@@ -141,7 +142,6 @@ function createResourcesContent(resources) {
  * @returns {HTMLDivElement} The content container for the tab.
  */
 function createTabContent(tab, specifications, standardWarranty, custom) {
-  const { resources } = custom;
   const content = document.createElement('div');
   content.classList.add('tab-content');
   content.id = tab.id;
@@ -153,13 +153,13 @@ function createTabContent(tab, specifications, standardWarranty, custom) {
       }
       break;
     case 'warranty':
-      if (standardWarranty) {
-        content.appendChild(createWarrantyContent(standardWarranty));
+      if (custom.warranty) {
+        content.appendChild(createWarrantyContent(standardWarranty, custom.warranty));
       }
       break;
     case 'resources':
-      if (resources) {
-        content.appendChild(createResourcesContent(resources));
+      if (custom.resources) {
+        content.appendChild(createResourcesContent(custom.resources));
       }
       break;
     default:
@@ -218,7 +218,7 @@ export default function renderSpecs(specifications, custom) {
   const standardWarranty = options?.find((option) => option.name.includes('Standard Warranty'));
   const tabs = [
     { id: 'specifications', label: 'Specifications', show: !!specifications },
-    { id: 'warranty', label: 'Warranty', show: !!standardWarranty },
+    { id: 'warranty', label: 'Warranty', show: !!custom.warranty },
     { id: 'resources', label: 'Resources', show: !!resources },
   ].filter((tab) => tab.show);
 
