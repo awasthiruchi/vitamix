@@ -584,7 +584,7 @@ async function decorateFragmentPreviews() {
     await resp.text();
   }
   const path = window.location.pathname;
-  if (path.includes('/nav/') || path.includes('/footer/') || path.includes('/fragments/') || path.includes('/modals/')) {
+  if (path.includes('/nav/') || path.includes('/footer/')) {
     if (window.location.search.includes('dapreview=on')) {
       document.body.classList.add('fragment-preview');
     } else {
