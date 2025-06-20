@@ -88,3 +88,16 @@ main > .hero-container.section {
     max-width: 800px;
   }
 }
+
+/* short variant */
+.hero.short,
+.hero.short > div {
+  min-height: 500px;
+}
+
+@media (width >= 800px) {
+  .hero.short,
+  .hero.short > div {
+    min-height: 480px;
+  }
+}
