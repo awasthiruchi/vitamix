@@ -181,6 +181,7 @@ main > .section > div.full-width {
   }
 
   main > .section[data-template='columns'] > div {
+    width: 100%;
     padding: 0;
     text-align: left;
   }
