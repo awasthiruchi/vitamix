@@ -66,6 +66,13 @@ export default function decorate(block) {
         }
       }
     });
+    // check for icon list
+    const cards = ul.querySelectorAll('li').length;
+    const icons = ul.querySelectorAll('li img[src*=".svg"]').length;
+    if (cards === icons) {
+      variants.push('icon-list');
+      block.classList.add('icon-list');
+    }
   }
 
   if (clickable.some((v) => variants.includes(v))) {
