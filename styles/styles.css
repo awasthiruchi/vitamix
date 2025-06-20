@@ -303,6 +303,7 @@ main .nav-banner {
   text-align: center;
 }
 
+/* stylelint-disable-next-line no-descending-specificity */
 main .nav-banner a {
   color: inherit;
 }
