@@ -74,13 +74,8 @@ main > .hero-container.section {
 }
 
 @media (width >= 800px) {
-  .hero,
-  .hero > div {
-    min-height: 900px;
-  }
-
   .hero h1 {
-    font-size: var(--font-size-1000);
+    font-size: var(--font-size-950);
   }
 
   .hero .eyebrow {
