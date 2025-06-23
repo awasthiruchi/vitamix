@@ -162,11 +162,11 @@ main > .section > div.full-width {
 }
 
 /* page theme */
-.text-center .default-content-wrapper {
+.text-center main .default-content-wrapper {
   text-align: center;
 }
 
-.text-center .default-content-wrapper .button-wrapper {
+.text-center main .default-content-wrapper .button-wrapper {
   justify-content: center;
 }
 
