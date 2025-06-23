@@ -1,4 +1,5 @@
 import { loadScript, toClassName, getMetadata } from '../../scripts/aem.js';
+import renderAddToCart from './add-to-cart.js';
 import renderGallery from './gallery.js';
 import renderSpecs from './specification-tabs.js';
 import renderPricing, { extractPricing } from './pricing.js';
@@ -48,105 +49,6 @@ function renderDetails(block) {
   h2.textContent = 'About';
   detailsContainer.prepend(h2);
   return detailsContainer;
-}
-
-/**
- * Renders the add to cart section of the PDP block.
- * @returns {Element} The add to cart container element
- */
-function renderAddToCart(block, custom) {
-  const { findLocally, findDealer, commercial } = custom;
-  if (findLocally === 'Yes' || (findDealer === 'Yes' && commercial !== 'Yes') || checkOutOfStock(window.jsonLdData.offers[0].sku)) {
-    const findLocallyContainer = document.createElement('div');
-    findLocallyContainer.classList.add('add-to-cart');
-    findLocallyContainer.innerHTML = `
-      <a class="button emphasis pdp-find-locally-button" href="https://www.vitamix.com/us/en_us/where-to-buy?productFamily=&productType=HH">Find Locally</a>
-    `;
-    block.classList.add('pdp-find-locally');
-    return findLocallyContainer;
-  }
-
-  if (findDealer === 'Yes') {
-    const findDealerContainer = document.createElement('div');
-    findDealerContainer.classList.add('add-to-cart');
-    findDealerContainer.innerHTML = `
-      <a class="button emphasis pdp-find-locally-button" href="https://www.vitamix.com/us/en_us/where-to-buy?productFamily=2205202&productType=COMM">Find Dealer</a>
-      <p><a href="https://www.vitamix.com/us/en_us/commercial/resources/consult-an-expert">Have a question? Consult an expert.</a></p>
-    `;
-    block.classList.add('pdp-find-dealer');
-    return findDealerContainer;
-  }
-
-  const addToCartContainer = document.createElement('div');
-  addToCartContainer.classList.add('add-to-cart');
-
-  // Quantity Label
-  const quantityLabel = document.createElement('label');
-  quantityLabel.textContent = 'Quantity:';
-  quantityLabel.classList.add('pdp-quantity-label');
-  quantityLabel.htmlFor = 'pdp-quantity-select';
-  addToCartContainer.appendChild(quantityLabel);
-
-  const quantityContainer = document.createElement('div');
-  quantityContainer.classList.add('quantity-container');
-  const quantitySelect = document.createElement('select');
-  quantitySelect.id = 'pdp-quantity-select';
-
-  const maxQuantity = custom.maxCartQty ? +custom.maxCartQty : 5;
-  for (let i = 1; i <= maxQuantity; i += 1) {
-    const option = document.createElement('option');
-    option.value = i;
-    option.textContent = i;
-    quantitySelect.appendChild(option);
-  }
-  quantityContainer.appendChild(quantitySelect);
-
-  // Add to Cart Button
-  const addToCartButton = document.createElement('button');
-  addToCartButton.textContent = 'Add to Cart';
-
-  addToCartButton.addEventListener('click', async () => {
-    addToCartButton.textContent = 'Adding...';
-    addToCartButton.setAttribute('aria-disabled', 'true');
-
-    const { cartApi } = await import('../../scripts/minicart/api.js');
-
-    const { updateMagentoCacheSections, getMagentoCache } = await import('../../scripts/storage/util.js');
-
-    // Check cache and update if needed
-    const currentCache = getMagentoCache();
-    if (!currentCache?.customer) {
-      await updateMagentoCacheSections(['customer']);
-    }
-
-    const quantity = document.querySelector('.quantity-container select')?.value || 1;
-    const sku = getMetadata('sku');
-
-    const selectedOptions = [];
-
-    if (window.selectedVariant?.options?.uid) {
-      selectedOptions.push(window.selectedVariant.options.uid);
-    }
-
-    if (window.selectedWarranty?.uid) {
-      selectedOptions.push(window.selectedWarranty.uid);
-    }
-
-    if (custom.requiredBundleOptions) {
-      selectedOptions.push(...custom.requiredBundleOptions);
-    }
-
-    await cartApi.addToCart(sku, selectedOptions, quantity);
-
-    // Open cart page
-    window.location.href = '/us/en_us/checkout/cart/';
-  });
-
-  quantityContainer.appendChild(addToCartButton);
-
-  addToCartContainer.appendChild(quantityContainer);
-
-  return addToCartContainer;
 }
 
 /**
