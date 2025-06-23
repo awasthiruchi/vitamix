@@ -1,0 +1,178 @@
+import { getMetadata } from '../../scripts/aem.js';
+import { checkOutOfStock } from '../../scripts/scripts.js';
+
+/**
+ * Renders "Find Locally" button container.
+ * @param {HTMLElement} block - PDP block element
+ * @returns {HTMLElement} Container div with the "Find Locally" button
+ */
+function renderFindLocally(block) {
+  const findLocallyContainer = document.createElement('div');
+  findLocallyContainer.classList.add('add-to-cart');
+  findLocallyContainer.innerHTML = `<a
+    class="button emphasis pdp-find-locally-button"
+    href="https://www.vitamix.com/us/en_us/where-to-buy?productFamily=&productType=HH">Find Locally</a>`;
+  block.classList.add('pdp-find-locally');
+  return findLocallyContainer;
+}
+
+/**
+ * Renders a "Find Dealer" button container.
+ * @param {HTMLElement} block - PDP block element
+ * @returns {HTMLElement} Container div with "Find Dealer" button and expert consultation link
+ */
+function renderFindDealer(block) {
+  const findDealerContainer = document.createElement('div');
+  findDealerContainer.classList.add('add-to-cart');
+  findDealerContainer.innerHTML = `<a
+    class="button emphasis pdp-find-locally-button"
+    href="https://www.vitamix.com/us/en_us/where-to-buy?productFamily=2205202&productType=COMM">Find Dealer</a>
+  <p>
+    <a
+      href="https://www.vitamix.com/us/en_us/commercial/resources/consult-an-expert">Have a question? Consult an expert.</a>
+  </p>`;
+  block.classList.add('pdp-find-dealer');
+  return findDealerContainer;
+}
+
+/**
+ * Toggles "fixed" class on "Add to Cart" container when the user scrolls.
+ * @param {HTMLElement} container - "Add to Cart" container
+ */
+function toggleFixedAddToCart(container) {
+  const rootStyles = getComputedStyle(document.documentElement);
+  const headerHeight = parseInt(rootStyles.getPropertyValue('--header-height'), 10) || 0;
+
+  window.addEventListener('scroll', () => {
+    // disable fixed behavior on desktop
+    if (window.innerWidth >= 900) {
+      container.classList.remove('fixed');
+      container.removeAttribute('style');
+      return;
+    }
+
+    const { scrollY } = window;
+    const offset = Math.max(headerHeight - scrollY, 0);
+
+    // apply or remove "fixed" class and dynamic top offset
+    if (scrollY > 0) {
+      container.classList.add('fixed');
+      container.style.top = `${offset}px`;
+    } else {
+      container.classList.remove('fixed');
+      container.removeAttribute('style');
+    }
+  });
+}
+
+/**
+ * Renders the main add to cart functionality with quantity selector and add to cart button.
+ * Handles product variants, warranties, bundles, and cart integration with Magento.
+ * Falls back to "Find Locally" or "Find Dealer" buttons based on product configuration.
+ * @param {HTMLElement} block - PDP block element
+ * @param {Object} custom - Configuration object containing product-specific settings
+ * @returns {HTMLElement} Container div with either add to cart functionality or alternative buttons
+ */
+export default function renderAddToCart(block, custom) {
+  // extract config options from custom object
+  const { findLocally, findDealer, commercial } = custom;
+
+  //  check if product should show "Find Locally" instead of add to cart if:
+  // findLocally is enabled, findDealer is enabled but not commercial, OR product is out of stock
+  if (findLocally === 'Yes' || (findDealer === 'Yes' && commercial !== 'Yes') || checkOutOfStock(window.jsonLdData.offers[0].sku)) {
+    return renderFindLocally(block);
+  }
+
+  // check if product should show "Find Dealer" instead of add to cart
+  if (findDealer === 'Yes') {
+    return renderFindDealer(block);
+  }
+
+  // create main add to cart container
+  const addToCartContainer = document.createElement('div');
+  addToCartContainer.classList.add('add-to-cart');
+
+  toggleFixedAddToCart(addToCartContainer);
+
+  // create and configure quantity label
+  const quantityLabel = document.createElement('label');
+  quantityLabel.textContent = 'Quantity:';
+  quantityLabel.classList.add('pdp-quantity-label');
+  quantityLabel.htmlFor = 'pdp-quantity-select';
+  addToCartContainer.appendChild(quantityLabel);
+
+  // create quantity selection container and dropdown
+  const quantityContainer = document.createElement('div');
+  quantityContainer.classList.add('quantity-container');
+  const quantitySelect = document.createElement('select');
+  quantitySelect.id = 'pdp-quantity-select';
+
+  // set maximum quantity (default to 5 if not specified)
+  const maxQuantity = custom.maxCartQty ? +custom.maxCartQty : 5;
+
+  // populate quantity dropdown with options from 1 to maxQuantity
+  for (let i = 1; i <= maxQuantity; i += 1) {
+    const option = document.createElement('option');
+    option.value = i;
+    option.textContent = i;
+    quantitySelect.appendChild(option);
+  }
+  quantityContainer.appendChild(quantitySelect);
+
+  // create and configure add to cart button
+  const addToCartButton = document.createElement('button');
+  addToCartButton.textContent = 'Add to Cart';
+
+  // add click event handler for add to cart functionality
+  addToCartButton.addEventListener('click', async () => {
+    // update button state to show loading
+    addToCartButton.textContent = 'Adding...';
+    addToCartButton.setAttribute('aria-disabled', 'true');
+
+    // import required modules for cart functionality
+    const { cartApi } = await import('../../scripts/minicart/api.js');
+    const { updateMagentoCacheSections, getMagentoCache } = await import('../../scripts/storage/util.js');
+
+    // cCheck and update customer cache if needed
+    const currentCache = getMagentoCache();
+    if (!currentCache?.customer) {
+      await updateMagentoCacheSections(['customer']);
+    }
+
+    // get selected quantity and product SKU
+    const quantity = document.querySelector('.quantity-container select')?.value || 1;
+    const sku = getMetadata('sku');
+
+    // build array of selected options (variants, warranties, required bundles)
+    const selectedOptions = [];
+
+    // add selected variant option if available
+    if (window.selectedVariant?.options?.uid) {
+      selectedOptions.push(window.selectedVariant.options.uid);
+    }
+
+    // add selected warranty if available
+    if (window.selectedWarranty?.uid) {
+      selectedOptions.push(window.selectedWarranty.uid);
+    }
+
+    // add any required bundle options
+    if (custom.requiredBundleOptions) {
+      selectedOptions.push(...custom.requiredBundleOptions);
+    }
+
+    // add product to cart with selected options and quantity
+    await cartApi.addToCart(sku, selectedOptions, quantity);
+
+    // redirect to cart page after successful addition
+    window.location.href = '/us/en_us/checkout/cart/';
+  });
+
+  // assemble the quantity container with select and button
+  quantityContainer.appendChild(addToCartButton);
+
+  // add quantity container to main add to cart container
+  addToCartContainer.appendChild(quantityContainer);
+
+  return addToCartContainer;
+}
