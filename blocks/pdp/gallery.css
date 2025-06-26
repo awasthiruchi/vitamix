@@ -2,6 +2,7 @@
   place-self: start center;
   max-width: 620px;
   padding-bottom: 44px;
+  overflow: unset;
 }
 
 .gallery.carousel > ul > li {
