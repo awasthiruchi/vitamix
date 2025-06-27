@@ -94,13 +94,26 @@ export default function renderGallery(block, variants) {
     }
   }
 
+  [...block.querySelectorAll('.button-wrapper a')].forEach((el) => {
+    if (isVideo(el)) {
+      const parent = el.parentElement;
+      const div = document.createElement('div');
+      div.className = 'video-wrapper';
+      div.append(el.previousElementSibling);
+      div.append(el);
+      parent.append(div);
+    }
+  });
+
+
   if (variants && variants.length === 0) {
-    const fallbackImages = block.querySelectorAll('.img-wrapper');
+    const fallbackImages = block.querySelectorAll('.img-wrapper, .video-wrapper');
     [...fallbackImages].forEach((el) => {
       const slide = buildSlide(el, 'lcp');
       if (slide) wrapper.append(slide);
     });
   }
+  
 
   if (variants && variants.length > 0) {
     const defaultVariant = variants[0];
@@ -112,17 +125,6 @@ export default function renderGallery(block, variants) {
       const clone = v.cloneNode(true);
       clone.dataset.source = i ? 'variant' : 'lcp';
       return clone;
-    });
-
-    [...block.querySelectorAll('.button-wrapper a')].forEach((el) => {
-      if (isVideo(el)) {
-        const parent = el.parentElement;
-        const div = document.createElement('div');
-        div.className = 'video-wrapper';
-        div.append(el.previousElementSibling);
-        div.append(el);
-        parent.append(div);
-      }
     });
 
     // grab fallback images
