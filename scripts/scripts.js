@@ -30,6 +30,20 @@ async function loadFonts() {
 }
 
 /**
+ * Parses `document.cookie` into key-value map.
+ * @returns {Object} Object representing all cookies as key-value pairs
+ */
+export function getCookies() {
+  const cookies = document.cookie.split(';');
+  const cookieMap = {};
+  cookies.forEach((cookie) => {
+    const [key, value] = cookie.split('=');
+    if (key && value) cookieMap[key.trim()] = value.trim();
+  });
+  return cookieMap;
+}
+
+/**
  * Replaces image icon with its SVG equivalent.
  * @param {HTMLImageElement} icon - Icon image element
  */
