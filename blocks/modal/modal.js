@@ -11,9 +11,7 @@ import {
 
 export async function createModal(contentNodes, path) {
   await loadCSS(`${window.hlx.codeBasePath}/blocks/modal/modal.css`);
-  const fallback = [...contentNodes]
-    .find((n) => n.textContent.trim()).textContent.trim().slice(0, 16);
-  const title = toClassName(path.split('/modals/')[1] || fallback);
+  const title = toClassName(path.split('/modals/')[1] || 'modal');
 
   const dialog = document.createElement('dialog');
   const dialogContent = document.createElement('div');
