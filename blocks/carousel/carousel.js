@@ -111,6 +111,17 @@ export default function decorate(block) {
         cell.className = 'slide-image';
       } else { // default, all other cells
         cell.className = 'slide-body';
+        const link = cell.querySelector('a[href]');
+        if (link) {
+          const content = cell.textContent.trim();
+          // link is the only content
+          if (link.textContent.trim() === content) {
+            link.removeAttribute('class');
+            link.parentElement.classList.remove('button-wrapper');
+            if (!variants.includes('linked')) variants.push('linked');
+            if (!block.classList.contains('linked')) block.classList.add('linked');
+          }
+        }
       }
 
       slide.append(cell);

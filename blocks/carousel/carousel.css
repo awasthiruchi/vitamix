@@ -19,6 +19,9 @@
 
 .carousel.linked ul > li .slide-body {
   align-self: center;
+  font-size: var(--body-size-s);
+  font-weight: bold;
+  text-align: center;
   text-transform: uppercase;
 }
 
@@ -42,7 +45,7 @@
 }
 
 @media (width >= 600px) {
-  .carousel.items img {
+  .carousel.items.portrait img {
     aspect-ratio: 3 / 4;
   }
 
@@ -519,6 +522,11 @@
 /* buy now variant */
 .carousel.buy-now h3 {
   font-size: var(--title-size-s);
+}
+
+.carousel.buy-now ul > li .slide-body {
+  text-align: left;
+  text-transform: unset;
 }
 
 @media (width >= 800px) {
