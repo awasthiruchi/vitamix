@@ -61,8 +61,8 @@ export default function decorate(block) {
         if (link.textContent.trim() === content) {
           link.removeAttribute('class');
           link.parentElement.classList.remove('button-wrapper');
-          variants.push('linked');
-          block.classList.add('linked');
+          if (!variants.includes('linked')) variants.push('linked');
+          if (!block.classList.contains('linked')) block.classList.add('linked');
         }
       }
     });
