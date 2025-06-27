@@ -721,6 +721,7 @@ input[type='radio'] {
   color: var(--color-white);
   text-align: center;
   cursor: pointer;
+  z-index: 2;
 }
 
 .carousel nav button.nav-arrow::after {
