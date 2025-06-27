@@ -105,7 +105,6 @@ export default function renderGallery(block, variants) {
     }
   });
 
-
   if (variants && variants.length === 0) {
     const fallbackImages = block.querySelectorAll('.img-wrapper, .video-wrapper');
     [...fallbackImages].forEach((el) => {
@@ -113,7 +112,6 @@ export default function renderGallery(block, variants) {
       if (slide) wrapper.append(slide);
     });
   }
-  
 
   if (variants && variants.length > 0) {
     const defaultVariant = variants[0];
