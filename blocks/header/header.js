@@ -1,5 +1,5 @@
 import { getMetadata, toClassName } from '../../scripts/aem.js';
-import { swapIcons } from '../../scripts/scripts.js';
+import { swapIcons, getCookies } from '../../scripts/scripts.js';
 import { loadFragment } from '../fragment/fragment.js';
 
 // media query match that indicates desktop width
@@ -18,20 +18,6 @@ function rewriteLinks(element) {
       }
     });
   }
-}
-
-/**
- * Parses `document.cookie` into key-value map.
- * @returns {Object} Object representing all cookies as key-value pairs
- */
-function getCookies() {
-  const cookies = document.cookie.split(';');
-  const cookieMap = {};
-  cookies.forEach((cookie) => {
-    const [key, value] = cookie.split('=');
-    if (key && value) cookieMap[key.trim()] = value.trim();
-  });
-  return cookieMap;
 }
 
 /**
