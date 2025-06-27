@@ -170,7 +170,7 @@
 }
 
 .banner.compact > div > div:not(.img-wrapper) .img-wrapper img {
-  max-width: 1ch;
+  max-width: 50px;
   margin-bottom: var(--spacing-100);
 }
 
