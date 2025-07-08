@@ -586,3 +586,7 @@
     transform: scale(1.05);
   }
 }
+
+.carousel .carousel-slide-price {
+  opacity: 0.72;
+}
