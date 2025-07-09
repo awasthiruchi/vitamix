@@ -122,8 +122,10 @@ export default function decorate(block) {
             if (!block.classList.contains('linked')) block.classList.add('linked');
           }
         }
+        [...cell.querySelectorAll('p')].forEach((p) => {
+          if (p.textContent.includes('$')) p.classList.add('carousel-slide-price');
+        });
       }
-
       slide.append(cell);
     });
 
