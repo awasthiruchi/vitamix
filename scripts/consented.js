@@ -149,7 +149,9 @@ if (localStorage.getItem('newsletter-popped-up') !== 'true') {
   localStorage.setItem('newsletter-popped-up', 'true');
   const newsletterLink = document.querySelector('a[href="/us/en_us/nav/modals/sign-up"]');
   if (newsletterLink) {
-    newsletterLink.click();
+    setTimeout(() => {
+      newsletterLink.click();
+    }, 10000);
   }
 }
 
