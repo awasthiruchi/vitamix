@@ -395,6 +395,7 @@ export function buildVideo(el) {
     // create video element
     const video = document.createElement('video');
     video.loop = true;
+    video.muted = true;
     video.setAttribute('muted', '');
     video.setAttribute('playsinline', '');
     video.setAttribute('preload', 'none');
