@@ -145,3 +145,13 @@ loadScript('https://cdn.datasteam.io/js/D26F66D1AD707A.js');
 })
 (window,document,"script","//bat.bing.com/bat.js","uetq");
 
+if (localStorage.getItem('newsletter-popped-up') !== 'true') {
+  localStorage.setItem('newsletter-popped-up', 'true');
+  const newsletterLink = document.querySelector('a[href="/us/en_us/nav/modals/sign-up"]');
+  if (newsletterLink) {
+    setTimeout(() => {
+      newsletterLink.click();
+    }, 10000);
+  }
+}
+
