@@ -32,7 +32,7 @@
   /* shadows */
   --shadow-100: rgba(0 0 0 / 7%);
   --shadow-200: rgba(0 0 0 / 33.3%);
-  --shadow-300: rgba(0 0 0 / 50%);
+  --shadow-300: rgba(146 142 142 / 50%);
   
   /* overlays */;
   --overlay-light: rgba(255 255 255 / 95%);
