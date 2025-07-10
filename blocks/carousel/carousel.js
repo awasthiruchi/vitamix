@@ -123,7 +123,7 @@ export default function decorate(block) {
           }
         }
         [...cell.querySelectorAll('p')].forEach((p) => {
-          if (p.textContent.includes('$')) p.classList.add('carousel-slide-price');
+          if (p.textContent.includes('$')) p.classList.add('slide-body-price');
         });
       }
       slide.append(cell);

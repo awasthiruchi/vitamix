@@ -8,6 +8,10 @@
   border-radius: var(--rounding-m);
 }
 
+.carousel.block .slide-body-price {
+  color: var(--color-gray-900);
+}
+
 /* linked content */
 .carousel.block .linked {
   cursor: pointer;
@@ -585,8 +589,4 @@
   .carousel.buy-now li:hover .slide-image img {
     transform: scale(1.05);
   }
-}
-
-.carousel .carousel-slide-price {
-  opacity: 0.72;
 }
