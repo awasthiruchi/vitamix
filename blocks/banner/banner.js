@@ -2,6 +2,8 @@ import { buildVideo } from '../../scripts/scripts.js';
 
 export default function decorate(block) {
   [...block.querySelectorAll('div img, div svg')].forEach((img) => {
+    const closestBlock = img.closest('.block');
+    if (closestBlock !== block) return; // skip nested blocks
     const wrapper = img.closest('div');
     if (wrapper.children.length === 1) wrapper.className = 'img-wrapper';
   });

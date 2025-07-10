@@ -426,6 +426,11 @@
     position: relative;
   }
 
+  .banner.split .img-wrapper,
+  .banner.split .img-wrapper img {
+    max-height: unset;
+  }
+
   .banner.split .img-wrapper img {
     position: absolute;
     inset: 0;
