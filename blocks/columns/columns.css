@@ -1,3 +1,7 @@
+p + .columns-container {
+  margin-top: var(--spacing-400);
+}
+
 .columns {
   text-align: center;
 }
@@ -49,5 +53,33 @@
   .columns > div > .column-button {
     max-width: max-content;
     align-self: flex-end;
+  }
+}
+
+/* icons variant */
+.columns.icons {
+  text-align: left;
+}
+
+.columns.icons > div {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--spacing-400);
+}
+
+.columns.icons > div + div {
+  margin-top: var(--spacing-400);;
+}
+
+.columns.icons .column-img img {
+  width: 6em;
+  height: 6em;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+@media (width >= 800px) {
+  .columns.icons > div > div {
+    flex: unset;
   }
 }
