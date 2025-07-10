@@ -128,4 +128,30 @@ gtag('config', 'AW-992994739');
 
 loadScript('https://cdn.datasteam.io/js/D26F66D1AD707A.js');
 
+(function(w,d,t,r,u)
+{
+  var f,n,i;
+  w[u]=w[u]||[],f=function()
+  {
+    var o={ti:"355047220", enableAutoSpaTracking: true};
+    o.q=w[u],w[u]=new UET(o),w[u].push("pageLoad")
+  },
+  n=d.createElement(t),n.src=r,n.async=1,n.onload=n.onreadystatechange=function()
+  {
+    var s=this.readyState;
+    s&&s!=="loaded"&&s!=="complete"||(f(),n.onload=n.onreadystatechange=null)
+  },
+  i=d.getElementsByTagName(t)[0],i.parentNode.insertBefore(n,i)
+})
+(window,document,"script","//bat.bing.com/bat.js","uetq");
+
+if (localStorage.getItem('newsletter-popped-up') !== 'true') {
+  localStorage.setItem('newsletter-popped-up', 'true');
+  const newsletterLink = document.querySelector('a[href="/us/en_us/nav/modals/sign-up"]');
+  if (newsletterLink) {
+    setTimeout(() => {
+      newsletterLink.click();
+    }, 10000);
+  }
+}
 
