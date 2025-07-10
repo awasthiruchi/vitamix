@@ -20,6 +20,10 @@ export default function decorate(block) {
     const index = cells.indexOf('img-wrapper');
     block.classList.add(index === 0 ? 'left-text' : 'right-text');
   }
+  if (variants.includes('narrow-media')) {
+    block.classList.add('split');
+    variants.push('split');
+  }
   if (variants.includes('split')) {
     block.parentElement.classList.add('split');
   }
