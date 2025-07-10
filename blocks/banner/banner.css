@@ -371,6 +371,10 @@
   background-color: var(--color-deep-rust);
 }
 
+.banner.split.charcoal > div {
+  background-color: var(--color-charcoal);
+}
+
 .banner.split.text-center > div {
   text-align: center;
 }
