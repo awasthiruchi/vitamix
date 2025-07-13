@@ -97,32 +97,35 @@ function createWarrantyContent(warranty, customWarranty) {
  * @param {Array<Object>} resources - The resources array containing name, content-type, and URL.
  * @returns {HTMLDivElement} The resources content container.
  */
-function createResourcesContent(resources) {
+function createResourcesContent(resources, productName) {
   const container = document.createElement('div');
   container.classList.add('resources-container');
 
-  const resourceTitle = document.createElement('h3');
-  resourceTitle.textContent = 'Ascent® X2 Resources';
+  if (resources && resources.length > 0) {
+    const resourceTitle = document.createElement('h3');
+    resourceTitle.textContent = `${productName} Resources`;
+    container.append(resourceTitle);
 
-  resources.forEach((resource) => {
-    if (resource['content-type'] === 'youtube') return;
+    resources.forEach((resource) => {
+      if (resource['content-type'] === 'youtube') return;
 
-    const resourceItem = document.createElement('div');
-    resourceItem.classList.add('resource-item');
+      const resourceItem = document.createElement('div');
+      resourceItem.classList.add('resource-item');
 
-    const resourceIcon = document.createElement('span');
-    resourceIcon.textContent = resource['content-type'] === 'application/pdf' ? '📄' : '🔗';
+      const resourceIcon = document.createElement('span');
+      resourceIcon.textContent = resource['content-type'] === 'application/pdf' ? '📄' : '🔗';
 
-    const resourceLink = document.createElement('a');
-    resourceLink.href = resource.url;
-    resourceLink.textContent = resource.name;
+      const resourceLink = document.createElement('a');
+      resourceLink.href = resource.url;
+      resourceLink.textContent = resource.name;
 
-    const resourceDetails = document.createElement('p');
-    resourceDetails.textContent = resource['content-type'] === 'application/pdf' ? 'PDF' : '';
+      const resourceDetails = document.createElement('p');
+      resourceDetails.textContent = resource['content-type'] === 'application/pdf' ? 'PDF' : '';
 
-    resourceItem.append(resourceIcon, resourceLink, resourceDetails);
-    container.appendChild(resourceItem);
-  });
+      resourceItem.append(resourceIcon, resourceLink, resourceDetails);
+      container.appendChild(resourceItem);
+    });
+  }
 
   const questions = document.createElement('div');
   questions.classList.add('pdp-questions-container');
@@ -132,6 +135,8 @@ function createResourcesContent(resources) {
     <a href="mailto:service@vitamix.com"><img class="icon" src="/icons/email.svg" alt="Email">service@vitamix.com</a>
     <a href="tel:18008482649"><img class="icon" src="/icons/phone.svg" alt="Phone">1.800.848.2649</a>
   `;
+
+  console.log(resources);
 
   container.append(questions);
 
@@ -145,7 +150,7 @@ function createResourcesContent(resources) {
  * @param {Object} data - The JSON-LD object containing custom data.
  * @returns {HTMLDivElement} The content container for the tab.
  */
-function createTabContent(tab, specifications, standardWarranty, custom) {
+function createTabContent(tab, specifications, standardWarranty, custom, productName) {
   const content = document.createElement('div');
   content.classList.add('tab-content');
   content.id = tab.id;
@@ -162,9 +167,7 @@ function createTabContent(tab, specifications, standardWarranty, custom) {
       }
       break;
     case 'resources':
-      if (custom.resources) {
-        content.appendChild(createResourcesContent(custom.resources));
-      }
+      content.appendChild(createResourcesContent(custom.resources, productName));
       break;
     default:
       break;
@@ -217,13 +220,13 @@ function initializeTabs(container) {
  * @param {Object} data - The JSON-LD object containing custom data.
  * @returns {Element} The specifications container element
  */
-export default function renderSpecs(specifications, custom) {
-  const { options, resources } = custom;
+export default function renderSpecs(specifications, custom, productName) {
+  const { options } = custom;
   const standardWarranty = options?.find((option) => option.name.includes('Standard Warranty'));
   const tabs = [
     { id: 'specifications', label: 'Specifications', show: !!specifications },
     { id: 'warranty', label: 'Warranty', show: !!custom.warranty },
-    { id: 'resources', label: 'Resources', show: !!resources },
+    { id: 'resources', label: 'Resources', show: true },
   ].filter((tab) => tab.show);
 
   // if there are no tabs, don't render anything
@@ -241,7 +244,7 @@ export default function renderSpecs(specifications, custom) {
   contents.classList.add('tab-contents');
 
   tabs.forEach((tab) => {
-    const content = createTabContent(tab, specifications, standardWarranty, custom);
+    const content = createTabContent(tab, specifications, standardWarranty, custom, productName);
     contents.appendChild(content);
   });
 

@@ -339,6 +339,7 @@ a.button.pdp-find-locally-button {
   font-family: var(--body-font-family);
   font-size: var(--heading-size-l);
   font-weight: var(--weight-medium);
+  margin-bottom: var(--spacing-m);
 }
 
 .tab-content .specifications ul {
@@ -358,18 +359,12 @@ a.button.pdp-find-locally-button {
 .tab-content .warranty-container {
   display: flex;
   gap: var(--spacing-100);
-  padding-top: var(--spacing-m);
 }
 
 .tab-content .warranty-icon {
   width: 150px;
   height: 150px;
   flex-shrink: 0;
-}
-
-.tab-content .warranty-title {
-  font-size: 18px;
-  font-weight: bold;
 }
 
 .tab-content .warranty-text {
@@ -384,10 +379,6 @@ a.button.pdp-find-locally-button {
 
 .tab-content .warranty-link:hover {
   text-decoration: underline;
-}
-
-.tab-content .resources-container {
-  padding-top: var(--spacing-m);
 }
 
 .tab-content .resources-container .resource-item span {
@@ -627,6 +618,16 @@ a.button.pdp-find-locally-button {
   list-style: none;
   padding: 0;
   margin: 0;
+}
+
+@media (width >= 900px) {
+  .pdp-related-products-container ul {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  }
+
+  .pdp-related-products-container ul li img {
+    width: 160px;
+  }
 }
 
 .pdp-related-products-container ul li {

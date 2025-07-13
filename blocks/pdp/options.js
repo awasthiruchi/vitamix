@@ -149,44 +149,45 @@ export function renderOptions(block, variants, custom) {
   // eslint-disable-next-line consistent-return
   if (findLocally === 'Yes') return optionsContainer;
 
-  const warrentyContainer = document.createElement('div');
-  warrentyContainer.classList.add('warranty');
+  if (options && options.length > 0) {
+    const warrentyContainer = document.createElement('div');
+    warrentyContainer.classList.add('warranty');
 
-  const warrentyHeading = document.createElement('div');
-  warrentyHeading.textContent = 'Warranty:';
-  warrentyContainer.append(warrentyHeading);
+    const warrentyHeading = document.createElement('div');
+    warrentyHeading.textContent = 'Warranty:';
+    warrentyContainer.append(warrentyHeading);
 
-  options.forEach((option, i) => {
-    const formatPrice = (price) => {
-      if (price) {
-        return `$${price.toFixed(2)}`;
+    options.forEach((option, i) => {
+      const formatPrice = (price) => {
+        if (price) {
+          return `$${price.toFixed(2)}`;
+        }
+        return 'Free';
+      };
+      const warrentyValue = document.createElement('div');
+      warrentyValue.classList.add('pdp-warrenty-option');
+      warrentyValue.textContent = `${option.name} (${formatPrice(+option.price)})`;
+      if (options.length > 1) {
+        const radio = document.createElement('input');
+        radio.type = 'radio';
+        radio.name = 'warranty';
+        radio.value = option.name;
+        if (i === 0) {
+          radio.checked = true;
+        }
+        warrentyValue.prepend(radio);
+
+        radio.addEventListener('change', () => {
+          window.selectedWarranty = option;
+        });
       }
-      return 'Free';
-    };
-    const warrentyValue = document.createElement('div');
-    warrentyValue.classList.add('pdp-warrenty-option');
-    warrentyValue.textContent = `${option.name} (${formatPrice(+option.price)})`;
-    if (options.length > 1) {
-      const radio = document.createElement('input');
-      radio.type = 'radio';
-      radio.name = 'warranty';
-      radio.value = option.name;
-      if (i === 0) {
-        radio.checked = true;
-      }
-      warrentyValue.prepend(radio);
+      warrentyContainer.append(warrentyValue);
+    });
+    // set default warranty
+    [window.selectedWarranty] = options;
 
-      radio.addEventListener('change', () => {
-        window.selectedWarranty = option;
-      });
-    }
-    warrentyContainer.append(warrentyValue);
-  });
-
-  // set default warranty
-  [window.selectedWarranty] = options;
-
-  optionsContainer.append(warrentyContainer);
+    optionsContainer.append(warrentyContainer);
+  }
 
   // eslint-disable-next-line consistent-return
   return optionsContainer;
