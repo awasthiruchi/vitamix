@@ -187,24 +187,40 @@ function renderRelatedProducts(custom) {
   if (relatedProducts.length > 0) {
     const relatedProductsContainer = document.createElement('div');
     relatedProductsContainer.classList.add('pdp-related-products-container');
-    relatedProductsContainer.innerHTML = `
-      <h2>Related Products</h2>
-    `;
-    const ul = document.createElement('ul');
-    relatedProducts.forEach((url) => {
-      const li = document.createElement('li');
-      const fillProduct = async () => {
+    const fillProducts = async () => {
+      const products = await Promise.all(relatedProducts.map(async (url) => {
         const resp = await fetch(`${url}.json`);
+        if (!resp.ok) return null;
         const json = await resp.json();
-        const title = json.name;
-        const image = new URL(json.images[0].url, window.location.href);
-        const price = +json.price.final;
-        li.innerHTML = `<a href="${url}"><img src="${image}?width=750&#x26;format=webply&#x26;optimize=medium" alt="${title}" /><div><p>${title}</p><strong>$${price.toFixed(2)}</strong></div></a>`;
-      };
-      fillProduct();
-      ul.appendChild(li);
+        json.url = url;
+        return json;
+      }));
+      const currentRelatedProducts = products.filter((product) => product && product.custom.retired === 'No');
+      if (currentRelatedProducts.length > 0) {
+        relatedProductsContainer.innerHTML = `
+          <h2>Related Products</h2>
+        `;
+        const ul = document.createElement('ul');
+        currentRelatedProducts.forEach((product) => {
+          const li = document.createElement('li');
+          const title = product.name;
+          const image = new URL(product.images[0].url, window.location.href);
+          const price = +product.price.final;
+          li.innerHTML = `<a href="${product.url}"><img src="${image}?width=750&#x26;format=webply&#x26;optimize=medium" alt="${title}" /><div><p>${title}</p><strong>$${price.toFixed(2)}</strong></div></a>`;
+          ul.appendChild(li);
+        });
+        relatedProductsContainer.appendChild(ul);
+      }
+    };
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          fillProducts();
+          io.disconnect();
+        }
+      });
     });
-    relatedProductsContainer.appendChild(ul);
+    io.observe(relatedProductsContainer);
     return relatedProductsContainer;
   }
   return null;
@@ -219,7 +235,7 @@ function renderShare() {
     <a rel="noopener noreferrer nofollow" href="https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${url}"><img src="/icons/facebook.svg" alt="Facebook" /></a>
     <a rel="noopener noreferrer nofollow" href="https://www.twitter.com/share?url=${url}"><img src="/icons/twitter.svg" alt="Twitter" /></a>
     <a rel="noopener noreferrer nofollow" href="https://www.pinterest.com/pin/create/button/?url=${url}"><img src="/icons/pinterest.svg" alt="Pinterest" /></a>
-    <a rel="noopener noreferrer nofollow" class="pdp-share-email"href="mailto: ?subject=Check this out on Vitamix.com&body=${url}"><img src="/icons/email.svg" alt="Email" /></a>
+    <a rel="noopener noreferrer nofollow" class="pdp-share-email" href="mailto:?subject=Check this out on Vitamix.com&body=${url}"><img src="/icons/email.svg" alt="Email" /></a>
   `;
   return shareContainer;
 }
@@ -258,7 +274,7 @@ export default function decorate(block) {
 
   const detailsContainer = renderDetails(block);
   const specifications = detailsContainer.querySelector('.specifications');
-  const specsContainer = renderSpecs(specifications, custom);
+  const specsContainer = renderSpecs(specifications, custom, jsonLdData.name);
   specifications.remove();
 
   const contentContainer = renderContent();
