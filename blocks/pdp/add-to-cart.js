@@ -80,7 +80,7 @@ export default function renderAddToCart(block, custom) {
 
   //  check if product should show "Find Locally" instead of add to cart if:
   // findLocally is enabled, findDealer is enabled but not commercial, OR product is out of stock
-  if (findLocally === 'Yes' || outOfStock) {
+  if (findLocally === 'Yes' && outOfStock) {
     return renderFindLocally(block);
   }
 
