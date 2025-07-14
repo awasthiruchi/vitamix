@@ -78,6 +78,18 @@ export default function renderAddToCart(block, custom) {
   const { findLocally, findDealer } = custom;
   const outOfStock = checkOutOfStock(window.jsonLdData.offers[0].sku);
 
+  // TODO: I believe this is incorrect, we should be using the selectedVariant.custom.managedStock
+  // In order for this to work variants should defined by the jsonLD and not the DOM.
+  // https://github.com/aemsites/vitamix/issues/185
+  const { managedStock } = window.jsonLdData.offers[0].custom || custom;
+
+  // When Manage Stock = 1 (for the variant) and the product is marked Out of Stock,
+  // we always show the "Find Locally" button,
+  // regardless of whether findLocally or findDealer is set to true or false.
+  if (managedStock === '1' && outOfStock) {
+    return renderFindLocally(block);
+  }
+
   //  check if product should show "Find Locally" instead of add to cart if:
   // findLocally is enabled, findDealer is enabled but not commercial, OR product is out of stock
   if (findLocally === 'Yes' && outOfStock) {
