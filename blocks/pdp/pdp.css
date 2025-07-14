@@ -10,7 +10,6 @@
 .pdp {
   display: grid;
   gap: var(--spacing-l) var(--spacing-xl);
-  padding-top: var(--spacing-xl);
   font-family: var(--font-family-body);
   grid-template-columns: 100%;
   grid-template-areas: 
@@ -36,8 +35,14 @@
 
 .pdp h1 {
   font-family: var(--body-font-family);
-  font-size: var(--font-size-950);
+  font-size: var(--font-size-700);
   font-weight: var(--weight-light);
+}
+
+@media (width >= 900px) {
+  .pdp h1 {
+    font-size: var(--font-size-950);
+  }
 }
 
 .title {
@@ -438,6 +443,12 @@ a.button.pdp-find-locally-button {
   }
 }
 
+@media (width >= 1200px) {
+  .pdp {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
 /* FAQ */
 .faq-container {
   grid-area: faq;
@@ -692,4 +703,12 @@ main .section > div.pdp-wrapper {
 
 .pdp.block.pdp-find-locally .pdp-free-shipping-container {
   display: none;
+}
+
+.pdp-collection-placeholder {
+  margin: 0;
+}
+
+.section.pdp-container {
+  margin-top: var(--spacing-l);
 }

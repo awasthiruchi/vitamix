@@ -4,6 +4,12 @@
   padding-bottom: 44px;
 }
 
+@media (width >= 1200px) {
+  .gallery.carousel {
+    max-width: unset;
+  }
+}
+
 .gallery.carousel > ul > li {
   flex: 0 0 100%;
   width: 100%;
