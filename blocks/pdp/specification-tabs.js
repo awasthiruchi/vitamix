@@ -136,8 +136,6 @@ function createResourcesContent(resources, productName) {
     <a href="tel:18008482649"><img class="icon" src="/icons/phone.svg" alt="Phone">1.800.848.2649</a>
   `;
 
-  console.log(resources);
-
   container.append(questions);
 
   return container;

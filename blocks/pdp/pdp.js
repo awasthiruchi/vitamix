@@ -212,7 +212,15 @@ function renderRelatedProducts(custom) {
         relatedProductsContainer.appendChild(ul);
       }
     };
-    fillProducts();
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          fillProducts();
+          io.disconnect();
+        }
+      });
+    });
+    io.observe(relatedProductsContainer);
     return relatedProductsContainer;
   }
   return null;
