@@ -26,15 +26,10 @@
 }
 
 .pdp .eyebrow {
-  font-family: var(--heading-font-family);
-  font-size: var(--font-size-200);
-  font-weight: var(--weight-light);
   color: var(--color-text);
-  text-transform: none;
 }
 
 .pdp h1 {
-  font-family: var(--body-font-family);
   font-size: var(--font-size-700);
   font-weight: var(--weight-light);
 }
@@ -600,7 +595,7 @@ a.button.pdp-find-locally-button {
 }
 
 .pdp-alert.pdp-promo-alert {
-  background-color: var(--color-deep-rust);
+  background-color: var(--color-xanadu);
 }
 
 .pdp-alert.pdp-promo-alert p {
