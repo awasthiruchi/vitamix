@@ -24,7 +24,7 @@ function renderTitle(block, custom, reviewsId) {
 
   const { collection } = custom;
   const collectionContainer = document.createElement('p');
-  collectionContainer.classList.add('pdp-collection-placeholder');
+  collectionContainer.classList.add('pdp-collection-placeholder', 'eyebrow');
   collectionContainer.textContent = `${collection || ''}`;
 
   titleContainer.append(
@@ -233,7 +233,7 @@ function renderShare() {
   shareContainer.innerHTML = `
     Share: 
     <a rel="noopener noreferrer nofollow" href="https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${url}"><img src="/icons/facebook.svg" alt="Facebook" /></a>
-    <a rel="noopener noreferrer nofollow" href="https://www.twitter.com/share?url=${url}"><img src="/icons/twitter.svg" alt="Twitter" /></a>
+    <a rel="noopener noreferrer nofollow" href="https://www.twitter.com/share?url=${url}"><img src="/icons/x.svg" alt="X" /></a>
     <a rel="noopener noreferrer nofollow" href="https://www.pinterest.com/pin/create/button/?url=${url}"><img src="/icons/pinterest.svg" alt="Pinterest" /></a>
     <a rel="noopener noreferrer nofollow" class="pdp-share-email" href="mailto:?subject=Check this out on Vitamix.com&body=${url}"><img src="/icons/email.svg" alt="Email" /></a>
   `;
