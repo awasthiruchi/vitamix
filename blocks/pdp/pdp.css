@@ -595,7 +595,7 @@ a.button.pdp-find-locally-button {
   grid-area: alert;
   background-color: var(--color-charcoal);
   color: var(--color-white);
-  font-weight: 700;
+  font-weight: var(--weight-medium);
   text-align: center;
 }
 
