@@ -66,6 +66,24 @@ function toggleFixedAddToCart(container) {
 }
 
 /**
+ * Checks if a variant is available for sale.
+ * @param {Object} variant - The variant object
+ * @returns {boolean} True if the variant is available for sale, false otherwise
+ */
+export function isVariantAvailableForSale(variant) {
+  const { managedStock, addToCart } = variant.custom;
+  if (!variant || addToCart === 'No') {
+    return false;
+  }
+
+  if (managedStock === '0') {
+    return true;
+  }
+
+  return !checkOutOfStock(variant.sku);
+}
+
+/**
  * Renders the main add to cart functionality with quantity selector and add to cart button.
  * Handles product variants, warranties, bundles, and cart integration with Magento.
  * Falls back to "Find Locally" or "Find Dealer" buttons based on product configuration.
@@ -76,28 +94,26 @@ function toggleFixedAddToCart(container) {
 export default function renderAddToCart(block, custom) {
   // extract config options from custom object
   const { findLocally, findDealer } = custom;
-  const outOfStock = checkOutOfStock(window.jsonLdData.offers[0].sku);
-
-  // TODO: I believe this is incorrect, we should be using the selectedVariant.custom.managedStock
-  // In order for this to work variants should defined by the jsonLD and not the DOM.
-  // https://github.com/aemsites/vitamix/issues/185
-  const { managedStock } = window.jsonLdData.offers[0].custom || custom;
+  const { sku: selectedSku } = window.selectedVariant;
+  const selectedVariant = window.jsonLdData.offers.find((variant) => variant.sku === selectedSku);
+  const isAvailableForSale = isVariantAvailableForSale(selectedVariant);
+  const { managedStock } = selectedVariant.custom;
 
   // When Manage Stock = 1 (for the variant) and the product is marked Out of Stock,
   // we always show the "Find Locally" button,
   // regardless of whether findLocally or findDealer is set to true or false.
-  if (managedStock === '1' && outOfStock) {
+  if (managedStock === '1' && !isAvailableForSale) {
     return renderFindLocally(block);
   }
 
   //  check if product should show "Find Locally" instead of add to cart if:
   // findLocally is enabled, findDealer is enabled but not commercial, OR product is out of stock
-  if (findLocally === 'Yes' && outOfStock) {
+  if (findLocally === 'Yes' && !isAvailableForSale) {
     return renderFindLocally(block);
   }
 
   // check if product should show "Find Dealer" instead of add to cart
-  if (findDealer === 'Yes' && outOfStock) {
+  if (findDealer === 'Yes' && !isAvailableForSale) {
     return renderFindDealer(block);
   }
 
