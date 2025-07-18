@@ -252,7 +252,7 @@ export default function decorate(block) {
 
   const pricingContainer = renderPricing(block);
   const optionsContainer = renderOptions(block, variants, custom);
-  const addToCartContainer = renderAddToCart(block, custom);
+  const addToCartContainer = renderAddToCart(block, jsonLdData);
   const compareContainer = renderCompare(custom);
   const freeShippingContainer = renderFreeShipping(offers);
   const shareContainer = renderShare();

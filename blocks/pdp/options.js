@@ -97,7 +97,7 @@ export function onOptionChange(block, variants, color) {
  * @returns {Element} The options container element
  */
 export function renderOptions(block, variants, custom) {
-  const { options, findLocally } = custom;
+  const { options } = custom;
   // if there are no variants, don't render anything
   if (!variants || variants.length === 0) {
     return;

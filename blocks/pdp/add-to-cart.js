@@ -88,16 +88,29 @@ export function isVariantAvailableForSale(variant) {
  * Handles product variants, warranties, bundles, and cart integration with Magento.
  * Falls back to "Find Locally" or "Find Dealer" buttons based on product configuration.
  * @param {HTMLElement} block - PDP block element
- * @param {Object} custom - Configuration object containing product-specific settings
+ * @param {Object} parent - Parent product object
  * @returns {HTMLElement} Container div with either add to cart functionality or alternative buttons
  */
-export default function renderAddToCart(block, custom) {
-  // extract config options from custom object
-  const { findLocally, findDealer } = custom;
-  const { sku: selectedSku } = window.selectedVariant;
-  const selectedVariant = window.jsonLdData.offers.find((variant) => variant.sku === selectedSku);
+export default function renderAddToCart(block, parent) {
+  // Default selectedVariant to parent product, if simple product, selectedVariant will be undefined
+  // TODO: this should be fixed with https://github.com/aemsites/vitamix/issues/185
+  let selectedVariant = parent;
+  if (window.selectedVariant) {
+    // If we actually have a selected variant, use it instead of the parent product
+    const { sku: selectedSku } = window.selectedVariant;
+    selectedVariant = parent.offers.find((variant) => variant.sku === selectedSku);
+  }
+
+  // Only look at findLocally and findDealer from parent product
+  const { findLocally, findDealer } = parent;
+
+  // Figure out if the selected variant is available for sale
   const isAvailableForSale = isVariantAvailableForSale(selectedVariant);
-  const { managedStock } = selectedVariant.custom;
+
+  // If we have a selected variant, use it's custom object,
+  // otherwise use the parent product's custom object
+  const { custom } = selectedVariant || parent;
+  const { managedStock } = custom;
 
   // When Manage Stock = 1 (for the variant) and the product is marked Out of Stock,
   // we always show the "Find Locally" button,
