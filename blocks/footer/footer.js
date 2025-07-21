@@ -59,4 +59,12 @@ export default async function decorate(block) {
 
   block.append(footer);
   swapIcons(block);
+
+  const cookieDeclaration = block.querySelector('a[href$="cookie-declaration"]');
+  if (cookieDeclaration) {
+    cookieDeclaration.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.Cookiebot.renew();
+    });
+  }
 }
