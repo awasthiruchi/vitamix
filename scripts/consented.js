@@ -1,5 +1,15 @@
 import { loadScript } from './aem.js';
 
+if (localStorage.getItem('newsletter-popped-up') !== 'true') {
+  localStorage.setItem('newsletter-popped-up', 'true');
+  const newsletterLink = document.querySelector('a[href="/us/en_us/nav/modals/sign-up"]');
+  if (newsletterLink) {
+    setTimeout(() => {
+      newsletterLink.click();
+    }, 10000);
+  }
+}
+
 // add delayed functionality here
 window.config = {
   POOLID: 'us-east-1:d54ecd7d-db6e-456d-bf35-d26346122a63',
@@ -144,14 +154,4 @@ loadScript('https://cdn.datasteam.io/js/D26F66D1AD707A.js');
   i=d.getElementsByTagName(t)[0],i.parentNode.insertBefore(n,i)
 })
 (window,document,"script","//bat.bing.com/bat.js","uetq");
-
-if (localStorage.getItem('newsletter-popped-up') !== 'true') {
-  localStorage.setItem('newsletter-popped-up', 'true');
-  const newsletterLink = document.querySelector('a[href="/us/en_us/nav/modals/sign-up"]');
-  if (newsletterLink) {
-    setTimeout(() => {
-      newsletterLink.click();
-    }, 10000);
-  }
-}
 

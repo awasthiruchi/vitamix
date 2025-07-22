@@ -248,6 +248,15 @@ export default function decorate(block) {
   const { jsonLdData, variants } = window;
   const { custom, offers } = jsonLdData;
 
+  const queryParams = new URLSearchParams(window.location.search);
+  const color = queryParams.get('color');
+
+  if (color) {
+    onOptionChange(block, variants, color);
+  } else if (variants.length > 0) {
+    [window.selectedVariant] = variants;
+  }
+
   const reviewsId = custom.reviewsId || toClassName(getMetadata('sku')).replace(/-/g, '');
   const galleryContainer = renderGallery(block, variants);
   const titleContainer = renderTitle(block, custom, reviewsId);
@@ -259,7 +268,7 @@ export default function decorate(block) {
 
   const pricingContainer = renderPricing(block);
   const optionsContainer = renderOptions(block, variants, custom);
-  const addToCartContainer = renderAddToCart(block, custom);
+  const addToCartContainer = renderAddToCart(block, jsonLdData);
   const compareContainer = renderCompare(custom);
   const freeShippingContainer = renderFreeShipping(offers);
   const shareContainer = renderShare();
@@ -299,15 +308,6 @@ export default function decorate(block) {
     faqContainer,
     relatedProductsContainer || '',
   );
-
-  const queryParams = new URLSearchParams(window.location.search);
-  const color = queryParams.get('color');
-
-  if (color) {
-    onOptionChange(block, variants, color);
-  } else if (variants.length > 0) {
-    [window.selectedVariant] = variants;
-  }
 
   buyBox.dataset.sku = offers[0].sku;
   buyBox.dataset.oos = checkOutOfStock(offers[0].sku);

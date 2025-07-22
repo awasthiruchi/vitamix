@@ -2,6 +2,7 @@ import { buildSlide, buildThumbnails } from './gallery.js';
 import { rebuildIndices, checkOutOfStock } from '../../scripts/scripts.js';
 import { toClassName, getMetadata } from '../../scripts/aem.js';
 import renderPricing from './pricing.js';
+import { isVariantAvailableForSale } from './add-to-cart.js';
 
 /**
  * Handles the change of an option.
@@ -96,7 +97,7 @@ export function onOptionChange(block, variants, color) {
  * @returns {Element} The options container element
  */
 export function renderOptions(block, variants, custom) {
-  const { options, findLocally } = custom;
+  const { options } = custom;
   // if there are no variants, don't render anything
   if (!variants || variants.length === 0) {
     return;
@@ -146,8 +147,11 @@ export function renderOptions(block, variants, custom) {
   oosMessage.textContent = 'This color is temporarily out of stock.';
   optionsContainer.append(oosMessage);
 
+  const { sku: selectedSku } = window.selectedVariant;
+  const selectedVariant = window.jsonLdData.offers.find((variant) => variant.sku === selectedSku);
+  const isAvailableForSale = isVariantAvailableForSale(selectedVariant);
   // eslint-disable-next-line consistent-return
-  if (findLocally === 'Yes') return optionsContainer;
+  if (!isAvailableForSale) return optionsContainer;
 
   if (options && options.length > 0) {
     const warrentyContainer = document.createElement('div');

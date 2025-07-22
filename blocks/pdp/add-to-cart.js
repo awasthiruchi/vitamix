@@ -66,25 +66,67 @@ function toggleFixedAddToCart(container) {
 }
 
 /**
+ * Checks if a variant is available for sale.
+ * @param {Object} variant - The variant object
+ * @returns {boolean} True if the variant is available for sale, false otherwise
+ */
+export function isVariantAvailableForSale(variant) {
+  const { managedStock, addToCart } = variant.custom;
+  if (!variant || addToCart === 'No') {
+    return false;
+  }
+
+  if (managedStock === '0') {
+    return true;
+  }
+
+  return !checkOutOfStock(variant.sku);
+}
+
+/**
  * Renders the main add to cart functionality with quantity selector and add to cart button.
  * Handles product variants, warranties, bundles, and cart integration with Magento.
  * Falls back to "Find Locally" or "Find Dealer" buttons based on product configuration.
  * @param {HTMLElement} block - PDP block element
- * @param {Object} custom - Configuration object containing product-specific settings
+ * @param {Object} parent - Parent product object
  * @returns {HTMLElement} Container div with either add to cart functionality or alternative buttons
  */
-export default function renderAddToCart(block, custom) {
-  // extract config options from custom object
-  const { findLocally, findDealer, commercial } = custom;
+export default function renderAddToCart(block, parent) {
+  // Default selectedVariant to parent product, if simple product, selectedVariant will be undefined
+  // TODO: this should be fixed with https://github.com/aemsites/vitamix/issues/185
+  let selectedVariant = parent;
+  if (window.selectedVariant) {
+    // If we actually have a selected variant, use it instead of the parent product
+    const { sku: selectedSku } = window.selectedVariant;
+    selectedVariant = parent.offers.find((variant) => variant.sku === selectedSku);
+  }
+
+  // Only look at findLocally and findDealer from parent product
+  const { findLocally, findDealer } = parent;
+
+  // Figure out if the selected variant is available for sale
+  const isAvailableForSale = isVariantAvailableForSale(selectedVariant);
+
+  // If we have a selected variant, use it's custom object,
+  // otherwise use the parent product's custom object
+  const { custom } = selectedVariant || parent;
+  const { managedStock } = custom;
+
+  // When Manage Stock = 1 (for the variant) and the product is marked Out of Stock,
+  // we always show the "Find Locally" button,
+  // regardless of whether findLocally or findDealer is set to true or false.
+  if (managedStock === '1' && !isAvailableForSale) {
+    return renderFindLocally(block);
+  }
 
   //  check if product should show "Find Locally" instead of add to cart if:
   // findLocally is enabled, findDealer is enabled but not commercial, OR product is out of stock
-  if (findLocally === 'Yes' || (findDealer === 'Yes' && commercial !== 'Yes') || checkOutOfStock(window.jsonLdData.offers[0].sku)) {
+  if (findLocally === 'Yes' && !isAvailableForSale) {
     return renderFindLocally(block);
   }
 
   // check if product should show "Find Dealer" instead of add to cart
-  if (findDealer === 'Yes') {
+  if (findDealer === 'Yes' && !isAvailableForSale) {
     return renderFindDealer(block);
   }
 
