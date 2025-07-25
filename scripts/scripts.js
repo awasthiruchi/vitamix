@@ -739,7 +739,8 @@ export function parseAlertBanners(block) {
 
   const rows = [...block.children];
   const banners = rows.map((row) => {
-    const [dates, times, content, color] = [...row.children];
+    const [dates, times, content, colorEl] = [...row.children];
+    const color = colorEl.textContent().trim();
     try {
       const startDate = dates.textContent.split('-')[0];
       const endDate = dates.textContent.split('-')[1];
