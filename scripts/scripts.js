@@ -673,6 +673,11 @@ function getTextColor(hex) {
   return luminance > 128 ? 'dark' : 'light';
 }
 
+/**
+ * Parses alert banner rows from a block element and returns an array of banner objects.
+ * @param {HTMLElement} block - The DOM element containing alert banner rows as children.
+ * @returns {Array<Object>} Array of parsed banner objects with properties:
+ */
 export function parseAlertBanners(block) {
   // Timezone offset lookup table (offsets from UTC in hours)
   const convertToISODate = (date, time) => {
@@ -766,6 +771,13 @@ export function parseAlertBanners(block) {
   return banners;
 }
 
+/**
+ * Determines whether the current date is before, during, or after the given start/end range.
+ * @param {Date} start - The start date/time of the range.
+ * @param {Date} end - The end date/time of the range.
+ * @param {Date} [date=new Date()] - The reference date/time to compare (defaults to now).
+ * @returns {string} String indicating the status relative to the range.
+ */
 export function currentPastFuture(start, end, date = new Date()) {
   if (start <= date && end >= date) {
     return 'current';
@@ -776,6 +788,12 @@ export function currentPastFuture(start, end, date = new Date()) {
   return 'past';
 }
 
+/**
+ * Finds the "best" alert banner from an array of banners, based on the current date.
+ * @param {Array<Object>} banners - Array of banner objects as returned by parseAlertBanners.
+ * @param {Date} [date=new Date()] - The reference date/time to use (defaults to now).
+ * @returns {Object|null} The best banner object, or null if none are current.
+ */
 export function findBestAlertBanner(banners, date = new Date()) {
   let bestBanner = null;
   banners.forEach((banner) => {
@@ -807,22 +825,23 @@ async function loadNavBanner(main) {
     const banners = parseAlertBanners(block);
     const selectedBanner = findBestAlertBanner(banners);
 
-    const banner = document.createElement('aside');
-    banner.className = 'nav-banner';
-    const p = document.createElement('p');
-    p.append(selectedBanner.content);
-    banner.append(p);
-
-    // apply custom color
-    if (banner.color) {
-      const styles = getComputedStyle(document.documentElement);
-      const value = styles.getPropertyValue(`--color-${banner.color}`).trim();
-      if (value) {
-        banner.style.backgroundColor = `var(--color-${banner.color})`;
-        banner.classList.add(`nav-banner-${getTextColor(value)}`);
+    if (selectedBanner && selectedBanner.content) {
+      const banner = document.createElement('aside');
+      banner.className = 'nav-banner';
+      const p = document.createElement('p');
+      p.append(...selectedBanner.content.childNodes);
+      banner.append(p);
+      // apply custom color
+      if (selectedBanner.color) {
+        const styles = getComputedStyle(document.documentElement);
+        const value = styles.getPropertyValue(`--color-${selectedBanner.color}`).trim();
+        if (value) {
+          banner.style.backgroundColor = `var(--color-${selectedBanner.color})`;
+          banner.classList.add(`nav-banner-${getTextColor(value)}`);
+        }
       }
+      main.prepend(banner);
     }
-    main.prepend(banner);
   } catch (e) {
     // eslint-disable-next-line no-console
     console.log('Error loading nav banner', e);
