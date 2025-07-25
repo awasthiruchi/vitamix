@@ -814,11 +814,11 @@ async function loadNavBanner(main) {
     banner.append(p);
 
     // apply custom color
-    if (banner.color) {
+    if (selectedBanner.color) {
       const styles = getComputedStyle(document.documentElement);
-      const value = styles.getPropertyValue(`--color-${banner.color}`).trim();
+      const value = styles.getPropertyValue(`--color-${selectedBanner.color}`).trim();
       if (value) {
-        banner.style.backgroundColor = `var(--color-${banner.color})`;
+        banner.style.backgroundColor = `var(--color-${selectedBanner.color})`;
         banner.classList.add(`nav-banner-${getTextColor(value)}`);
       }
     }
