@@ -356,7 +356,7 @@ function buildPDPBlock(main) {
     [
       ['nav', '/us/en_us/nav/nav'],
       ['footer', '/us/en_us/footer/footer'],
-      ['nav-banner', '/us/en_us/nav/nav-banner'],
+      ['nav-banners', '/us/en_us/nav/nav-banners'],
     ].forEach(([name, content]) => {
       const meta = document.createElement('meta');
       meta.name = name;
@@ -673,33 +673,150 @@ function getTextColor(hex) {
   return luminance > 128 ? 'dark' : 'light';
 }
 
+export function parseAlertBanners(block) {
+  // Timezone offset lookup table (offsets from UTC in hours)
+  const convertToISODate = (date, time) => {
+    const TIMEZONE_OFFSETS = {
+      // Eastern Time
+      EST: -5, // Eastern Standard Time
+      EDT: -4, // Eastern Daylight Time
+      // Central Time
+      CST: -6, // Central Standard Time
+      CDT: -5, // Central Daylight Time
+      // Mountain Time
+      MST: -7, // Mountain Standard Time
+      MDT: -6, // Mountain Daylight Time
+      // Pacific Time
+      PST: -8, // Pacific Standard Time
+      PDT: -7, // Pacific Daylight Time
+      // Other common timezones
+      UTC: 0, // Coordinated Universal Time
+      GMT: 0, // Greenwich Mean Time
+    };
+
+    // Parse date as month/day format
+    const [month, day] = date.split('/');
+    const year = new Date().getFullYear();
+
+    // Extract time and timezone from strings like "12am EDT", "11:59pm EST", "2:30pm", etc.
+    const timeMatch = time.match(/(\d{1,2})(?::(\d{2}))?\s*(am|pm)(?:\s+([A-Z]{2,4}))?/i);
+    if (!timeMatch) {
+      throw new Error(`Invalid time format: ${time}`);
+    }
+
+    let hours = parseInt(timeMatch[1], 10);
+    const minutes = timeMatch[2] || '00';
+    const ampm = timeMatch[3].toLowerCase();
+    const timezone = timeMatch[4] || 'UTC'; // Default to UTC if no timezone specified
+
+    // Convert 12-hour to 24-hour format
+    if (ampm === 'am' && hours === 12) {
+      hours = 0; // 12am = 00:00
+    } else if (ampm === 'pm' && hours !== 12) {
+      hours += 12; // 1pm-11pm = 13:00-23:00, 12pm stays 12:00
+    }
+
+    // Get timezone offset
+    const timezoneOffset = TIMEZONE_OFFSETS[timezone.toUpperCase()];
+    if (timezoneOffset === undefined) {
+      throw new Error(`Unsupported timezone: ${timezone}`);
+    }
+
+    // Pad with zeros
+    const paddedMonth = month.padStart(2, '0');
+    const paddedDay = day.padStart(2, '0');
+    const paddedHours = hours.toString().padStart(2, '0');
+    const paddedMinutes = minutes.padStart(2, '0');
+
+    // Return ISO string with timezone offset
+    if (timezoneOffset === 0) {
+      return `${year}-${paddedMonth}-${paddedDay}T${paddedHours}:${paddedMinutes}:00Z`;
+    }
+    const offsetSign = timezoneOffset >= 0 ? '+' : '-';
+    const offsetHours = Math.abs(timezoneOffset).toString().padStart(2, '0');
+    return `${year}-${paddedMonth}-${paddedDay}T${paddedHours}:${paddedMinutes}:00${offsetSign}${offsetHours}:00`;
+  };
+
+  const rows = [...block.children];
+  const banners = rows.map((row) => {
+    const [dates, times, content, color] = [...row.children];
+    try {
+      const startDate = dates.textContent.split('-')[0];
+      const endDate = dates.textContent.split('-')[1];
+      const startTime = times.textContent.split('-')[0];
+      const endTime = times.textContent.split('-')[1];
+      return ({
+        valid: true,
+        start: new Date(convertToISODate(startDate, startTime)),
+        end: new Date(convertToISODate(endDate, endTime)),
+        content,
+        color,
+      });
+    } catch (e) {
+      return {
+        valid: false,
+        error: e.message,
+        start: null,
+        end: null,
+        content,
+        color,
+      };
+    }
+  });
+  return banners;
+}
+
+export function currentPastFuture(start, end, date = new Date()) {
+  if (start <= date && end >= date) {
+    return 'current';
+  }
+  if (start > date) {
+    return 'future';
+  }
+  return 'past';
+}
+
+export function findBestAlertBanner(banners, date = new Date()) {
+  let bestBanner = null;
+  banners.forEach((banner) => {
+    if (banner.valid) {
+      if (currentPastFuture(banner.start, banner.end, date) === 'current') {
+        bestBanner = banner;
+      }
+    }
+  });
+  return bestBanner;
+}
+
 /**
  * Loads and prepends nav banner.
  * @param {HTMLElement} main - Main element
  */
 async function loadNavBanner(main) {
-  const meta = getMetadata('nav-banner');
+  const meta = getMetadata('nav-banners');
   if (!meta) return;
 
   const path = new URL(meta, window.location).pathname;
   // eslint-disable-next-line import/no-cycle
-  const { loadFragment } = await import('../blocks/fragment/fragment.js');
-  const fragment = await loadFragment(path);
-  const content = fragment.querySelectorAll('main > div > div');
-  if (content.length < 1) return;
+  const resp = await fetch(path);
+  const text = await resp.text();
+
+  const dom = new DOMParser(text, 'text/html');
+  const block = dom.querySelector('.alert-banners');
+
+  const banners = parseAlertBanners(block);
+  const selectedBanner = findBestAlertBanner(banners);
 
   const banner = document.createElement('aside');
   banner.className = 'nav-banner';
-  banner.append(...content);
+  banner.append(selectedBanner.content);
 
   // apply custom color
-  const section = fragment.querySelector('div[data-background]');
-  if (section) {
-    const { background } = section.dataset;
+  if (banner.color) {
     const styles = getComputedStyle(document.documentElement);
-    const value = styles.getPropertyValue(`--color-${background}`).trim();
+    const value = styles.getPropertyValue(`--color-${banner.color}`).trim();
     if (value) {
-      banner.style.backgroundColor = `var(--color-${background})`;
+      banner.style.backgroundColor = `var(--color-${banner.color})`;
       banner.classList.add(`nav-banner-${getTextColor(value)}`);
     }
   }
