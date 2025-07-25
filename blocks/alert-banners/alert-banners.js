@@ -1,5 +1,10 @@
 import { parseAlertBanners, findBestAlertBanner, currentPastFuture } from '../../scripts/scripts.js';
 
+/**
+ * Formats a Date object into a short date-time string format (M/D HHam/pm).
+ * @param {Date} date - The date to format
+ * @returns {string} Formatted date string, or "Invalid Date"
+ */
 function formatShortDateTime(date) {
   if (!date || !(date instanceof Date) || Number.isNaN(date.getTime())) {
     return 'Invalid Date';
@@ -25,6 +30,13 @@ function formatShortDateTime(date) {
   return `${month}/${day} ${timeStr}`;
 }
 
+/**
+ * Creates a structured list of parsed banner elements with appropriate CSS classes and content.
+ * @param {Array<Object>} banners - Array of banner objects
+ * @param {Object|null} [bestBanner=null] - The optimal banner to highlight with special styling
+ * @param {Date} [date=new Date()] - Reference date for determining banner status
+ * @returns {HTMLUListElement} Unordered list element containing all banner items
+ */
 function createParsedBanners(banners, bestBanner = null, date = new Date()) {
   const list = document.createElement('ul');
   banners.forEach((banner) => {
@@ -43,12 +55,17 @@ function createParsedBanners(banners, bestBanner = null, date = new Date()) {
     row.innerHTML = `
       <div class="alert-banners-date">${formatShortDateTime(banner.start)} - ${formatShortDateTime(banner.end)}</div>
       <div class="alert-banners-content">${banner.content.innerHTML}</div>
-      <div class="alert-banners-color">${banner.color.textContent}</div>
+      <div class="alert-banners-color">${banner.color}</div>
       `;
   });
   return list;
 }
 
+/**
+ * Parses banner data, finds best banner, and replaces block with formatted list of all banners.
+ * @param {HTMLElement} block - The DOM element containing the alert banners block to be decorated
+ * @returns {Promise<void>} Promise that resolves when the block decoration is complete
+ */
 export default async function decorateAlertBanners(block) {
   const banners = parseAlertBanners(block);
   block.innerHTML = '';
