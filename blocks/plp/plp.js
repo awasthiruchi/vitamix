@@ -1,7 +1,94 @@
 import { fetchPlaceholders, readBlockConfig } from '../../scripts/aem.js';
 
-// Mock lookupPages function since it's not available
-const lookupPages = async () => [];
+export async function lookupProducts(config, facets = {}) {
+  /* load index */
+  if (!window.productIndex) {
+    const resp = await fetch('/drafts/uncled/product-index.json');
+    const json = await resp.json();
+    const populateIndex = async (data) => {
+      data.forEach(async (row) => {
+        const url = new URL(row.URL);
+        row.path = url.pathname;
+        const productResp = await fetch(row.path);
+        const productHTML = await productResp.text();
+        const dom = new DOMParser().parseFromString(productHTML, 'text/html');
+        const jsonLD = dom.querySelector('script[type="application/ld+json"]');
+        const jsonLDData = JSON.parse(jsonLD.textContent);
+        row.title = jsonLDData.name;
+        row.price = jsonLDData.offers.price;
+        row.image = jsonLDData.image;
+        row.description = jsonLDData.description;
+        row.category = jsonLDData.category;
+      });
+      return data;
+    };
+    json.data = await populateIndex(json.data);
+    const lookup = {};
+    json.data.forEach((row) => {
+      lookup[row.path] = row;
+    });
+    window.productIndex = { data: json.data, lookup };
+    console.log(window.productIndex);
+  }
+
+  /* simple array lookup */
+  if (Array.isArray(config)) {
+    const pathnames = config;
+    return (pathnames.map((path) => window.productIndex.lookup[path]).filter((e) => e));
+  }
+
+  /* setup config */
+  const facetKeys = Object.keys(facets);
+  const keys = Object.keys(config);
+  const tokens = {};
+  keys.forEach((key) => {
+    tokens[key] = config[key].split(',').map((t) => t.trim());
+  });
+
+  /* filter */
+  const results = window.productIndex.data.filter((row) => {
+    const filterMatches = {};
+    let matchedAll = keys.every((key) => {
+      let matched = false;
+      if (row[key]) {
+        const rowValues = row[key].split(',').map((t) => t.trim());
+        matched = tokens[key].some((t) => rowValues.includes(t));
+      }
+      if (key === 'fulltext') {
+        const fulltext = row.title.toLowerCase();
+        matched = fulltext.includes(config.fulltext.toLowerCase());
+      }
+      filterMatches[key] = matched;
+      return matched;
+    });
+
+    const isProduct = () => !!row.price;
+
+    if (!isProduct()) matchedAll = false;
+
+    /* facets */
+    facetKeys.forEach((facetKey) => {
+      let includeInFacet = true;
+      Object.keys(filterMatches).forEach((filterKey) => {
+        if (filterKey !== facetKey && !filterMatches[filterKey]) includeInFacet = false;
+      });
+      if (includeInFacet) {
+        if (row[facetKey]) {
+          const rowValues = row[facetKey].split(',').map((t) => t.trim());
+          rowValues.forEach((val) => {
+            if (facets[facetKey][val]) {
+              facets[facetKey][val] += 1;
+            } else {
+              facets[facetKey][val] = 1;
+            }
+          });
+        }
+      }
+    });
+    return (matchedAll);
+  });
+  return results;
+}
 
 // Simple product card creation function to replace carousel dependency
 const createProductCard = (product) => {
@@ -211,7 +298,7 @@ export default async function decorate(block) {
       'price-asc': (a, b) => getPrice(a.price) - getPrice(b.price),
       'price-desc': (a, b) => getPrice(b.price) - getPrice(a.price),
     };
-    const results = await lookupPages(filterConfig, facets);
+    const results = await lookupProducts(filterConfig, facets);
     const sortBy = document.getElementById('plp-sortby') ? document.getElementById('plp-sortby').dataset.sort : 'best';
     if (sortBy && sorts[sortBy]) results.sort(sorts[sortBy]);
     block.querySelector('#plp-results-count').textContent = results.length;
