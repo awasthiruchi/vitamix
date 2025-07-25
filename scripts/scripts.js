@@ -795,32 +795,38 @@ export function findBestAlertBanner(banners, date = new Date()) {
 async function loadNavBanner(main) {
   const meta = getMetadata('nav-banners');
   if (!meta) return;
+  try {
+    const path = new URL(meta, window.location).pathname;
+    // eslint-disable-next-line import/no-cycle
+    const resp = await fetch(path);
+    const text = await resp.text();
 
-  const path = new URL(meta, window.location).pathname;
-  // eslint-disable-next-line import/no-cycle
-  const resp = await fetch(path);
-  const text = await resp.text();
+    const dom = new DOMParser().parseFromString(text, 'text/html');
+    const block = dom.querySelector('.alert-banners');
 
-  const dom = new DOMParser(text, 'text/html');
-  const block = dom.querySelector('.alert-banners');
+    const banners = parseAlertBanners(block);
+    const selectedBanner = findBestAlertBanner(banners);
 
-  const banners = parseAlertBanners(block);
-  const selectedBanner = findBestAlertBanner(banners);
+    const banner = document.createElement('aside');
+    banner.className = 'nav-banner';
+    const p = document.createElement('p');
+    p.append(selectedBanner.content);
+    banner.append(p);
 
-  const banner = document.createElement('aside');
-  banner.className = 'nav-banner';
-  banner.append(selectedBanner.content);
-
-  // apply custom color
-  if (banner.color) {
-    const styles = getComputedStyle(document.documentElement);
-    const value = styles.getPropertyValue(`--color-${banner.color}`).trim();
-    if (value) {
-      banner.style.backgroundColor = `var(--color-${banner.color})`;
-      banner.classList.add(`nav-banner-${getTextColor(value)}`);
+    // apply custom color
+    if (banner.color) {
+      const styles = getComputedStyle(document.documentElement);
+      const value = styles.getPropertyValue(`--color-${banner.color}`).trim();
+      if (value) {
+        banner.style.backgroundColor = `var(--color-${banner.color})`;
+        banner.classList.add(`nav-banner-${getTextColor(value)}`);
+      }
     }
+    main.prepend(banner);
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.log('Error loading nav banner', e);
   }
-  main.prepend(banner);
 }
 
 /**
