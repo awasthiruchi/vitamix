@@ -1,3 +1,7 @@
+main > .section > div.alert-banners-wrapper {
+  padding: 0;
+}
+
 .alert-banners ul {
   list-style: none;
   padding: 0;
