@@ -1,0 +1,79 @@
+main > .section > div.alert-banners-wrapper {
+  padding: 0;
+}
+
+.alert-banners ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.alert-banners li {
+  padding: 12px 16px;
+  margin-bottom: 8px;
+  border-radius: 6px;
+}
+
+/* Past state - Light gray pastel with dark gray text */
+.alert-banners-past {
+  background-color: #f5f5f5;
+  color: #424242;
+  border-color: #d0d0d0;
+}
+
+/* Future state - Light blue pastel with dark blue text */
+.alert-banners-future {
+  background-color: #e3f2fd;
+  color: #1565c0;
+  border-color: #90caf9;
+}
+
+/* Current state - Light green pastel with dark green text */
+.alert-banners-current {
+  background-color: #e8f5e8;
+  color: #2e7d32;
+  border-color: #81c784;
+}
+
+/* Invalid state - Light pink/red pastel with dark red text */
+.alert-banners-invalid {
+  background-color: #ffeaea;
+  color: #c62828;
+  border-color: #ef9a9a;
+}
+
+.alert-banners-date,
+.alert-banners-content,
+.alert-banners-color {
+  display: inline-block;
+  margin-right: 12px;
+}
+
+.alert-banners-content {
+  flex: 1;
+}
+
+.alert-banners-color {
+  background-color: var(--color-charcoal);
+  border-radius: 8px;
+  display: inline-block;
+  padding: 0.25em 1em;
+  color: var(--color-white);
+}
+
+.alert-banners-selected {
+  border: 2px solid currentcolor;
+}
+
+.alert-banners-datetime {
+  display: flex;
+  gap: 10px;
+  padding: 16px 0;
+  justify-content: flex-end;
+  align-items: flex-end;
+  flex-direction: column;
+}
+
+.alert-banners-datetime input {
+  max-width: 300px;
+}
