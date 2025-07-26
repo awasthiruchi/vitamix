@@ -70,9 +70,23 @@ export default async function decorateAlertBanners(block) {
   const banners = parseAlertBanners(block);
   block.innerHTML = '';
   const bestBanner = findBestAlertBanner(banners);
-  block.append(createParsedBanners(banners, bestBanner));
-  // eslint-disable-next-line no-console
-  console.log(banners);
-  // eslint-disable-next-line no-console
-  console.log(findBestAlertBanner(banners));
+  const bannersContainer = document.createElement('div');
+  bannersContainer.append(createParsedBanners(banners, bestBanner));
+  block.append(bannersContainer);
+
+  const div = document.createElement('div');
+  div.classList.add('alert-banners-datetime');
+  div.textContent = 'Simulate Date/Time (local)';
+  const dtl = document.createElement('input');
+  dtl.type = 'datetime-local';
+  dtl.value = new Date().toISOString();
+  dtl.id = 'alert-banners-party-time';
+  div.append(dtl);
+  dtl.addEventListener('input', (e) => {
+    const simDate = new Date(e.target.value);
+    bannersContainer.textContent = '';
+    const simBestBanner = findBestAlertBanner(banners, simDate);
+    bannersContainer.append(createParsedBanners(banners, simBestBanner, simDate));
+  });
+  block.append(div);
 }

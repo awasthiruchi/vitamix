@@ -747,10 +747,8 @@ export function parseAlertBanners(block) {
     const [dates, times, content, colorEl] = [...row.children];
     const color = colorEl.textContent.trim();
     try {
-      const startDate = dates.textContent.split('-')[0];
-      const endDate = dates.textContent.split('-')[1];
-      const startTime = times.textContent.split('-')[0];
-      const endTime = times.textContent.split('-')[1];
+      const [startDate, endDate] = dates.textContent.split('-');
+      const [startTime, endTime] = times.textContent.split('-');
       return ({
         valid: true,
         start: new Date(convertToISODate(startDate, startTime)),
