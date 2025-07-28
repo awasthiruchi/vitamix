@@ -6,29 +6,39 @@ export async function lookupProducts(config, facets = {}) {
     const resp = await fetch('/drafts/uncled/product-index.json');
     const json = await resp.json();
     const populateIndex = async (data) => {
-      data.forEach(async (row) => {
-        const url = new URL(row.URL);
-        row.path = url.pathname;
-        const productResp = await fetch(row.path);
-        const productHTML = await productResp.text();
-        const dom = new DOMParser().parseFromString(productHTML, 'text/html');
-        const jsonLD = dom.querySelector('script[type="application/ld+json"]');
-        const jsonLDData = JSON.parse(jsonLD.textContent);
-        row.title = jsonLDData.name;
-        row.price = jsonLDData.offers.price;
-        row.image = jsonLDData.image;
-        row.description = jsonLDData.description;
-        row.category = jsonLDData.category;
-      });
+      for (let i = 0; i < data.length; i += 1) {
+        const row = data[i];
+        try {
+          const url = new URL(row.URL);
+          row.path = url.pathname;
+          // eslint-disable-next-line no-await-in-loop
+          const productResp = await fetch(row.path);
+          // eslint-disable-next-line no-await-in-loop
+          const productHTML = await productResp.text();
+          const dom = new DOMParser().parseFromString(productHTML, 'text/html');
+          const jsonLD = dom.querySelector('script[type="application/ld+json"]');
+          const jsonLDData = JSON.parse(jsonLD.textContent);
+          row.title = jsonLDData.name;
+          row.price = jsonLDData.offers[0].price;
+          row.colors = jsonLDData.offers.map((offer) => offer.options[0].value).join(',');
+          [row.image] = jsonLDData.offers[0].image;
+          row.description = jsonLDData.description;
+          row.series = jsonLDData.custom.collection;
+          row.category = 'Blenders';
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.error(error);
+        }
+      }
       return data;
     };
-    json.data = await populateIndex(json.data);
+    const products = json.data.slice(0, 10);
+    json.data = await populateIndex(products);
     const lookup = {};
     json.data.forEach((row) => {
       lookup[row.path] = row;
     });
     window.productIndex = { data: json.data, lookup };
-    console.log(window.productIndex);
   }
 
   /* simple array lookup */
@@ -117,7 +127,7 @@ const createProductCard = (product) => {
 };
 
 export default async function decorate(block) {
-  const ph = await fetchPlaceholders();
+  const ph = await fetchPlaceholders('/us/en_us');
 
   const addEventListeners = (elements, event, callback) => {
     elements.forEach((e) => {
@@ -125,8 +135,7 @@ export default async function decorate(block) {
     });
   };
 
-  let config = [...document.querySelectorAll('a')].map((a) => new URL(a.href).pathname);
-  if (!config.length) config = readBlockConfig(block);
+  const config = readBlockConfig(block);
 
   block.innerHTML = `<div class="plp-controls"><input id="fulltext" placeholder="${ph.typeToSearch}">
       <p class="plp-results-count"><span id="plp-results-count"></span> ${ph.results}</p>
@@ -289,7 +298,7 @@ export default async function decorate(block) {
     });
   };
 
-  const getPrice = (string) => +string.substr(1);
+  const getPrice = (string) => +string;
 
   const runSearch = async (filterConfig = config) => {
     const facets = { colors: {}, sizes: {} };

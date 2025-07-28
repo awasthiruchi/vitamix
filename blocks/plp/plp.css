@@ -4,11 +4,6 @@ main div.plp-container {
     padding-top: 0;
 }
 
-main .plp-container h1 {
-    font-size: var(--body-font-size-l);
-    font-family: var(--body-font-family);
-}
-
 main .plp-wrapper {
     max-width: unset;
 }
@@ -37,7 +32,7 @@ main .plp-facets > div {
     padding: 20px;
     overflow-y: scroll;
     width: 360px;
-    background-color: var(--background-color);
+    background-color: var(--color-background);
     height: 100vh;
     display: flex;
     flex-direction: column;
@@ -48,7 +43,7 @@ main .plp-facets > div {
 
 main .plp-facets > div::after {
     position: absolute;
-    background-image: url(/styles/close.svg);
+    background-image: url(/blocks/plp/close.svg);
     background-size: contain;
     content: ' ';
     right: 20px;
@@ -78,11 +73,11 @@ main .plp-facets .plp-apply-filters {
 }
 
 main .plp-filters-selected span {
-    background-color: var(--medium-background-color);
+    background-color: var(--overlay-charcoal);
     padding: 10px 12px 10px 38px;
     border-radius: 6px;
-    color: var(--background-color);
-    background-image: url(/styles/close-white.svg);
+    color: var(--color-background);
+    background-image: url(/blocks/plp/close-white.svg);
     background-size: 25px;
     background-position: 8px;
     background-repeat: no-repeat;
@@ -102,14 +97,14 @@ main .plp-filters-selected:empty + p {
 }
 
 main .plp-facets button {
-    font-size: var(--body-font-size-s);
+    font-size: var(--body-size-s);
     width: unset;
     margin: 0;
 }
 
 main .plp-facets h2 {
     font-family: var(--body-font-family);
-    font-size: var(--body-font-size-l);
+    font-size: var(--body-size-l);
     font-weight: 400;
     margin-top: 5px;
     margin-bottom: 20px;
@@ -117,7 +112,7 @@ main .plp-facets h2 {
 
 main .plp-facets h3 {
     font-family: var(--body-font-family);
-    font-size: var(--body-font-size-m);
+    font-size: var(--body-size-m);
     font-weight: 400;
     margin: 17px 0;
 }
@@ -130,7 +125,7 @@ main .plp-facets input[type="checkbox"] {
 main .plp-facets label {
     display: block;
     padding-left: 30px;
-    background-image: url(/styles/checkbox.svg);
+    background-image: url(/blocks/plp/checkbox.svg);
     background-size: contain;
     background-position: center left;
     background-repeat: no-repeat;
@@ -138,7 +133,7 @@ main .plp-facets label {
 }
 
 main .plp-facets :checked + label {
-    background-image: url(/styles/checked.svg);
+    background-image: url(/blocks/plp/checked.svg);
 }
 
 main .plp-facets.visible {
@@ -147,7 +142,7 @@ main .plp-facets.visible {
 
 main .plp-sortby {
     text-align: center;
-    font-size: var(--body-font-size-s);
+    font-size: var(--body-size-s);
     position: relative;
 }
 
@@ -157,13 +152,13 @@ main .plp-sortby ul {
     top: -40px;
     right: calc(50% - 105px);
     z-index: 1;
-    background-color: var(--background-color);
+    background-color: var(--color-background);
     border: 1px solid #ddd;
     text-align: left;
     list-style: none;
     padding: 0;
     border-radius: 3px;
-    box-shadow: 0px 2px 5px 0px var(--overlay-background-color);
+    box-shadow: 0px 2px 5px 0px var(--overlay-light);
     font-size: var(--body-font-size-m);
     min-width: 190px;
 }
@@ -174,7 +169,7 @@ main .plp-sortby ul li {
 }
 
 main .plp-sortby ul li.selected {
-    background: url(/styles/checkmark.svg) center right 10px no-repeat;
+    background: url(/blocks/plp/checkmark.svg) center right 10px no-repeat;
 }
 
 main .plp-sortby ul li:hover {
@@ -227,7 +222,6 @@ main .plp-product-card {
 }
 
 main .plp-product-card img {
-    aspect-ratio: 400 / 496;
     width: 100%;
     height: auto;
     display: block;
@@ -312,7 +306,7 @@ main .plp-product-card p {
         border: 2px solid #888;
         padding: 5px 45px 5px 15px;
         font-size: var(--body-font-size-m);
-        background: url(/styles/chevron-down.svg) center right 10px no-repeat;
+        background: url(/blocks/plp/chevron-down.svg) center right 10px no-repeat;
     }
 
 
@@ -320,14 +314,14 @@ main .plp-product-card p {
         top: 40px;
         right: 0;
         z-index: 1;
-        background-color: var(--background-color);
+        background-color: var(--color-background);
         border: 1px solid #ddd;
         text-align: left;
         list-style: none;
         padding: 0;
         border-radius: 3px;
-        box-shadow: 0px 2px 5px 0px var(--overlay-background-color);
-        font-size: var(--body-font-size-m);
+        box-shadow: 0px 2px 5px 0px var(--overlay-light);
+        font-size: var(--body-font-m);
         min-width: 190px;
     }
 }
