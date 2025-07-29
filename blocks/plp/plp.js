@@ -20,20 +20,22 @@ export async function lookupProducts(config, facets = {}) {
           const jsonLDData = JSON.parse(jsonLD.textContent);
           row.title = jsonLDData.name;
           row.price = jsonLDData.offers[0].price;
-          row.colors = jsonLDData.offers.map((offer) => offer.options[0].value).join(',');
-          [row.image] = jsonLDData.offers[0].image;
+          row.colors = jsonLDData.offers.map((offer) => (offer.options[0] ? offer.options[0].value : '')).join(',');
+          row.image = jsonLDData.offers[0].image
+            ? jsonLDData.offers[0].image[0] : jsonLDData.image[0];
           row.description = jsonLDData.description;
           row.series = jsonLDData.custom.collection;
           row.category = 'Blenders';
         } catch (error) {
           // eslint-disable-next-line no-console
-          console.error(error);
+          console.error(error, row.path);
         }
       }
       return data;
     };
     const products = json.data;
     json.data = await populateIndex(products);
+    console.log(json.data);
     const lookup = {};
     json.data.forEach((row) => {
       lookup[row.path] = row;
@@ -73,6 +75,7 @@ export async function lookupProducts(config, facets = {}) {
     });
 
     const isProduct = () => !!row.price;
+    console.log(row.price, row.path);
 
     if (!isProduct()) matchedAll = false;
 
@@ -299,7 +302,7 @@ export default async function decorate(block) {
       const h3 = document.createElement('h3');
       h3.innerHTML = ph[facetKey];
       div.append(h3);
-      const facetValues = Object.keys(facets[facetKey]);
+      const facetValues = Object.keys(facets[facetKey]).sort((a, b) => a.localeCompare(b));
       facetValues.forEach((facetValue) => {
         const input = document.createElement('input');
         input.type = 'checkbox';
