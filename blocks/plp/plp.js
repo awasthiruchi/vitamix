@@ -35,7 +35,6 @@ export async function lookupProducts(config, facets = {}) {
     };
     const products = json.data;
     json.data = await populateIndex(products);
-    console.log(json.data);
     const lookup = {};
     json.data.forEach((row) => {
       lookup[row.path] = row;
