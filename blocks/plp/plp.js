@@ -147,6 +147,9 @@ const createProductCard = (product, ph) => {
   card.appendChild(price);
   card.appendChild(viewDetails);
   card.appendChild(compareDiv);
+  card.addEventListener('click', () => {
+    window.location.href = product.path;
+  });
 
   return card;
 };

@@ -222,6 +222,14 @@ main .plp-product-card {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-s);
+    cursor: pointer;
+    border: 2px solid transparent;
+    border-radius: 4px;
+}
+
+main .plp-product-card:hover {
+    background-color: var(--color-gray-400);
+    border-color: var(--color-gray-500);
 }
 
 main .plp-product-card img {
@@ -347,6 +355,7 @@ main .plp-product-card p {
     justify-content: center;
     box-sizing: border-box;
     cursor: pointer;
+    background-color: var(--color-white);
   }
   
   .plp-color-inner {
