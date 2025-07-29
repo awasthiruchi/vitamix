@@ -1,16 +1,16 @@
-import { fetchPlaceholders, readBlockConfig } from '../../scripts/aem.js';
+import { fetchPlaceholders, readBlockConfig, toClassName } from '../../scripts/aem.js';
 
 export async function lookupProducts(config, facets = {}) {
   /* load index */
   if (!window.productIndex) {
-    const resp = await fetch('/drafts/uncled/product-index.json');
+    const resp = await fetch('/drafts/uncled/blenders.json');
     const json = await resp.json();
     const populateIndex = async (data) => {
       for (let i = 0; i < data.length; i += 1) {
         const row = data[i];
         try {
           const url = new URL(row.URL);
-          row.path = url.pathname;
+          row.path = url.pathname.replace('/shop/blenders/', '/products/');
           // eslint-disable-next-line no-await-in-loop
           const productResp = await fetch(row.path);
           // eslint-disable-next-line no-await-in-loop
@@ -32,7 +32,7 @@ export async function lookupProducts(config, facets = {}) {
       }
       return data;
     };
-    const products = json.data.slice(0, 10);
+    const products = json.data;
     json.data = await populateIndex(products);
     const lookup = {};
     json.data.forEach((row) => {
@@ -101,7 +101,7 @@ export async function lookupProducts(config, facets = {}) {
 }
 
 // Simple product card creation function to replace carousel dependency
-const createProductCard = (product) => {
+const createProductCard = (product, ph) => {
   const card = document.createElement('div');
   card.className = 'plp-product-card';
 
@@ -117,11 +117,35 @@ const createProductCard = (product) => {
   title.appendChild(link);
 
   const price = document.createElement('p');
-  price.textContent = product.price || '';
+  price.className = 'plp-price';
+  price.textContent = product.price ? `$${product.price}` : '';
+
+  const colors = document.createElement('div');
+  colors.className = 'plp-colors';
+  product.colors.split(',').forEach((color) => {
+    const colorSwatch = document.createElement('div');
+    colorSwatch.className = 'plp-color-swatch';
+    const colorInner = document.createElement('div');
+    colorInner.className = 'plp-color-inner';
+    colorInner.style.backgroundColor = `var(--color-${toClassName(color)})`;
+    colorSwatch.appendChild(colorInner);
+    colors.appendChild(colorSwatch);
+  });
+
+  const viewDetails = document.createElement('div');
+  viewDetails.classList.add('plp-view-details', 'button-container');
+  viewDetails.innerHTML = `<a href="${product.path}" class="button emphasis">${ph.viewDetails}</a>`;
+
+  const compareDiv = document.createElement('div');
+  compareDiv.classList.add('plp-compare', 'button-container');
+  compareDiv.innerHTML = `<a href="${product.path}" class="button">${ph.compare}</a>`;
 
   card.appendChild(image);
+  card.appendChild(colors);
   card.appendChild(title);
   card.appendChild(price);
+  card.appendChild(viewDetails);
+  card.appendChild(compareDiv);
 
   return card;
 };
@@ -145,10 +169,9 @@ export default async function decorate(block) {
     <div class="plp-facets">
     </div>
     <div class="plp-sortby">
-      <p>${ph.sortBy} <span data-sort="best" id="plp-sortby">${ph.bestMatch}</span></p>
+      <p>${ph.sortBy} <span data-sort="featured" id="plp-sortby">${ph.featured}</span></p>
       <ul>
-        <li data-sort="best">${ph.bestMatch}</li>
-        <li data-sort="position">${ph.position}</li>
+        <li data-sort="featured">${ph.featured}</li>
         <li data-sort="price-desc">${ph.priceHighToLow}</li>
         <li data-sort="price-asc">${ph.priceLowToHigh}</li>
         <li data-sort="name">${ph.productName}</li>
@@ -204,7 +227,7 @@ export default async function decorate(block) {
   const displayResults = async (results) => {
     resultsElement.innerHTML = '';
     results.forEach((product) => {
-      resultsElement.append(createProductCard(product));
+      resultsElement.append(createProductCard(product, ph));
     });
     highlightResults(resultsElement);
   };
@@ -301,15 +324,17 @@ export default async function decorate(block) {
   const getPrice = (string) => +string;
 
   const runSearch = async (filterConfig = config) => {
-    const facets = { colors: {}, sizes: {} };
+    const facets = { colors: {}, series: {} };
     const sorts = {
       name: (a, b) => a.title.localeCompare(b.title),
       'price-asc': (a, b) => getPrice(a.price) - getPrice(b.price),
       'price-desc': (a, b) => getPrice(b.price) - getPrice(a.price),
     };
     const results = await lookupProducts(filterConfig, facets);
-    const sortBy = document.getElementById('plp-sortby') ? document.getElementById('plp-sortby').dataset.sort : 'best';
-    if (sortBy && sorts[sortBy]) results.sort(sorts[sortBy]);
+    const sortBy = document.getElementById('plp-sortby') ? document.getElementById('plp-sortby').dataset.sort : 'featured';
+    if (sortBy !== 'featured') {
+      results.sort(sorts[sortBy]);
+    }
     block.querySelector('#plp-results-count').textContent = results.length;
     displayResults(results, null);
     displayFacets(facets, filterConfig);

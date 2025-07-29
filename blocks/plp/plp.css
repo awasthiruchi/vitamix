@@ -1,5 +1,6 @@
-/* stylelint-disable */
+@import url('../pdp/color-swatches.css');
 
+/* stylelint-disable */
 main div.plp-container {
     padding-top: 0;
 }
@@ -187,25 +188,24 @@ main .plp-results {
 }
 
 main .plp-results > div {
-    width: 50%;
+    width: 100%;
     position: relative;
 }
 
-main .plp-results a.button:any-link {
-    font-size: var(--body-font-size-s);
-    padding: 4px 15px;
-    text-transform: uppercase;
+@media (min-width: 600px) {
+    main .plp-results > div {
+        width: 50%;
+    }
 }
-
 
 main .plp-results h4 {
     font-size: var(--body-font-size-m);
     font-family: var(--body-font-family);
+    min-height: 40px;
 }
 
 main .plp-results .highlight {
-    background-color: var(--link-color);
-    color: var(--background-color);
+    background-color: var(--color-yellow);
     padding: 0 2px;
 }
 
@@ -219,6 +219,9 @@ main .plp-product-card {
     position: relative;
     padding: 10px;
     box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-s);
 }
 
 main .plp-product-card img {
@@ -311,7 +314,7 @@ main .plp-product-card p {
 
 
     main .plp-sortby ul {
-        top: 40px;
+        top: 32px;
         right: 0;
         z-index: 1;
         background-color: var(--color-background);
@@ -322,7 +325,7 @@ main .plp-product-card p {
         border-radius: 3px;
         box-shadow: 0px 2px 5px 0px var(--overlay-light);
         font-size: var(--body-font-m);
-        min-width: 190px;
+        min-width: 174px;
     }
 }
 
@@ -333,3 +336,73 @@ main .plp-product-card p {
         width: calc(100%/3);
     }
 } 
+
+.plp-color-swatch {
+    width: 24px;
+    height: 24px;
+    border: 1px solid #333f48;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    cursor: pointer;
+  }
+  
+  .plp-color-inner {
+    width: 16px;
+    height: 16px;
+    border: 1px solid #333f48;
+    border-radius: 50%;
+    position: relative;
+  }
+  
+  .plp-color-swatch-oos.pdp-color-inner::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: -webkit-gradient(linear, left top, right bottom, 
+    color-stop(0%, #fff0),
+    color-stop(42%, #fff0), 
+    color-stop(43%, #fff), 
+    color-stop(46%, #fff), 
+    color-stop(47%, #ff5216), 
+    color-stop(53%, #ff5216), 
+    color-stop(54%, #fff), 
+    color-stop(57%, #fff), 
+    color-stop(58%, #fff0), 
+    color-stop(100%, #fff0)
+    );
+  }
+  
+  .plp-colors {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .plp-price {
+    font-weight: var(--weight-medium);
+  }
+
+  .plp-compare {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .plp-compare a.button {
+    background-color: var(--color-gray-200);
+    color: var(--color-charcoal);
+    font-size: var(--body-font-size-m);
+    border: unset;
+    text-transform: unset;
+    width: 100%;
+  }
+
+  .plp-view-details a.button {
+    width: 100%;
+  }
