@@ -75,7 +75,6 @@ export async function lookupProducts(config, facets = {}) {
     });
 
     const isProduct = () => !!row.price;
-    console.log(row.price, row.path);
 
     if (!isProduct()) matchedAll = false;
 
