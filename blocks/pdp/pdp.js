@@ -153,7 +153,7 @@ function renderAlert(block, custom) {
   if (custom && custom.retired === 'Yes') {
     const alertContainer = document.createElement('div');
     alertContainer.classList.add('pdp-alert');
-    alertContainer.innerHTML = '<p>Retired Product</p>';
+    alertContainer.innerText = 'Retired Product';
     block.classList.add('pdp-retired');
     return alertContainer;
   }
@@ -163,7 +163,7 @@ function renderAlert(block, custom) {
     const alertContainer = document.createElement('div');
     alertContainer.classList.add('pdp-alert');
     alertContainer.classList.add('pdp-promo-alert');
-    alertContainer.innerHTML = `<p>${promoButton}</p>`;
+    alertContainer.innerText = promoButton;
     return alertContainer;
   }
 
@@ -174,7 +174,7 @@ function renderAlert(block, custom) {
     const alertContainer = document.createElement('div');
     alertContainer.classList.add('pdp-alert');
     alertContainer.classList.add('pdp-promo-alert');
-    alertContainer.innerHTML = '<p>Save Now!</p>';
+    alertContainer.innerText = 'Save Now!';
     return alertContainer;
   }
 
@@ -248,15 +248,6 @@ export default function decorate(block) {
   const { jsonLdData, variants } = window;
   const { custom, offers } = jsonLdData;
 
-  const queryParams = new URLSearchParams(window.location.search);
-  const color = queryParams.get('color');
-
-  if (color) {
-    onOptionChange(block, variants, color);
-  } else if (variants.length > 0) {
-    [window.selectedVariant] = variants;
-  }
-
   const reviewsId = custom.reviewsId || toClassName(getMetadata('sku')).replace(/-/g, '');
   const galleryContainer = renderGallery(block, variants);
   const titleContainer = renderTitle(block, custom, reviewsId);
@@ -308,6 +299,15 @@ export default function decorate(block) {
     faqContainer,
     relatedProductsContainer || '',
   );
+
+  const queryParams = new URLSearchParams(window.location.search);
+  const color = queryParams.get('color');
+
+  if (color) {
+    onOptionChange(block, variants, color);
+  } else if (variants.length > 0) {
+    [window.selectedVariant] = variants;
+  }
 
   buyBox.dataset.sku = offers[0].sku;
   buyBox.dataset.oos = checkOutOfStock(offers[0].sku);
