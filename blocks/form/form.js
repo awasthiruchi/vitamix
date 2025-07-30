@@ -329,9 +329,9 @@ function enableFooterSignUp(form) {
   form.classList.add('footer-sign-up');
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
+    const data = new FormData(form);
     // disable form and show loading button
     toggleForm(form);
-    const data = new FormData(form);
     const entries = Object.fromEntries(data.entries());
     const { email, mobile, optIn } = entries;
     const payload = {
