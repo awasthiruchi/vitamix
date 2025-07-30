@@ -6,7 +6,7 @@
 
 @media (width >= 1200px) {
   .gallery.carousel {
-    max-width: 750px;
+    max-width: unset;
   }
 }
 
