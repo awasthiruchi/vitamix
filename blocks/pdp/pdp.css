@@ -424,10 +424,22 @@ a.button.pdp-find-locally-button {
   .pdp {
     padding-top: var(--spacing-xl);
     grid-template-columns: 2fr 3fr;
-    grid-template-rows: fit-content(30px) auto auto auto auto auto;
+    grid-template-rows: fit-content(30px) min-content 1fr auto auto auto auto auto;
     /* stylelint-disable-next-line declaration-block-no-redundant-longhand-properties */
     grid-template-areas:
       "alert gallery"
+      "title gallery"
+      "buy-box gallery"
+      "content content"
+      "details specs"
+      "faq faq"
+      "related related"
+      "reviews reviews"
+  }
+
+  .pdp[data-alert="false"] {
+    grid-template-rows: min-content 1fr auto auto auto auto auto;
+    grid-template-areas:
       "title gallery"
       "buy-box gallery"
       "content content"
@@ -599,7 +611,6 @@ a.button.pdp-find-locally-button {
   background-color: var(--color-xanadu);
   color: var(--color-white);
 }
-
 
 .pdp-related-products-container {
   grid-area: related;

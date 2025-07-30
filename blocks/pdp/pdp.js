@@ -149,10 +149,11 @@ function renderFreeShipping(offers) {
 }
 
 function renderAlert(block, custom) {
+  const alertContainer = document.createElement('div');
+  alertContainer.classList.add('pdp-alert');
+
   /* retired and coming soon */
   if (custom && custom.retired === 'Yes') {
-    const alertContainer = document.createElement('div');
-    alertContainer.classList.add('pdp-alert');
     alertContainer.innerText = 'Retired Product';
     block.classList.add('pdp-retired');
     return alertContainer;
@@ -160,8 +161,6 @@ function renderAlert(block, custom) {
   /* promos */
   const { promoButton } = custom;
   if (promoButton) {
-    const alertContainer = document.createElement('div');
-    alertContainer.classList.add('pdp-alert');
     alertContainer.classList.add('pdp-promo-alert');
     alertContainer.innerText = promoButton;
     return alertContainer;
@@ -171,13 +170,12 @@ function renderAlert(block, custom) {
   const pricingElement = block.querySelector('p:nth-of-type(1)');
   const pricing = extractPricing(pricingElement);
   if (pricing.regular && pricing.regular > pricing.final) {
-    const alertContainer = document.createElement('div');
-    alertContainer.classList.add('pdp-alert');
     alertContainer.classList.add('pdp-promo-alert');
     alertContainer.innerText = 'Save Now!';
     return alertContainer;
   }
 
+  block.dataset.alert = false;
   return null;
 }
 
