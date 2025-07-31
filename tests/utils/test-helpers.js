@@ -62,15 +62,15 @@ export async function assertPDPElements(page) {
   await expect(page.locator('.gallery')).toBeVisible();
 
   // Assert that pricing information is present
-  const pricingElement = page.locator('.pdp-pricing');
+  const pricingElement = page.locator('.pricing-final');
   await expect(pricingElement).toBeVisible();
 
   // Assert that add to cart button exists
-  const addToCartButton = page.locator('.pdp-add-to-cart-button');
+  const addToCartButton = page.locator('.quantity-container button');
   await expect(addToCartButton).toBeVisible();
 
   // Assert that product options exist (if applicable)
-  const optionsContainer = page.locator('.pdp-options');
+  const optionsContainer = page.locator('.pdp-color-options');
   if (await optionsContainer.count() > 0) {
     await expect(optionsContainer).toBeVisible();
   }

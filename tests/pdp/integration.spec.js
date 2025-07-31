@@ -42,20 +42,21 @@ test.describe('PDP Integration Tests', () => {
       await assertPDPElements(page);
 
       // Assert specific elements for this product
-      await assertElementExists(page, '.pdp-gallery', 'Product Gallery');
-      await assertElementExists(page, '.pdp-title', 'Product Title');
-      await assertElementExists(page, '.pdp-pricing', 'Product Pricing');
-      await assertElementExists(page, '.pdp-add-to-cart-button', 'Add to Cart Button');
+      await assertElementExists(page, '.gallery', 'Product Gallery');
+      await assertElementExists(page, '.title h1', 'Product Title');
+      await assertElementExists(page, '.pricing', 'Product Pricing');
+      await assertElementExists(page, '.pricing-final', 'Product Pricing');
+      await assertElementExists(page, '.quantity-container button', 'Add to Cart Button');
 
       // Assert that the product title contains "Ascent X3"
-      await assertElementText(page, 'h1', 'Ascent X3', 'Product Title');
+      await assertElementText(page, 'h1', 'Ascent® X3', 'Product Title');
 
       // Assert that pricing information is displayed
-      const pricingElement = page.locator('.pdp-pricing');
+      const pricingElement = page.locator('.pricing');
       await expect(pricingElement).toBeVisible();
 
       // Assert that product options are available (if this product has variants)
-      const optionsContainer = page.locator('.pdp-options');
+      const optionsContainer = page.locator('.pdp-color-options');
       if (await optionsContainer.count() > 0) {
         await expect(optionsContainer).toBeVisible();
         console.log('✓ Product options are available');
@@ -96,10 +97,10 @@ test.describe('PDP Integration Tests', () => {
       await page.goto(productUrl);
 
       // Wait for add to cart button
-      await waitForElement(page, '.pdp-add-to-cart-button');
+      await waitForElement(page, '.quantity-container button');
 
       // Assert that add to cart button is enabled
-      const addToCartButton = page.locator('.pdp-add-to-cart-button');
+      const addToCartButton = page.locator('.quantity-container button');
       await expect(addToCartButton).toBeEnabled();
 
       // Assert that button has proper text
