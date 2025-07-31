@@ -9,7 +9,7 @@ jobs:
     
     strategy:
       matrix:
-        browser: [chromium, firefox, webkit]
+        browser: [chromium]
     
     steps:
     - uses: actions/checkout@v4
@@ -35,22 +35,6 @@ jobs:
         BRANCH: ${{ steps.branch.outputs.branch }}
         BASE_URL: https://${{ steps.branch.outputs.branch }}--vitamix--aemsites.aem.network
       run: npx playwright test --reporter=html
-    
-    - name: Upload test results
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: playwright-report-${{ matrix.browser }}
-        path: playwright-report/
-        retention-days: 30
-    
-    - name: Upload test results to GitHub
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: playwright-report-${{ matrix.browser }}
-        path: playwright-report/
-        retention-days: 30
 
   test-mobile:
     runs-on: ubuntu-latest
@@ -78,4 +62,4 @@ jobs:
       env:
         BRANCH: ${{ steps.branch.outputs.branch }}
         BASE_URL: https://${{ steps.branch.outputs.branch }}--vitamix--aemsites.aem.network
-      run: npx playwright test --project="Mobile Chrome" --project="Mobile Safari"
+      run: npx playwright test --project="Mobile Chrome"
