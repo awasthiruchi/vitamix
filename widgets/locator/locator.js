@@ -130,7 +130,7 @@ function displayResults(results, location) {
 
     const address = document.createElement('a');
     const addressQuery = `${result.NAME} ${result.ADDRESS_1}, ${result.CITY}, ${result.STATE_PROVINCE} ${result.POSTAL_CODE}`;
-    address.href = `https://maps.google.com/q=${encodeURIComponent(addressQuery)}`;
+    address.href = `https://maps.google.com/?q=${encodeURIComponent(addressQuery)}`;
     address.target = '_blank';
     address.rel = 'noopener noreferrer';
     address.textContent = addressQuery;
