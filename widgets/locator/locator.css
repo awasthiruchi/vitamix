@@ -65,7 +65,7 @@ main > .locator-container.section {
 }
 
 @media (width >= 900px) {
-  .locator form [data-name='location'] {
+  .locator form [data-name='address'] {
     flex: 1 1 45%;
   }
 
@@ -78,3 +78,112 @@ main > .locator-container.section {
   }
 }
 
+/* stylelint-disable no-descending-specificity */
+
+.locator-results {
+  background-color: var(--color-charcoal);
+}
+
+.locator-results h3 {
+  margin-top: 0;
+  font-size: var(--body-size-xxl);
+  font-family: var(--font-family-body);
+  font-weight: var(--font-weight-medium);
+}
+
+.locator-results ol {
+  counter-reset: locator-result-counter;
+  list-style: none;
+  margin: 0;
+}
+
+.locator-results .locator-retailers {
+  --locator-accent-color: var(--color-rosewood);
+}
+
+.locator-results .locator-distributors {
+  --locator-accent-color: var(--color-green);
+}
+
+.locator-results .locator-online {
+  --locator-accent-color: var(--color-blue);
+}
+
+.locator-results ol li {
+  counter-increment: locator-result-counter;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-100);
+  margin-bottom: var(--spacing-200);
+  padding: var(--spacing-200);
+  background-color: var(--color-white);
+}
+
+.locator-results ol li::before {
+  content: counter(locator-result-counter);
+  color: var(--color-white);
+  font-size: 1.5rem;
+  font-weight: bold;
+  position: absolute;
+
+  --size: 48px;
+  
+  left: calc(-1 * var(--size));
+  line-height: var(--size);
+  width: var(--size);
+  height: var(--size);
+  top: var(--vertical-spacing);
+  background: var(--locator-accent-color);
+  border-radius: 50%;
+  text-align: center;
+}
+
+.locator-results-tablist {
+  max-width: 1000px;
+  margin: 0 auto;
+  display: flex;
+  color: var(--color-white);
+  background-color: var(--color-charcoal);
+}
+
+.locator-results-tablist button {
+  color: var(--color-white);
+  background-color: transparent;
+  border: none;
+  padding: var(--spacing-200) var(--spacing-300);
+  font-weight: var(--font-weight-normal);
+}
+
+.locator-results-tablist button[aria-selected='true'] {
+  background-color: var(--color-white);
+  color: var(--color-charcoal);
+  border-top: 4px solid var(--locator-accent-color);
+}
+
+.locator-tabpanels {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: var(--spacing-300);
+  background-color: var(--color-white);
+}
+
+.locator-results .locator-website-label {
+  font-weight: var(--weight-medium);
+}
+
+.locator-results .locator-phone-label {
+  font-weight: var(--weight-medium);
+}
+
+.locator-results .locator-distance {
+  font-style: italic;
+}
+
+.locator-results .locator-tabpanel[aria-hidden='true'] {
+  display: none;
+}
+
+.locator .locator-results[aria-hidden='true'] {
+  display: none;
+}

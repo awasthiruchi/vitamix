@@ -12,7 +12,7 @@
         <div class="form-field text-field" data-name="location">
           <label for="location">Your Location</label>
           <input
-            type="text" id="location" name="location" placeholder="Address, City, or Zipcode" required>
+            type="text" id="address" name="address" placeholder="Address, City, or Zipcode" required>
         </div>
         <div class="form-field select-field" data-name="productType">
           <label for="productType">What are you looking for?</label>
@@ -28,4 +28,20 @@
       </form>
     </div>
   </div>
+</div>
+<div class="section">
+  <div class="locator-results-wrapper">
+    <div class="locator-results" aria-hidden="true">
+      <div class="locator-results-tablist" role="tablist">
+        <button role="tab" aria-selected="true" aria-controls="locator-retailers-tabpanel" id="locator-retailers-tab" class="locator-retailers">Retailers</button>
+        <button role="tab" aria-selected="false" aria-controls="locator-distributors-tabpanel" id="locator-distributors-tab" class="locator-distributors">Distributors</button>
+        <button role="tab" aria-selected="false" aria-controls="locator-online-tabpanel" id="locator-online-tab" class="locator-online">Online</button>
+      </div>
+      <div class="locator-tabpanels">
+        <div class="locator-tabpanel locator-retailers" role="tabpanel" aria-labelledby="locator-retailers-tab" aria-hidden="false" id="locator-retailers-tabpanel"></div>
+        <div class="locator-tabpanel locator-distributors" role="tabpanel" aria-labelledby="locator-distributors-tab" aria-hidden="true" id="locator-distributors-tabpanel"></div>
+        <div class="locator-tabpanel locator-online" role="tabpanel" aria-labelledby="locator-online-tab" aria-hidden="true" id="locator-online-tabpanel"></div>
+      </div>
+    </div>
+  </div>  
 </div>
