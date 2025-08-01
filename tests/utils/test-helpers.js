@@ -12,10 +12,14 @@ import { expect } from '@playwright/test';
  * @returns {string} The base URL for the branch
  */
 export function getBaseUrl(branch = 'main') {
+  // Check if we're running locally
+  if (process.env.NODE_ENV === 'development' || process.env.LOCAL_TESTING) {
+    return 'http://localhost:3000';
+  }
+
   const baseUrl = process.env.BASE_URL || `https://${branch}--vitamix--aemsites.aem.network`;
   return baseUrl;
 }
-
 /**
  * Get the current branch name from environment or git
  * @returns {Promise<string>} The current branch name
@@ -118,10 +122,11 @@ export async function assertOptionElements(page) {
 
   // Assert that product options are available (if this product has variants)
   const optionsContainer = page.locator('.pdp-color-options');
-  if (await optionsContainer.count() > 0) {
-    await expect(optionsContainer).toBeVisible();
-    console.log('✓ Product options are available');
-  }
+  const options = page.locator('.pdp-color-options .pdp-color-swatch');
+
+  await expect(optionsContainer).toBeVisible();
+  await expect(await options.count()).toBeGreaterThan(0);
+  console.log('✓ Product options are available');
 }
 
 /**
