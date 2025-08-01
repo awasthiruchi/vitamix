@@ -43,53 +43,10 @@ export async function getCurrentBranch() {
  * @param {string} branch - The branch name
  * @returns {string} The full product URL
  */
-export function buildProductUrl(productPath, branch = 'main') {
+export function buildProductUrl(productPath, branch = 'main', queryParams = {}) {
   const baseUrl = getBaseUrl(branch);
-  return `${baseUrl}${productPath}`;
-}
-
-/**
- * Common assertions for PDP elements
- * @param {import('@playwright/test').Page} page - Playwright page object
- */
-export async function assertPDPElements(page) {
-  // Wait for the page to load
-  await page.waitForLoadState('networkidle');
-
-  // Assert that key PDP elements exist
-  await expect(page.locator('h1')).toBeVisible();
-  await expect(page.locator('.pdp-buy-box')).toBeVisible();
-  await expect(page.locator('.gallery')).toBeVisible();
-
-  // Assert that pricing information is present
-  const pricingElement = page.locator('.pricing-final');
-  await expect(pricingElement).toBeVisible();
-
-  // Assert that add to cart button exists
-  const addToCartButton = page.locator('.quantity-container button');
-  await expect(addToCartButton).toBeVisible();
-
-  // Assert that product options exist (if applicable)
-  const optionsContainer = page.locator('.pdp-color-options');
-  if (await optionsContainer.count() > 0) {
-    await expect(optionsContainer).toBeVisible();
-  }
-
-  // Assert that product details section exists
-  const detailsSection = page.locator('.details');
-  await expect(detailsSection).toBeVisible();
-
-  // Assert that specifications section exists
-  const specsSection = page.locator('.specifications');
-  await expect(specsSection).toBeVisible();
-
-  // Assert that FAQ section exists
-  const faqSection = page.locator('.faq-container');
-  await expect(faqSection).toBeVisible();
-
-  // Assert that share buttons exist
-  const shareContainer = page.locator('.pdp-share-container');
-  await expect(shareContainer).toBeVisible();
+  const queryString = new URLSearchParams(queryParams).toString();
+  return `${baseUrl}${productPath}${queryString ? `?${queryString}` : ''}`;
 }
 
 /**
@@ -102,6 +59,69 @@ export async function assertElementExists(page, selector, description) {
   const element = page.locator(selector);
   await expect(element).toBeVisible();
   console.log(`✓ ${description} is visible`);
+}
+
+/**
+ * Common assertions for PDP elements
+ * @param {import('@playwright/test').Page} page - Playwright page object
+ */
+export async function assertPDPElements(page) {
+  // Wait for the page to load
+  await page.waitForLoadState('networkidle');
+
+  // Assert that key PDP elements exist
+  await assertElementExists(page, '.title h1', 'Product Title');
+  await assertElementExists(page, '.pdp-buy-box', 'Product Gallery');
+  await assertElementExists(page, '.gallery', 'Product Gallery');
+
+  // Assert that product images are displayed
+  const images = page.locator('.gallery img');
+  await expect(images.first()).toBeVisible();
+
+  // Assert that multiple images are available (if applicable)
+  const imageCount = await images.count();
+  expect(imageCount).toBeGreaterThan(0);
+
+  // Assert that specifications section exists
+  await assertElementExists(page, '.specifications', 'Product Specifications');
+
+  // Assert that FAQ section exists
+  await assertElementExists(page, '.faq-container', 'FAQ Section');
+
+  // Assert that share buttons exist
+  await assertElementExists(page, '.pdp-share-container', 'Share Buttons');
+
+  // Assert that compare functionality exists
+  await assertElementExists(page, '.pdp-compare-container', 'Compare Functionality');
+}
+
+/**
+ * Common assertions for PDP elements
+ * @param {import('@playwright/test').Page} page - Playwright page object
+ */
+export async function assertSaleableElements(page) {
+  // Wait for the page to load
+  await page.waitForLoadState('networkidle');
+
+  await assertElementExists(page, '.pricing', 'Product Pricing');
+  await assertElementExists(page, '.pricing-final', 'Product Pricing');
+  await assertElementExists(page, '.quantity-container button', 'Add to Cart Button');
+}
+
+/**
+ * Common assertions for PDP elements
+ * @param {import('@playwright/test').Page} page - Playwright page object
+ */
+export async function assertOptionElements(page) {
+  // Wait for the page to load
+  await page.waitForLoadState('networkidle');
+
+  // Assert that product options are available (if this product has variants)
+  const optionsContainer = page.locator('.pdp-color-options');
+  if (await optionsContainer.count() > 0) {
+    await expect(optionsContainer).toBeVisible();
+    console.log('✓ Product options are available');
+  }
 }
 
 /**

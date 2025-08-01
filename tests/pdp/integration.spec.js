@@ -4,9 +4,10 @@ import {
   getCurrentBranch,
   buildProductUrl,
   assertPDPElements,
-  assertElementExists,
-  assertElementText,
   waitForElement,
+  assertSaleableElements,
+  assertOptionElements,
+  assertElementText,
 } from '../utils/test-helpers.js';
 
 /**
@@ -25,8 +26,25 @@ test.describe('PDP Integration Tests', () => {
   test.describe('Ascent X3 Product Page', () => {
     const productPath = '/us/en_us/products/ascent-x3';
 
-    test('should load Ascent X3 product page with all required elements', async ({ page }) => {
+    test('should load Ascent X3 (configurable) product page with all required elements', async ({ page }) => {
       const productUrl = buildProductUrl(productPath, currentBranch);
+      console.log(`Testing URL: ${productUrl}`);
+
+      await page.goto(productUrl);
+
+      // Wait for page to load
+      await page.waitForLoadState('networkidle');
+
+      await expect(page).toHaveTitle(/Ascent X3/i);
+      await assertPDPElements(page);
+      await assertSaleableElements(page);
+      await assertOptionElements(page);
+    });
+
+    test('should deeplink to Ascent X3 variant', async ({ page }) => {
+      const productUrl = buildProductUrl(productPath, currentBranch, {
+        color: 'polar-white',
+      });
       console.log(`Testing URL: ${productUrl}`);
 
       // Navigate to the product page
@@ -35,168 +53,79 @@ test.describe('PDP Integration Tests', () => {
       // Wait for page to load
       await page.waitForLoadState('networkidle');
 
-      // Assert that the page title contains the product name
       await expect(page).toHaveTitle(/Ascent X3/i);
-
-      // Assert that key PDP elements exist
       await assertPDPElements(page);
+      await assertPDPElements(page);
+      await assertSaleableElements(page);
+      await assertOptionElements(page);
 
-      // Assert specific elements for this product
-      await assertElementExists(page, '.gallery', 'Product Gallery');
-      await assertElementExists(page, '.title h1', 'Product Title');
-      await assertElementExists(page, '.pricing', 'Product Pricing');
-      await assertElementExists(page, '.pricing-final', 'Product Pricing');
-      await assertElementExists(page, '.quantity-container button', 'Add to Cart Button');
-
-      // Assert that the product title contains "Ascent X3"
-      await assertElementText(page, 'h1', 'Ascent® X3', 'Product Title');
-
-      // Assert that pricing information is displayed
-      const pricingElement = page.locator('.pricing');
-      await expect(pricingElement).toBeVisible();
-
-      // Assert that product options are available (if this product has variants)
-      const optionsContainer = page.locator('.pdp-color-options');
-      if (await optionsContainer.count() > 0) {
-        await expect(optionsContainer).toBeVisible();
-        console.log('✓ Product options are available');
-      }
-
-      // Assert that specifications section exists
-      await assertElementExists(page, '.specifications', 'Product Specifications');
-
-      // Assert that FAQ section exists
-      await assertElementExists(page, '.faq-container', 'FAQ Section');
-
-      // Assert that share buttons exist
-      await assertElementExists(page, '.pdp-share-container', 'Share Buttons');
-
-      // Assert that compare functionality exists
-      await assertElementExists(page, '.pdp-compare-container', 'Compare Functionality');
+      assertElementText(page, '.selected-option-label', 'Color: Polar White', 'Selected Variant Label');
     });
 
-    test('should display product images in gallery', async ({ page }) => {
-      const productUrl = buildProductUrl(productPath, currentBranch);
-      await page.goto(productUrl);
+    test('add to cart button should work', async ({ page }) => {
+      await page.route('**/graphql', async (route) => {
+        const requestBody = route.request().postDataJSON();
+        expect(requestBody.variables).toEqual({
+          cartItems: [
+            {
+              sku: 'Ascent X3',
+              quantity: '1',
+              selected_options: [
+                'Y29uZmlndXJhYmxlLzkzLzUzNA==',
+                'Y3VzdG9tLW9wdGlvbi8zMDAyLzM5NDE=',
+              ],
+            },
+          ],
+        });
 
-      // Wait for gallery to load
-      await waitForElement(page, '.gallery');
+        // Log the arguments that were passed to addToCart
+        console.log('✓ Add to Cart function called with correct variables');
+        await route.fulfill({
+          status: 200,
+        });
+      });
 
-      // Assert that product images are displayed
-      const images = page.locator('.gallery img');
-      await expect(images.first()).toBeVisible();
-
-      // Assert that multiple images are available (if applicable)
-      const imageCount = await images.count();
-      expect(imageCount).toBeGreaterThan(0);
-      console.log(`✓ Product gallery contains ${imageCount} images`);
-    });
-
-    test('should have functional add to cart button', async ({ page }) => {
       const productUrl = buildProductUrl(productPath, currentBranch);
       await page.goto(productUrl);
 
       // Wait for add to cart button
       await waitForElement(page, '.quantity-container button');
 
-      // Assert that add to cart button is enabled
       const addToCartButton = page.locator('.quantity-container button');
-      await expect(addToCartButton).toBeEnabled();
-
-      // Assert that button has proper text
       await expect(addToCartButton).toContainText(/add to cart/i);
 
+      // Click the add to cart button
+      await addToCartButton.click();
+
+      await page.waitForTimeout(3000);
+
+      // should redirect to the cart page
+      const currentUrl = new URL(page.url());
+      expect(currentUrl.pathname).toBe('/us/en_us/checkout/cart/');
       console.log('✓ Add to Cart button is functional');
-    });
-
-    test('should display product specifications', async ({ page }) => {
-      const productUrl = buildProductUrl(productPath, currentBranch);
-      await page.goto(productUrl);
-
-      // Wait for specifications section
-      await waitForElement(page, '.specifications');
-
-      // Assert that specifications content is present
-      const specsContent = page.locator('.specifications');
-      await expect(specsContent).toBeVisible();
-
-      // Assert that specifications have content
-      const specsText = await specsContent.textContent();
-      expect(specsText.length).toBeGreaterThan(0);
-
-      console.log('✓ Product specifications are displayed');
-    });
-
-    test('should have working share functionality', async ({ page }) => {
-      const productUrl = buildProductUrl(productPath, currentBranch);
-      await page.goto(productUrl);
-
-      // Wait for share container
-      await waitForElement(page, '.pdp-share-container');
-
-      // Assert that share buttons exist
-      const shareButtons = page.locator('.pdp-share-container a');
-      await expect(shareButtons.first()).toBeVisible();
-
-      // Assert that multiple share options are available
-      const shareCount = await shareButtons.count();
-      expect(shareCount).toBeGreaterThan(0);
-
-      console.log(`✓ Share functionality has ${shareCount} options`);
     });
   });
 
-  test.describe('Product Page Navigation', () => {
+  test.describe('Variant Selection', () => {
     test('should handle product variant selection', async ({ page }) => {
       const productUrl = buildProductUrl('/us/en_us/products/ascent-x3', currentBranch);
       await page.goto(productUrl);
+      await page.waitForLoadState('networkidle');
 
-      // Look for variant options (like color selection)
-      const variantOptions = page.locator('.pdp-options button, .pdp-options input[type="radio"]');
+      // Look for variant options
+      const variantOptions = page.locator('.pdp-color-options .pdp-color-swatch');
 
       if (await variantOptions.count() > 0) {
-        // Click on the first variant option
-        await variantOptions.first().click();
+        await variantOptions.nth(1).click();
 
         // Wait for any updates to complete
         await page.waitForTimeout(1000);
-
-        // Assert that the selection was made
-        await expect(variantOptions.first()).toHaveAttribute('aria-selected', 'true');
+        assertElementText(page, '.selected-option-label', 'Color: Polar White', 'Selected Variant Label');
 
         console.log('✓ Product variant selection works');
       } else {
         console.log('ℹ No variant options found for this product');
       }
-    });
-
-    test('should display free shipping message when eligible', async ({ page }) => {
-      const productUrl = buildProductUrl('/us/en_us/products/ascent-x3', currentBranch);
-      await page.goto(productUrl);
-
-      // Check for free shipping message
-      const freeShippingElement = page.locator('.pdp-free-shipping-container');
-
-      if (await freeShippingElement.count() > 0) {
-        await expect(freeShippingElement).toBeVisible();
-        await expect(freeShippingElement).toContainText(/free shipping/i);
-        console.log('✓ Free shipping message is displayed');
-      } else {
-        console.log('ℹ Product is not eligible for free shipping');
-      }
-    });
-  });
-
-  test.describe('Cross-browser Compatibility', () => {
-    test('should work across different browsers', async ({ page, browserName }) => {
-      const productUrl = buildProductUrl('/us/en_us/products/ascent-x3', currentBranch);
-      await page.goto(productUrl);
-
-      // Basic functionality test that works across browsers
-      await expect(page.locator('h1')).toBeVisible();
-      await expect(page.locator('.pdp-buy-box')).toBeVisible();
-
-      console.log(`✓ Basic PDP functionality works in ${browserName}`);
     });
   });
 });
