@@ -57,7 +57,7 @@ async function geoCode(address) {
   return results[0]?.geometry?.location;
 }
 
-async function findEventsResults(data, location) {
+function findEventsResults(data, location) {
   // Household Events
   const filteredHHEvents = data.filter((item) => item.PRODUCT_TYPE === 'HH');
   const hhEvents = filteredHHEvents.sort(
@@ -75,7 +75,7 @@ async function findEventsResults(data, location) {
   return { hhEvents, commEvents };
 }
 
-async function findCommResults(data, location) {
+function findCommResults(data, location) {
   // Distributors
   const filteredDistributors = data.filter(
     (item) => item.TYPE === 'DEALER/DISTRIBUTOR' && haversineDistance(location.lat, location.lng, item.lat, item.lng) < MAX_DISTANCE,
@@ -97,7 +97,7 @@ async function findCommResults(data, location) {
   return { distributors, localRep };
 }
 
-async function findHHResults(data, location) {
+function findHHResults(data, location) {
   // Retailers
   const filteredRetailers = data.filter(
     (item) => item.TYPE === 'RETAILERS' && haversineDistance(location.lat, location.lng, item.lat, item.lng) < MAX_DISTANCE,
@@ -169,14 +169,12 @@ function displayCommResults(results, location) {
     return li;
   };
 
-  commDistributorsResults.innerHTML = '';
-  commLocalrepResults.innerHTML = '';
-
   if (distributors && distributors.length > 0) {
     const distributorList = document.createElement('ol');
     distributors.forEach((distributor) => {
       distributorList.appendChild(createDistributorResult(distributor));
     });
+    commDistributorsResults.textContent = '';
     commDistributorsResults.appendChild(distributorList);
   } else {
     commDistributorsResults.innerHTML = '<p>No distributors found</p>';
@@ -187,6 +185,7 @@ function displayCommResults(results, location) {
     localRep.forEach((lr) => {
       localRepList.appendChild(createLocalRepResult(lr));
     });
+    commLocalrepResults.textContent = '';
     commLocalrepResults.appendChild(localRepList);
   } else {
     commLocalrepResults.innerHTML = '<p>No local representatives found</p>';
@@ -263,14 +262,12 @@ function displayEventsResults(results, location) {
     return li;
   };
 
-  eventsHHResults.innerHTML = '';
-  eventsCommResults.innerHTML = '';
-
   if (hhEvents && hhEvents.length > 0) {
     const hhEventList = document.createElement('ol');
     hhEvents.forEach((event) => {
       hhEventList.appendChild(createHHEventResult(event));
     });
+    eventsHHResults.textContent = '';
     eventsHHResults.appendChild(hhEventList);
   } else {
     eventsHHResults.innerHTML = '<p>No household events found</p>';
@@ -281,6 +278,7 @@ function displayEventsResults(results, location) {
     commEvents.forEach((event) => {
       commEventList.appendChild(createCommEventResult(event));
     });
+    eventsCommResults.textContent = '';
     eventsCommResults.appendChild(commEventList);
   } else {
     eventsCommResults.innerHTML = '<p>No commercial events found</p>';
@@ -387,15 +385,12 @@ function displayHHResults(results, location) {
     return li;
   };
 
-  hhRetailersResults.innerHTML = '';
-  hhDistributorsResults.innerHTML = '';
-  hhOnlineResults.innerHTML = '';
-
   if (retailers && retailers.length > 0) {
     const retailerList = document.createElement('ol');
     retailers.forEach((retailer) => {
       retailerList.appendChild(createRetailerResult(retailer));
     });
+    hhRetailersResults.textContent = '';
     hhRetailersResults.appendChild(retailerList);
   } else {
     hhRetailersResults.innerHTML = '<p>No retailers found</p>';
@@ -406,6 +401,7 @@ function displayHHResults(results, location) {
     distributors.forEach((distributor) => {
       distributorList.appendChild(createDistributorResult(distributor));
     });
+    hhDistributorsResults.textContent = '';
     hhDistributorsResults.appendChild(distributorList);
   } else {
     hhDistributorsResults.innerHTML = '<p>No distributors found</p>';
@@ -416,6 +412,7 @@ function displayHHResults(results, location) {
     online.forEach((item) => {
       onlineList.appendChild(createOnlineResult(item));
     });
+    hhOnlineResults.textContent = '';
     hhOnlineResults.appendChild(onlineList);
   } else {
     hhOnlineResults.innerHTML = '<p>No online retailers found</p>';
@@ -436,7 +433,6 @@ export default function decorate(widget) {
   });
 
   // load results data
-  form.addEventListener('input', () => fetchData(form));
   setTimeout(() => fetchData(form), 300);
 
   const tabpanels = widget.querySelectorAll('.locator-tabpanels .locator-tabpanel');
@@ -449,48 +445,48 @@ export default function decorate(widget) {
     tabpanel.setAttribute('aria-hidden', false);
   };
 
+  const showType = (type) => {
+    widget.querySelectorAll('.locator-results').forEach((result) => {
+      result.setAttribute('aria-hidden', true);
+    });
+    widget.querySelector(`.locator-results.locator-${type}-results`).setAttribute('aria-hidden', false);
+    showTab(widget.querySelector(`.locator-results.locator-${type}-results button`));
+  };
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    widget.querySelector('.locator-results').setAttribute('aria-hidden', false);
     const formData = new FormData(form);
     const data = Object.fromEntries(formData);
     const location = await geoCode(data.address);
 
-    widget.querySelectorAll('.locator-results').forEach((result) => {
-      result.setAttribute('aria-hidden', true);
-    });
-
     if (data.productType === 'HH') {
       if (location) {
-        const results = await findHHResults(window.locatorData.HH, location);
+        const results = findHHResults(window.locatorData.HH, location);
         displayHHResults(results, location);
       } else {
         displayHHResults({});
       }
-      widget.querySelector('.locator-results.locator-hh-results').setAttribute('aria-hidden', false);
-      showTab(widget.querySelector('.locator-results.locator-hh-results button'));
+      showType('hh');
     }
 
     if (data.productType === 'COMM') {
       if (location) {
-        const results = await findCommResults(window.locatorData.COMM, location);
+        const results = findCommResults(window.locatorData.COMM, location);
         displayCommResults(results, location);
       } else {
         displayCommResults({});
       }
-      widget.querySelector('.locator-results.locator-comm-results').setAttribute('aria-hidden', false);
-      showTab(widget.querySelector('.locator-results.locator-comm-results button'));
+      showType('comm');
     }
 
     if (data.productType === 'EVENTS') {
       if (location) {
-        const results = await findEventsResults(window.locatorData.EVENTS, location);
+        const results = findEventsResults(window.locatorData.EVENTS, location);
         displayEventsResults(results, location);
       } else {
         displayEventsResults({});
       }
-      widget.querySelector('.locator-results.locator-events-results').setAttribute('aria-hidden', false);
-      showTab(widget.querySelector('.locator-results.locator-events-results button'));
+      showType('events');
     }
   });
 
