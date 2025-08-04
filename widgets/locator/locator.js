@@ -1,25 +1,38 @@
 import { loadCSS } from '../../scripts/aem.js';
 
-const retailersResults = document.querySelector('#locator-retailers-tabpanel');
-const distributorsResults = document.querySelector('#locator-distributors-tabpanel');
-const onlineResults = document.querySelector('#locator-online-tabpanel');
+const MAX_DISTANCE = 100;
+
+const hhRetailersResults = document.querySelector('#locator-hh-retailers-tabpanel');
+const hhDistributorsResults = document.querySelector('#locator-hh-distributors-tabpanel');
+const hhOnlineResults = document.querySelector('#locator-hh-online-tabpanel');
+
+const commDistributorsResults = document.querySelector('#locator-comm-distributors-tabpanel');
+const commLocalrepResults = document.querySelector('#locator-comm-localrep-tabpanel');
+
+const eventsHHResults = document.querySelector('#locator-events-hh-tabpanel');
+const eventsCommResults = document.querySelector('#locator-events-comm-tabpanel');
 
 async function fetchData(form) {
+  const fetchSheet = async (src) => {
+    const resp = await fetch(`https://little-forest-58aa.david8603.workers.dev/?url=${encodeURIComponent(src)}`);
+    const { data } = await resp.json();
+    data.forEach((item) => {
+      item.lat = +item.LAT;
+      item.lng = +item.LONG;
+    });
+    return data;
+  };
+
   const loaded = form.dataset.status;
   if (loaded) return window.locatorData;
 
   form.dataset.status = 'loading';
-  const src = 'https://main--thinktanked--davidnuescheler.aem.live/vitamix/storelocations-hh.json?sheet=US&limit=5000';
-  const resp = await fetch(`https://little-forest-58aa.david8603.workers.dev/?url=${encodeURIComponent(src)}`);
-  const { data } = await resp.json();
-  data.forEach((item) => {
-    item.lat = +item.LAT;
-    item.lng = +item.LONG;
-  });
-
-  window.locatorData = data;
+  window.locatorData = {};
+  window.locatorData.HH = await fetchSheet('https://main--thinktanked--davidnuescheler.aem.live/vitamix/storelocations-hh.json?sheet=US&limit=5000');
+  window.locatorData.COMM = await fetchSheet('https://main--thinktanked--davidnuescheler.aem.live/vitamix/storelocations-comm.json?sheet=US&limit=5000');
+  window.locatorData.EVENTS = await fetchSheet('https://main--thinktanked--davidnuescheler.aem.live/vitamix/storelocations-events.json?sheet=current&limit=5000');
   form.dataset.status = 'loaded';
-  return data;
+  return window.locatorData;
 }
 
 const haversineDistance = (lat1, lon1, lat2, lon2) => {
@@ -44,12 +57,50 @@ async function geoCode(address) {
   return results[0]?.geometry?.location;
 }
 
-async function findResults(data, location) {
-  // eslint-disable-next-line no-unused-vars
+async function findEventsResults(data, location) {
+  // Household Events
+  const filteredHHEvents = data.filter((item) => item.PRODUCT_TYPE === 'HH');
+  const hhEvents = filteredHHEvents.sort(
+    (a, b) => haversineDistance(location.lat, location.lng, a.lat, a.lng)
+      - haversineDistance(location.lat, location.lng, b.lat, b.lng),
+  );
 
+  // Commercial Events
+  const filteredCommEvents = data.filter((item) => item.PRODUCT_TYPE === 'COMM');
+  const commEvents = filteredCommEvents.sort(
+    (a, b) => haversineDistance(location.lat, location.lng, a.lat, a.lng)
+      - haversineDistance(location.lat, location.lng, b.lat, b.lng),
+  );
+
+  return { hhEvents, commEvents };
+}
+
+async function findCommResults(data, location) {
+  // Distributors
+  const filteredDistributors = data.filter(
+    (item) => item.TYPE === 'DEALER/DISTRIBUTOR' && haversineDistance(location.lat, location.lng, item.lat, item.lng) < MAX_DISTANCE,
+  );
+  const distributors = filteredDistributors.sort(
+    (a, b) => haversineDistance(location.lat, location.lng, a.lat, a.lng)
+      - haversineDistance(location.lat, location.lng, b.lat, b.lng),
+  );
+
+  // Local Representatives
+  const filteredLocalRep = data.filter(
+    (item) => item.TYPE === 'LOCAL REP' && haversineDistance(location.lat, location.lng, item.lat, item.lng) < MAX_DISTANCE,
+  );
+  const localRep = filteredLocalRep.sort(
+    (a, b) => haversineDistance(location.lat, location.lng, a.lat, a.lng)
+      - haversineDistance(location.lat, location.lng, b.lat, b.lng),
+  );
+
+  return { distributors, localRep };
+}
+
+async function findHHResults(data, location) {
   // Retailers
-  const filteredRetailers = window.locatorData.filter(
-    (item) => item.TYPE === 'RETAILERS' && haversineDistance(location.lat, location.lng, item.lat, item.lng) < 100,
+  const filteredRetailers = data.filter(
+    (item) => item.TYPE === 'RETAILERS' && haversineDistance(location.lat, location.lng, item.lat, item.lng) < MAX_DISTANCE,
   );
   const retailers = filteredRetailers.sort(
     (a, b) => haversineDistance(location.lat, location.lng, a.lat, a.lng)
@@ -57,19 +108,186 @@ async function findResults(data, location) {
   );
 
   // Distributors
-  const filteredDistributors = window.locatorData.filter((item) => item.TYPE === 'DEALER/DISTRIBUTOR');
+  const filteredDistributors = data.filter((item) => item.TYPE === 'DEALER/DISTRIBUTOR');
   const distributors = filteredDistributors.sort(
     (a, b) => haversineDistance(location.lat, location.lng, a.lat, a.lng)
       - haversineDistance(location.lat, location.lng, b.lat, b.lng),
   );
 
   // Online
-  const online = window.locatorData.filter((item) => item.TYPE === 'ONLINE');
+  const online = data.filter((item) => item.TYPE === 'ONLINE');
 
   return { retailers, distributors, online };
 }
 
-function displayResults(results, location) {
+function displayCommResults(results, location) {
+  const { distributors, localRep } = results;
+
+  const createDistributorResult = (result) => {
+    const li = document.createElement('li');
+    const title = document.createElement('h3');
+    title.textContent = result.NAME;
+    li.append(title);
+
+    const distance = document.createElement('span');
+    distance.textContent = `${haversineDistance(location.lat, location.lng, result.lat, result.lng).toFixed(1)} miles away`;
+    distance.classList.add('locator-distance');
+    li.append(distance);
+
+    const address = document.createElement('a');
+    const addressQuery = `${result.NAME} ${result.ADDRESS_1}, ${result.CITY}, ${result.STATE_PROVINCE} ${result.POSTAL_CODE}`;
+    address.href = `https://maps.google.com/?q=${encodeURIComponent(addressQuery)}`;
+    address.target = '_blank';
+    address.rel = 'noopener noreferrer';
+    address.textContent = addressQuery;
+    address.classList.add('locator-address');
+    li.append(address);
+
+    return li;
+  };
+
+  const createLocalRepResult = (result) => {
+    const li = document.createElement('li');
+    const title = document.createElement('h3');
+    title.textContent = result.NAME;
+    li.append(title);
+
+    const distance = document.createElement('span');
+    distance.textContent = `${haversineDistance(location.lat, location.lng, result.lat, result.lng).toFixed(1)} miles away`;
+    distance.classList.add('locator-distance');
+    li.append(distance);
+
+    const address = document.createElement('a');
+    const addressQuery = `${result.NAME} ${result.ADDRESS_1}, ${result.CITY}, ${result.STATE_PROVINCE} ${result.POSTAL_CODE}`;
+    address.href = `https://maps.google.com/?q=${encodeURIComponent(addressQuery)}`;
+    address.target = '_blank';
+    address.rel = 'noopener noreferrer';
+    address.textContent = addressQuery;
+    address.classList.add('locator-address');
+    li.append(address);
+
+    return li;
+  };
+
+  commDistributorsResults.innerHTML = '';
+  commLocalrepResults.innerHTML = '';
+
+  if (distributors && distributors.length > 0) {
+    const distributorList = document.createElement('ol');
+    distributors.forEach((distributor) => {
+      distributorList.appendChild(createDistributorResult(distributor));
+    });
+    commDistributorsResults.appendChild(distributorList);
+  } else {
+    commDistributorsResults.innerHTML = '<p>No distributors found</p>';
+  }
+
+  if (localRep && localRep.length > 0) {
+    const localRepList = document.createElement('ol');
+    localRep.forEach((lr) => {
+      localRepList.appendChild(createLocalRepResult(lr));
+    });
+    commLocalrepResults.appendChild(localRepList);
+  } else {
+    commLocalrepResults.innerHTML = '<p>No local representatives found</p>';
+  }
+}
+
+function displayEventsResults(results, location) {
+  const { hhEvents, commEvents } = results;
+  const formatDate = (excelDate) => {
+    // Excel dates are the number of days since January 1, 1900
+    // JavaScript dates are milliseconds since January 1, 1970
+    // Excel has a bug where it treats 1900 as a leap year, so we adjust for that
+    const excelEpoch = new Date(1900, 0, 1); // January 1, 1900
+    const millisecondsPerDay = 24 * 60 * 60 * 1000;
+    // Adjust for Excel's leap year bug
+    const adjustedDays = excelDate > 59 ? excelDate - 1 : excelDate;
+    const date = new Date(excelEpoch.getTime() + (adjustedDays - 1) * millisecondsPerDay);
+    return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  };
+
+  const createHHEventResult = (result) => {
+    const li = document.createElement('li');
+    const title = document.createElement('h3');
+    title.textContent = result.NAME;
+    li.append(title);
+
+    const date = document.createElement('span');
+    date.textContent = `${formatDate(result.START_DATE)} - ${formatDate(result.END_DATE)}`;
+    date.classList.add('locator-date');
+    li.append(date);
+
+    const distance = document.createElement('span');
+    distance.textContent = `${haversineDistance(location.lat, location.lng, result.lat, result.lng).toFixed(1)} miles away`;
+    distance.classList.add('locator-distance');
+    li.append(distance);
+
+    const address = document.createElement('a');
+    const addressQuery = `${result.NAME} ${result.ADDRESS_1}, ${result.CITY}, ${result.STATE_PROVINCE} ${result.POSTAL_CODE}`;
+    address.href = `https://maps.google.com/?q=${encodeURIComponent(addressQuery)}`;
+    address.target = '_blank';
+    address.rel = 'noopener noreferrer';
+    address.textContent = addressQuery;
+    address.classList.add('locator-address');
+    li.append(address);
+
+    return li;
+  };
+
+  const createCommEventResult = (result) => {
+    const li = document.createElement('li');
+    const title = document.createElement('h3');
+    title.textContent = result.NAME;
+    li.append(title);
+
+    const date = document.createElement('span');
+    date.textContent = `${formatDate(result.START_DATE)} - ${formatDate(result.END_DATE)}`;
+    date.classList.add('locator-date');
+    li.append(date);
+
+    const distance = document.createElement('span');
+    distance.textContent = `${haversineDistance(location.lat, location.lng, result.lat, result.lng).toFixed(1)} miles away`;
+    distance.classList.add('locator-distance');
+    li.append(distance);
+
+    const address = document.createElement('a');
+    const addressQuery = `${result.NAME} ${result.ADDRESS_1}, ${result.CITY}, ${result.STATE_PROVINCE} ${result.POSTAL_CODE}`;
+    address.href = `https://maps.google.com/?q=${encodeURIComponent(addressQuery)}`;
+    address.target = '_blank';
+    address.rel = 'noopener noreferrer';
+    address.textContent = addressQuery;
+    address.classList.add('locator-address');
+    li.append(address);
+
+    return li;
+  };
+
+  eventsHHResults.innerHTML = '';
+  eventsCommResults.innerHTML = '';
+
+  if (hhEvents && hhEvents.length > 0) {
+    const hhEventList = document.createElement('ol');
+    hhEvents.forEach((event) => {
+      hhEventList.appendChild(createHHEventResult(event));
+    });
+    eventsHHResults.appendChild(hhEventList);
+  } else {
+    eventsHHResults.innerHTML = '<p>No household events found</p>';
+  }
+
+  if (commEvents && commEvents.length > 0) {
+    const commEventList = document.createElement('ol');
+    commEvents.forEach((event) => {
+      commEventList.appendChild(createCommEventResult(event));
+    });
+    eventsCommResults.appendChild(commEventList);
+  } else {
+    eventsCommResults.innerHTML = '<p>No commercial events found</p>';
+  }
+}
+
+function displayHHResults(results, location) {
   const { retailers, distributors, online } = results;
 
   const createOnlineResult = (result) => {
@@ -169,18 +387,18 @@ function displayResults(results, location) {
     return li;
   };
 
-  retailersResults.innerHTML = '';
-  distributorsResults.innerHTML = '';
-  onlineResults.innerHTML = '';
+  hhRetailersResults.innerHTML = '';
+  hhDistributorsResults.innerHTML = '';
+  hhOnlineResults.innerHTML = '';
 
   if (retailers && retailers.length > 0) {
     const retailerList = document.createElement('ol');
     retailers.forEach((retailer) => {
       retailerList.appendChild(createRetailerResult(retailer));
     });
-    retailersResults.appendChild(retailerList);
+    hhRetailersResults.appendChild(retailerList);
   } else {
-    retailersResults.innerHTML = '<p>No retailers found</p>';
+    hhRetailersResults.innerHTML = '<p>No retailers found</p>';
   }
 
   if (distributors && distributors.length > 0) {
@@ -188,9 +406,9 @@ function displayResults(results, location) {
     distributors.forEach((distributor) => {
       distributorList.appendChild(createDistributorResult(distributor));
     });
-    distributorsResults.appendChild(distributorList);
+    hhDistributorsResults.appendChild(distributorList);
   } else {
-    distributorsResults.innerHTML = '<p>No distributors found</p>';
+    hhDistributorsResults.innerHTML = '<p>No distributors found</p>';
   }
 
   if (online && online.length > 0) {
@@ -198,9 +416,9 @@ function displayResults(results, location) {
     online.forEach((item) => {
       onlineList.appendChild(createOnlineResult(item));
     });
-    onlineResults.appendChild(onlineList);
+    hhOnlineResults.appendChild(onlineList);
   } else {
-    onlineResults.innerHTML = '<p>No online retailers found</p>';
+    hhOnlineResults.innerHTML = '<p>No online retailers found</p>';
   }
 }
 
@@ -219,7 +437,17 @@ export default function decorate(widget) {
 
   // load results data
   form.addEventListener('input', () => fetchData(form));
-  setTimeout(() => fetchData(form), 3000);
+  setTimeout(() => fetchData(form), 300);
+
+  const tabpanels = widget.querySelectorAll('.locator-tabpanels .locator-tabpanel');
+  const tablistButtons = widget.querySelectorAll('.locator-results-tablist button');
+  const showTab = (tabButton) => {
+    tablistButtons.forEach((b) => b.removeAttribute('aria-selected'));
+    tabpanels.forEach((panel) => panel.setAttribute('aria-hidden', true));
+    tabButton.setAttribute('aria-selected', 'true');
+    const tabpanel = document.getElementById(tabButton.getAttribute('aria-controls'));
+    tabpanel.setAttribute('aria-hidden', false);
+  };
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -227,24 +455,55 @@ export default function decorate(widget) {
     const formData = new FormData(form);
     const data = Object.fromEntries(formData);
     const location = await geoCode(data.address);
-    if (location) {
-      const results = await findResults(data, location);
-      displayResults(results, location);
-    } else {
-      displayResults({});
+
+    widget.querySelectorAll('.locator-results').forEach((result) => {
+      result.setAttribute('aria-hidden', true);
+    });
+
+    if (data.productType === 'HH') {
+      if (location) {
+        const results = await findHHResults(window.locatorData.HH, location);
+        displayHHResults(results, location);
+      } else {
+        displayHHResults({});
+      }
+      widget.querySelector('.locator-results.locator-hh-results').setAttribute('aria-hidden', false);
+      showTab(widget.querySelector('.locator-results.locator-hh-results button'));
+    }
+
+    if (data.productType === 'COMM') {
+      if (location) {
+        const results = await findCommResults(window.locatorData.COMM, location);
+        displayCommResults(results, location);
+      } else {
+        displayCommResults({});
+      }
+      widget.querySelector('.locator-results.locator-comm-results').setAttribute('aria-hidden', false);
+      showTab(widget.querySelector('.locator-results.locator-comm-results button'));
+    }
+
+    if (data.productType === 'EVENTS') {
+      if (location) {
+        const results = await findEventsResults(window.locatorData.EVENTS, location);
+        displayEventsResults(results, location);
+      } else {
+        displayEventsResults({});
+      }
+      widget.querySelector('.locator-results.locator-events-results').setAttribute('aria-hidden', false);
+      showTab(widget.querySelector('.locator-results.locator-events-results button'));
     }
   });
 
-  const tablistButtons = widget.querySelectorAll('.locator-results-tablist button');
-  const tabpanels = widget.querySelectorAll('.locator-tabpanels .locator-tabpanel');
   tablistButtons.forEach((button) => {
     button.addEventListener('click', (e) => {
       e.preventDefault();
-      tablistButtons.forEach((b) => b.removeAttribute('aria-selected'));
-      button.setAttribute('aria-selected', 'true');
-      tabpanels.forEach((panel) => panel.setAttribute('aria-hidden', true));
-      const tabpanel = document.getElementById(button.getAttribute('aria-controls'));
-      tabpanel.setAttribute('aria-hidden', false);
+      showTab(button);
     });
+  });
+
+  widget.querySelector('#productType').addEventListener('change', () => {
+    if (widget.querySelector('#address').value) {
+      form.requestSubmit();
+    }
   });
 }

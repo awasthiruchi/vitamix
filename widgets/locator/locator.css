@@ -109,6 +109,15 @@ main > .locator-container.section {
   --locator-accent-color: var(--color-blue);
 }
 
+.locator-results .locator-localrep {
+  --locator-accent-color: var(--color-blue);
+}
+
+.locator-results .locator-events {
+  --locator-accent-color: var(--color-red);
+}
+
+
 .locator-results ol li {
   counter-increment: locator-result-counter;
   position: relative;
