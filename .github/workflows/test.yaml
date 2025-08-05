@@ -11,10 +11,6 @@ jobs:
     # Only run if comment contains trigger phrase and is on a PR
     if: contains(github.event.comment.body, '/run-tests') && github.event.issue.pull_request != null
     
-    strategy:
-      matrix:
-        browser: [chromium]
-    
     steps:
     - name: Comment on PR - Starting
       id: comment
@@ -22,10 +18,10 @@ jobs:
       with:
         script: |
           const { data: comment } = await github.rest.issues.createComment({
-            issue_number: ${{ github.event.issue.number }},
+            issue_number: context.issue.number,
             owner: context.repo.owner,
             repo: context.repo.repo,
-            body: '🚀 **Integration tests are starting...** This will take a few minutes.\n\n🔗 [View progress](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})'
+            body: `🚀 **Integration tests are starting...** This will take a few minutes.\n\n🔗 [View progress](${context.payload.repository.html_url}/actions/runs/${context.runId})`
           });
           return comment.id;
         result-encoding: string
@@ -57,17 +53,11 @@ jobs:
         BRANCH_NAME=$(echo "$PR_DATA" | jq -r '.head.ref')
         echo "branch=$BRANCH_NAME" >> $GITHUB_OUTPUT
     
-    - name: Run Playwright tests on desktop
+    - name: Run Playwright tests
       env:
         BRANCH: ${{ steps.branch.outputs.branch }}
         BASE_URL: https://${{ steps.branch.outputs.branch }}--vitamix--aemsites.aem.network
       run: npx playwright test --reporter=html
-      
-    - name: Run Playwright tests on mobile
-      env:
-        BRANCH: ${{ steps.branch.outputs.branch }}
-        BASE_URL: https://${{ steps.branch.outputs.branch }}--vitamix--aemsites.aem.network
-      run: npx playwright test --project="Mobile Chrome"
     
     - name: Upload Playwright Report
       uses: actions/upload-artifact@v4
@@ -86,7 +76,7 @@ jobs:
             owner: context.repo.owner,
             repo: context.repo.repo,
             comment_id: ${{ steps.comment.outputs.result }},
-            body: '✅ **Integration tests passed!** 🎉\n\n**All Playwright tests completed successfully.**\n\n📊 [View detailed report](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})'
+            body: `✅ **Integration tests passed!** 🎉\n\n**All Playwright tests completed successfully.**\n\n📊 [View detailed report](${context.payload.repository.html_url}/actions/runs/${context.runId})`
           })
     
     - name: Comment on PR - Failure
@@ -98,5 +88,5 @@ jobs:
             owner: context.repo.owner,
             repo: context.repo.repo,
             comment_id: ${{ steps.comment.outputs.result }},
-            body: '❌ **Integration tests failed.**\n\n🔍 [Check the workflow run for details](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})\n📊 Test report will be available in the artifacts section.'
+            body: `❌ **Integration tests failed.**\n\n🔍 [Check the workflow run for details](${context.payload.repository.html_url}/actions/runs/${context.runId})\n📊 Test report will be available in the artifacts section.`
           })
