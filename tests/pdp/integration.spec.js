@@ -53,7 +53,7 @@ test.describe('PDP Integration Tests', () => {
       // Wait for page to load
       await page.waitForLoadState('networkidle');
 
-      await expect(page).toHaveTitle(/Ascent X32t/i);
+      await expect(page).toHaveTitle(/Ascent X3/i);
       await assertPDPElements(page);
       await assertPDPElements(page);
       await assertSaleableElements(page);

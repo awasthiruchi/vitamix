@@ -95,16 +95,7 @@ BRANCH=staging npm test
 
 #### Running Tests in CI
 
-```bash
-# Install dependencies
-npm ci
-
-# Install Playwright browsers
-npm run test:install
-
-# Run tests
-npm test
-```
+Tests can be manually run within a PR on github by commenting `/run-tests`
 
 ### Debugging Tests in VSCode
 
