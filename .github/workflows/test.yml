@@ -34,9 +34,14 @@ jobs:
     - name: Install Playwright Browsers
       run: npx playwright install chromium --with-deps
     
-    - name: Get branch name
+    - name: Get PR branch name
       id: branch
-      run: echo "branch=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
+      run: |
+        # Get the actual branch name from the PR using REST API
+        PR_DATA=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.issue.number }}")
+        BRANCH_NAME=$(echo "$PR_DATA" | jq -r '.head.ref')
+        echo "branch=$BRANCH_NAME" >> $GITHUB_OUTPUT
     
     - name: Run Playwright tests on desktop
       env:
