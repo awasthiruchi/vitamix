@@ -6,7 +6,7 @@ if (localStorage.getItem('newsletter-popped-up') !== 'true') {
   if (newsletterLink) {
     setTimeout(() => {
       newsletterLink.click();
-    }, 10000);
+    }, 5000);
   }
 }
 
