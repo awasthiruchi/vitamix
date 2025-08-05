@@ -1,7 +1,6 @@
 name: Integration Tests
 
 on:
-  workflow_dispatch:
   issue_comment:
     types: [created]
 
@@ -9,15 +8,19 @@ jobs:
   test:
     runs-on: ubuntu-latest
     
-    # Only run if manually dispatched or if comment contains trigger phrase
-    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'issue_comment' && contains(github.event.comment.body, '/run-tests'))
+    # Only run if comment contains trigger phrase and is on a PR
+    if: contains(github.event.comment.body, '/run-tests') && github.event.issue.pull_request
     
     strategy:
       matrix:
         browser: [chromium]
     
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        # Checkout the PR branch
+        ref: ${{ format('refs/pull/{0}/head', github.event.issue.number) }}
     
     - name: Use Node.js 20
       uses: actions/setup-node@v4
