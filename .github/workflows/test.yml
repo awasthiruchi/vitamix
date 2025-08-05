@@ -1,56 +1,12 @@
-name: Integration Tests
+name: Simple Test
 
 on:
-  pull_request_review_comment:
+  issue_comment:
     types: [created]
 
 jobs:
   test:
     runs-on: ubuntu-latest
-    
-    # Only run if comment contains trigger phrase and is on a PR
-    if: contains(github.event.comment.body, '/run-tests') && github.event.issue.pull_request
-    
-    strategy:
-      matrix:
-        browser: [chromium]
-    
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      with:
-        # Checkout the PR branch
-        ref: ${{ format('refs/pull/{0}/head', github.event.issue.number) }}
-    
-    - name: Use Node.js 20
-      uses: actions/setup-node@v4
-      with:
-        node-version: 20
-        cache: 'npm'
-    
-    - name: Install dependencies
-      run: npm ci
-    
-    - name: Install Playwright Browsers
-      run: npx playwright install chromium --with-deps
-    
-    - name: Get PR branch name
-      id: branch
-      run: |
-        # Get the actual branch name from the PR using REST API
-        PR_DATA=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-          "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.issue.number }}")
-        BRANCH_NAME=$(echo "$PR_DATA" | jq -r '.head.ref')
-        echo "branch=$BRANCH_NAME" >> $GITHUB_OUTPUT
-    
-    - name: Run Playwright tests on desktop
-      env:
-        BRANCH: ${{ steps.branch.outputs.branch }}
-        BASE_URL: https://${{ steps.branch.outputs.branch }}--vitamix--aemsites.aem.network
-      run: npx playwright test --reporter=html
-      
-    - name: Run Playwright tests on mobile
-      env:
-        BRANCH: ${{ steps.branch.outputs.branch }}
-        BASE_URL: https://${{ steps.branch.outputs.branch }}--vitamix--aemsites.aem.network
-      run: npx playwright test --project="Mobile Chrome"
+    - name: Always run
+      run: echo "This should always run on any comment"
