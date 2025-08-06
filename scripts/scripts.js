@@ -48,8 +48,13 @@ function setDiscountCookie() {
   const urlParams = new URLSearchParams(window.location.search);
   const cjData = urlParams.get('cjdata');
   const cjEvent = urlParams.get('cjevent');
+  const coupon = urlParams.get('COUPON');
+  if (coupon) {
+    document.cookie = `discount_coupon_url_code=${coupon}; path=/`;
+    document.cookie = `ebs_sender_id_coupon=${coupon}; path=/`;
+  }
   if (cjData) {
-    document.cookie = `discount_coupon_url_code=${cjData}; path=/`;
+    document.cookie = `cjConsent=${cjData}; path=/`;
   }
   if (cjEvent) {
     document.cookie = `discount_cjevent=${cjEvent}; path=/`;
