@@ -349,9 +349,41 @@ test.describe('PDP Integration Tests', () => {
   });
 
   test.describe('Newsletter Subscription', () => {
-    const productPath = '/us/en_us/products/20-ounce-travel-cup';
+    const newsletterConfigs = [
+      {
+        modal: false,
+        smsOptin: false,
+        leadSource: 'sub-em-footer-us',
+        pageUrl: '/us/en_us/products/20-ounce-travel-cup',
+      },
+      {
+        modal: false,
+        smsOptin: true,
+        leadSource: 'sub-emsms-footer-us',
+        pageUrl: '/us/en_us/products/20-ounce-travel-cup',
+      },
+      {
+        modal: true,
+        smsOptin: false,
+        leadSource: 'sub-em-footer-us',
+        pageUrl: '/us/en_us/products/20-ounce-travel-cup',
+      },
+      {
+        modal: true,
+        smsOptin: true,
+        leadSource: 'sub-emsms-modal-us',
+        pageUrl: '/us/en_us/products/20-ounce-travel-cup',
+      },
+    ];
 
-    test('newsletter subscription should work', async ({ page }) => {
+    const newsLetterSubscription = async (page, config) => {
+      const {
+        modal,
+        smsOptin,
+        leadSource,
+        pageUrl,
+      } = config;
+
       await page.route('**/bin/vitamix/newslettersubscription**', async (route) => {
         const url = route.request().url();
         const urlObj = new URL(url);
@@ -360,8 +392,8 @@ test.describe('PDP Integration Tests', () => {
         expect(urlObj.searchParams.get('email')).toBe('test@test.com');
         expect(urlObj.searchParams.get('mobile')).toBe('1234567890');
         expect(urlObj.searchParams.get('sms_optin')).toBe('1');
-        expect(urlObj.searchParams.get('lead_source')).toBe('sub-emsms-footer-us');
-        expect(urlObj.searchParams.get('pageUrl')).toContain('/us/en_us/products/20-ounce-travel-cup');
+        expect(urlObj.searchParams.get('lead_source')).toBe(leadSource);
+        expect(urlObj.searchParams.get('pageUrl')).toContain(pageUrl);
         expect(urlObj.searchParams.get('actionUrl')).toBe('/us/en_us/rest/V1/vitamix-api/newslettersubscribe');
 
         console.log('✓ Newsletter subscription request intercepted with correct parameters');
@@ -372,32 +404,65 @@ test.describe('PDP Integration Tests', () => {
         });
       });
 
-      const productUrl = buildProductUrl(productPath, currentBranch);
+      const productUrl = buildProductUrl(pageUrl, currentBranch);
       await page.goto(productUrl);
 
-      // Wait for add to cart button
-      await waitForElement(page, '.footer-sign-up .form-field #email');
+      if (smsOptin) {
+        const consentCheckbox = page.locator('.footer-sign-up fieldset label input[type="checkbox"]');
+        await consentCheckbox.click({ force: true });
+        // wait for consent checkbox to be checked
+        await expect(consentCheckbox).toBeChecked();
+      }
 
-      const emailInput = page.locator('.footer-sign-up .form-field #email');
+      let form = page.locator('form.footer-sign-up');
+
+      if (modal) {
+        const signupButton = page.locator('header a[href$="/modals/sign-up"]');
+        await signupButton.click();
+
+        const modalForm = page.locator('dialog form.footer-sign-up');
+        await modalForm.waitFor({ state: 'visible', timeout: 10000 });
+
+        form = modalForm;
+      }
+
+      const emailInput = form.locator('.form-field #email');
       await emailInput.fill('test@test.com');
+      await expect(emailInput).toHaveValue('test@test.com');
 
-      const phoneInput = page.locator('.footer-sign-up .form-field #mobile');
+      const phoneInput = form.locator('.form-field #mobile');
       await phoneInput.fill('1234567890');
+      await expect(phoneInput).toHaveValue('1234567890');
 
-      const consentCheckbox = page.locator('.footer-sign-up fieldset label input[type="checkbox"]');
-      await consentCheckbox.click({ force: true });
-
-      // wait for consent checkbox to be checked
-      await expect(consentCheckbox).toBeChecked();
-
-      await page.evaluate(() => {
-        const form = document.querySelector('.footer-sign-up');
-        if (form) {
-          form.dispatchEvent(new Event('submit', { bubbles: true }));
+      if (smsOptin) {
+        const consentCheckbox = form.locator('.form-field #sms_optin');
+        await consentCheckbox.click({ force: true });
+        // wait for consent checkbox to be checked
+        await expect(consentCheckbox).toBeChecked();
+      }
+      await page.evaluate((nlForm) => {
+        if (nlForm) {
+          nlForm.dispatchEvent(new Event('submit', { bubbles: true }));
         }
       });
 
       console.log('✓ Newsletter subscription form is functional');
+    };
+
+    test('newsletter subscription should work in footer', async ({ page }) => {
+      await newsLetterSubscription(page, newsletterConfigs[0]);
+    });
+
+    test('newsletter subscription should work in footer with SMS', async ({ page }) => {
+      await newsLetterSubscription(page, newsletterConfigs[1]);
+    });
+
+    test('newsletter subscription should work in modal', async ({ page }) => {
+      await newsLetterSubscription(page, newsletterConfigs[2]);
+    });
+
+    test('newsletter subscription should work in modal with SMS', async ({ page }) => {
+      await newsLetterSubscription(page, newsletterConfigs[3]);
     });
   });
 });
