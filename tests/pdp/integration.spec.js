@@ -347,4 +347,57 @@ test.describe('PDP Integration Tests', () => {
       console.log('✓ Add to Cart button is functional');
     });
   });
+
+  test.describe('Newsletter Subscription', () => {
+    const productPath = '/us/en_us/products/20-ounce-travel-cup';
+
+    test('newsletter subscription should work', async ({ page }) => {
+      await page.route('**/bin/vitamix/newslettersubscription**', async (route) => {
+        const url = route.request().url();
+        const urlObj = new URL(url);
+
+        // Check the query parameters
+        expect(urlObj.searchParams.get('email')).toBe('test@test.com');
+        expect(urlObj.searchParams.get('mobile')).toBe('1234567890');
+        expect(urlObj.searchParams.get('sms_optin')).toBe('1');
+        expect(urlObj.searchParams.get('lead_source')).toBe('sub-emsms-footer-us');
+        expect(urlObj.searchParams.get('pageUrl')).toContain('/us/en_us/products/20-ounce-travel-cup');
+        expect(urlObj.searchParams.get('actionUrl')).toBe('/us/en_us/rest/V1/vitamix-api/newslettersubscribe');
+
+        console.log('✓ Newsletter subscription request intercepted with correct parameters');
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({ data: { message: 'Success' } }),
+        });
+      });
+
+      const productUrl = buildProductUrl(productPath, currentBranch);
+      await page.goto(productUrl);
+
+      // Wait for add to cart button
+      await waitForElement(page, '.footer-sign-up .form-field #email');
+
+      const emailInput = page.locator('.footer-sign-up .form-field #email');
+      await emailInput.fill('test@test.com');
+
+      const phoneInput = page.locator('.footer-sign-up .form-field #mobile');
+      await phoneInput.fill('1234567890');
+
+      const consentCheckbox = page.locator('.footer-sign-up fieldset label input[type="checkbox"]');
+      await consentCheckbox.click({ force: true });
+
+      // wait for consent checkbox to be checked
+      await expect(consentCheckbox).toBeChecked();
+
+      await page.evaluate(() => {
+        const form = document.querySelector('.footer-sign-up');
+        if (form) {
+          form.dispatchEvent(new Event('submit', { bubbles: true }));
+        }
+      });
+
+      console.log('✓ Newsletter subscription form is functional');
+    });
+  });
 });
