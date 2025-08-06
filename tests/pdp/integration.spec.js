@@ -97,7 +97,8 @@ test.describe('PDP Integration Tests', () => {
       // Click the add to cart button
       await addToCartButton.click();
 
-      await page.waitForTimeout(3000);
+      // wait for page to navigate to the cart page
+      await page.waitForURL('**/checkout/cart/**');
 
       // should redirect to the cart page
       const currentUrl = new URL(page.url());
@@ -204,7 +205,8 @@ test.describe('PDP Integration Tests', () => {
       // Click the add to cart button
       await addToCartButton.click();
 
-      await page.waitForTimeout(3000);
+      // wait for page to navigate to the cart page
+      await page.waitForURL('**/checkout/cart/**');
 
       // should redirect to the cart page
       const currentUrl = new URL(page.url());
@@ -259,7 +261,8 @@ test.describe('PDP Integration Tests', () => {
       await expect(addToCartButton).toContainText(/add to cart/i);
       await addToCartButton.click();
 
-      await page.waitForTimeout(3000);
+      // wait for page to navigate to the cart page
+      await page.waitForURL('**/checkout/cart/**');
 
       // should redirect to the cart page
       const currentUrl = new URL(page.url());
@@ -339,7 +342,8 @@ test.describe('PDP Integration Tests', () => {
       // Click the add to cart button
       await addToCartButton.click();
 
-      await page.waitForTimeout(3000);
+      // wait for page to navigate to the cart page
+      await page.waitForURL('**/checkout/cart/**');
 
       // should redirect to the cart page
       const currentUrl = new URL(page.url());
