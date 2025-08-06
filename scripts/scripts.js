@@ -44,6 +44,18 @@ export function getCookies() {
   return cookieMap;
 }
 
+function setDiscountCookie() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const cjData = urlParams.get('cjdata');
+  const cjEvent = urlParams.get('cjevent');
+  if (cjData) {
+    document.cookie = `discount_coupon_url_code=${cjData}; path=/`;
+  }
+  if (cjEvent) {
+    document.cookie = `discount_cjevent=${cjEvent}; path=/`;
+  }
+}
+
 /**
  * Replaces image icon with its SVG equivalent.
  * @param {HTMLImageElement} icon - Icon image element
@@ -654,6 +666,7 @@ export function decorateMain(main) {
   decorateButtons(main);
   decorateEyebrows(main);
   decorateDisclaimers(main);
+  setDiscountCookie();
 }
 
 /**
