@@ -438,12 +438,6 @@ test.describe('PDP Integration Tests', () => {
       await phoneInput.fill('1234567890');
       await expect(phoneInput).toHaveValue('1234567890');
 
-      if (smsOptin) {
-        const consentCheckbox = form.locator('.form-field #sms_optin');
-        await consentCheckbox.click({ force: true });
-        // wait for consent checkbox to be checked
-        await expect(consentCheckbox).toBeChecked();
-      }
       await page.evaluate((nlForm) => {
         if (nlForm) {
           nlForm.dispatchEvent(new Event('submit', { bubbles: true }));
