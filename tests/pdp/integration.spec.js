@@ -369,7 +369,7 @@ test.describe('PDP Integration Tests', () => {
       {
         modal: true,
         smsOptin: false,
-        leadSource: 'sub-em-footer-us',
+        leadSource: 'sub-em-modal-us',
         pageUrl: '/us/en_us/products/20-ounce-travel-cup',
       },
       {
@@ -395,7 +395,7 @@ test.describe('PDP Integration Tests', () => {
         // Check the query parameters
         expect(urlObj.searchParams.get('email')).toBe('test@test.com');
         expect(urlObj.searchParams.get('mobile')).toBe('1234567890');
-        expect(urlObj.searchParams.get('sms_optin')).toBe('1');
+        expect(urlObj.searchParams.get('sms_optin')).toBe(smsOptin ? '1' : '0');
         expect(urlObj.searchParams.get('lead_source')).toBe(leadSource);
         expect(urlObj.searchParams.get('pageUrl')).toContain(pageUrl);
         expect(urlObj.searchParams.get('actionUrl')).toBe('/us/en_us/rest/V1/vitamix-api/newslettersubscribe');
@@ -410,13 +410,6 @@ test.describe('PDP Integration Tests', () => {
 
       const productUrl = buildProductUrl(pageUrl, currentBranch);
       await page.goto(productUrl);
-
-      if (smsOptin) {
-        const consentCheckbox = page.locator('.footer-sign-up fieldset label input[type="checkbox"]');
-        await consentCheckbox.click({ force: true });
-        // wait for consent checkbox to be checked
-        await expect(consentCheckbox).toBeChecked();
-      }
 
       let form = page.locator('form.footer-sign-up');
 
@@ -443,11 +436,17 @@ test.describe('PDP Integration Tests', () => {
       await phoneInput.fill('1234567890');
       await expect(phoneInput).toHaveValue('1234567890');
 
-      await page.evaluate((nlForm) => {
-        if (nlForm) {
-          nlForm.dispatchEvent(new Event('submit', { bubbles: true }));
-        }
-      });
+      if (smsOptin) {
+        const consentCheckbox = form.locator('label input[type="checkbox"]');
+        await consentCheckbox.click({ force: true });
+        // wait for consent checkbox to be checked
+        await expect(consentCheckbox).toBeChecked();
+      }
+
+      const submitButton = form.locator('button[type="submit"]');
+      await submitButton.click();
+
+      await page.waitForTimeout(1000);
 
       console.log('✓ Newsletter subscription form is functional');
     };
