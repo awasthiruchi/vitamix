@@ -44,21 +44,18 @@ export function getCookies() {
   return cookieMap;
 }
 
-function setDiscountCookie() {
+function setAffiliateCoupon() {
   const urlParams = new URLSearchParams(window.location.search);
-  const cjData = urlParams.get('cjdata');
-  const cjEvent = urlParams.get('cjevent');
-  const coupon = urlParams.get('COUPON');
-  if (coupon) {
-    document.cookie = `discount_coupon_url_code=${coupon}; path=/`;
-    document.cookie = `ebs_sender_id_coupon=${coupon}; path=/`;
-  }
-  if (cjData) {
-    document.cookie = `cjConsent=${cjData}; path=/`;
-  }
-  if (cjEvent) {
-    document.cookie = `discount_cjevent=${cjEvent}; path=/`;
-  }
+  const { cjdata, cjevent, COUPON } = Object.fromEntries(urlParams);
+
+  if (!cjdata || !cjevent || !COUPON) return;
+
+  const loginUrl = new URL('https://www.vitamix.com/us/en_us/customer/account/login');
+  Object.entries({ cjdata, cjevent, COUPON }).forEach(([key, value]) => {
+    loginUrl.searchParams.set(key, value);
+  });
+
+  fetch(loginUrl.toString());
 }
 
 /**
@@ -671,7 +668,7 @@ export function decorateMain(main) {
   decorateButtons(main);
   decorateEyebrows(main);
   decorateDisclaimers(main);
-  setDiscountCookie();
+  setAffiliateCoupon();
 }
 
 /**
