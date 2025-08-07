@@ -421,6 +421,11 @@ test.describe('PDP Integration Tests', () => {
       let form = page.locator('form.footer-sign-up');
 
       if (modal) {
+        if (page.viewportSize().width < 600) {
+          const hamburgerMenu = page.locator('header .nav-hamburger button');
+          await hamburgerMenu.click();
+        }
+
         const signupButton = page.locator('header a[href$="/modals/sign-up"]');
         await signupButton.click();
 
