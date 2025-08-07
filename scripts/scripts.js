@@ -50,7 +50,7 @@ function setAffiliateCoupon() {
 
   if (!cjdata || !cjevent || !COUPON) return;
 
-  const loginUrl = new URL('https://www.vitamix.com/us/en_us/customer/account/login');
+  const loginUrl = new URL('https://www.vitamix.com/us/en_us/checkout/cart');
   Object.entries({ cjdata, cjevent, COUPON }).forEach(([key, value]) => {
     loginUrl.searchParams.set(key, value);
   });
