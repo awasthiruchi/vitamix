@@ -64,7 +64,7 @@ async function renderReviews(block, reviewsId) {
 
   setTimeout(async () => {
     await loadScript('https://apps.bazaarvoice.com/deployments/vitamix/main_site/production/en_US/bv.js');
-  }, 5000);
+  }, 500);
 
   window.bvCallback = () => { };
 
