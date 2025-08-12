@@ -138,7 +138,7 @@ function renderContent() {
 }
 
 function renderFreeShipping(offers) {
-  if (!offers[0] || offers[0].price < 99) return null;
+  if (!offers[0] || offers[0].price < 150) return null;
   const freeShippingContainer = document.createElement('div');
   freeShippingContainer.classList.add('pdp-free-shipping-container');
   freeShippingContainer.innerHTML = `
