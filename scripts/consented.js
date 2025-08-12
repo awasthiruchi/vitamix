@@ -51,7 +51,8 @@ gtag('config', 'G-XJB3SPQE38');
 
 loadScript('https://s-a.innovid.com/conversion/1hk0tl');
 loadScript('https://arttrk.com/pixel/?ad_log=referer&action=content&pixid=82dc3545-14a0-41d8-9870-2156059087d9');
-loadScript('https://cdn.evgnet.com/beacon/vitamixmgmtcorp/vitamix_us/scripts/evergage.min.js');
+// temporarily disabled until css is fixed
+// loadScript('https://cdn.evgnet.com/beacon/vitamixmgmtcorp/vitamix_us/scripts/evergage.min.js');
 
 loadScript('https://www.googletagmanager.com/gtag/js?id=DC-10418690');
 gtag('js', new Date());
