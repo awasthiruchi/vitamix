@@ -54,7 +54,10 @@ async function geoCode(address) {
   const resp = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=AIzaSyCPlws-m9FD9W0nP-WRR-5ldW2a4nh-t4E`);
   const json = await resp.json();
   const { results } = json;
-  return results[0]?.geometry?.location;
+  return {
+    location: results[0]?.geometry?.location,
+    country: results[0]?.address_components?.find((component) => component.types.includes('country'))?.short_name,
+  };
 }
 
 function findEventsResults(data, location) {
@@ -97,7 +100,7 @@ function findCommResults(data, location) {
   return { distributors, localRep };
 }
 
-function findHHResults(data, location) {
+function findHHResults(data, location, country) {
   // Retailers
   const filteredRetailers = data.filter(
     (item) => item.TYPE === 'RETAILERS' && haversineDistance(location.lat, location.lng, item.lat, item.lng) < MAX_DISTANCE,
@@ -115,7 +118,7 @@ function findHHResults(data, location) {
   );
 
   // Online
-  const online = data.filter((item) => item.TYPE === 'ONLINE');
+  const online = data.filter((item) => item.TYPE === 'ONLINE' && item.COUNTRY === country);
 
   return { retailers, distributors, online };
 }
@@ -457,11 +460,11 @@ export default function decorate(widget) {
     e.preventDefault();
     const formData = new FormData(form);
     const data = Object.fromEntries(formData);
-    const location = await geoCode(data.address);
+    const { location, country } = await geoCode(data.address);
 
     if (data.productType === 'HH') {
       if (location) {
-        const results = findHHResults(window.locatorData.HH, location);
+        const results = findHHResults(window.locatorData.HH, location, country);
         displayHHResults(results, location);
       } else {
         displayHHResults({});
