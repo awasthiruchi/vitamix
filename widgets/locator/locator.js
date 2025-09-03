@@ -146,6 +146,29 @@ function displayCommResults(results, location) {
     address.classList.add('locator-address');
     li.append(address);
 
+    // Phone number Added by Ruchi 
+    if (result.PHONE_NUMBER) {
+      const phoneWrapper = document.createElement('span');
+      phoneWrapper.classList.add('fs8');
+      const phoneLink = document.createElement('a');
+      phoneLink.href = `tel:${result.PHONE_NUMBER}`;
+      phoneLink.textContent = result.PHONE_NUMBER;
+      phoneWrapper.append(phoneLink);
+      li.append(phoneWrapper);
+    }
+    // Web address Added by Ruchi 
+    if (result.WEB_ADDRESS) {
+      const webWrapper = document.createElement('span');
+      webWrapper.classList.add('fs8');
+      const webLink = document.createElement('a');
+      webLink.href = result.WEB_ADDRESS;
+      webLink.target = '_blank';
+      webLink.rel = 'noopener noreferrer';
+      webLink.textContent = result.WEB_ADDRESS_LINK_TEXT || result.WEB_ADDRESS;
+      webWrapper.append(webLink);
+      li.append(webWrapper);
+    }
+    
     return li;
   };
 

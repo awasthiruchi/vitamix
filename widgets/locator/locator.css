@@ -123,7 +123,7 @@ main > .locator-container.section {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-100);
+  gap: var(--spacing-60);
   margin-bottom: var(--spacing-200);
   padding: var(--spacing-200);
   background-color: var(--color-white);
