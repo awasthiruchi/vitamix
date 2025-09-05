@@ -121,15 +121,22 @@ function renderCompare(custom) {
   return compareContainer;
 }
 
-function renderContent() {
+function renderContent(detailsContainer) {
   const contentContainer = document.createElement('div');
   contentContainer.classList.add('pdp-content-fragment');
   const fragmentPath = window.location.pathname.replace('/products/', '/products/fragments/');
   const insertFragment = async () => {
     const fragment = await loadFragment(fragmentPath);
     if (fragment) {
-      while (fragment.firstChild) {
-        contentContainer.append(fragment.firstChild);
+      const sections = [...fragment.querySelectorAll('main > div.section')];
+      while (sections.length > 0) {
+        const section = sections.shift();
+        if (section.querySelector('h3#features')) {
+          detailsContainer.innerHTML = '<h2>About</h2>';
+          detailsContainer.append(section);
+        } else {
+          contentContainer.append(section);
+        }
       }
     }
   };
@@ -275,7 +282,7 @@ export default function decorate(block) {
   const specsContainer = renderSpecs(specifications, custom, jsonLdData.name);
   specifications.remove();
 
-  const contentContainer = renderContent();
+  const contentContainer = renderContent(detailsContainer);
   const faqContainer = renderFAQ(block);
 
   renderReviews(block, reviewsId);
