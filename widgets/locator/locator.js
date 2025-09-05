@@ -172,7 +172,6 @@ function displayCommResults(results, location) {
       webWrapper.append(webLink);
       li.append(webWrapper);
     }
-    
     return li;
   };
 
