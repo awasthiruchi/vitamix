@@ -156,16 +156,17 @@ function displayCommResults(results, location) {
       phoneWrapper.append(phoneLink);
       li.append(phoneWrapper);
     }
-    // Web address 
+    // Web address
     if (result.WEB_ADDRESS) {
       const webWrapper = document.createElement('span');
       webWrapper.classList.add('locator-web');
       const webLink = document.createElement('a');
-      const address = result.WEB_ADDRESS.startsWith('http')
+
+      const webAddress = result.WEB_ADDRESS.startsWith('http')
         ? result.WEB_ADDRESS
         : `https://${result.WEB_ADDRESS}`;
 
-      webLink.href = address;
+      webLink.href = webAddress;
       webLink.target = '_blank';
       webLink.textContent = result.WEB_ADDRESS_LINK_TEXT || result.WEB_ADDRESS;
       webWrapper.append(webLink);
