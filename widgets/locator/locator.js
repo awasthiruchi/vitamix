@@ -146,24 +146,27 @@ function displayCommResults(results, location) {
     address.classList.add('locator-address');
     li.append(address);
 
-    // Phone number Added by Ruchi 
+    // Phone number
     if (result.PHONE_NUMBER) {
       const phoneWrapper = document.createElement('span');
-      phoneWrapper.classList.add('fs8');
+      phoneWrapper.classList.add('locator-phone');
       const phoneLink = document.createElement('a');
       phoneLink.href = `tel:${result.PHONE_NUMBER}`;
       phoneLink.textContent = result.PHONE_NUMBER;
       phoneWrapper.append(phoneLink);
       li.append(phoneWrapper);
     }
-    // Web address Added by Ruchi 
+    // Web address 
     if (result.WEB_ADDRESS) {
       const webWrapper = document.createElement('span');
-      webWrapper.classList.add('fs8');
+      webWrapper.classList.add('locator-web');
       const webLink = document.createElement('a');
-      webLink.href = result.WEB_ADDRESS;
+      const address = result.WEB_ADDRESS.startsWith('http')
+        ? result.WEB_ADDRESS
+        : `https://${result.WEB_ADDRESS}`;
+
+      webLink.href = address;
       webLink.target = '_blank';
-      webLink.rel = 'noopener noreferrer';
       webLink.textContent = result.WEB_ADDRESS_LINK_TEXT || result.WEB_ADDRESS;
       webWrapper.append(webLink);
       li.append(webWrapper);
