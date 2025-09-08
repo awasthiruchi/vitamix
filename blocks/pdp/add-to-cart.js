@@ -94,14 +94,11 @@ export function isVariantAvailableForSale(variant) {
 export default function renderAddToCart(block, parent) {
   // Default selectedVariant to parent product, if simple product, selectedVariant will be undefined
   // TODO: this should be fixed with https://github.com/aemsites/vitamix/issues/185
-  let selectedVariant = parent;
+  let selectedVariant = parent.offers?.[0]?.custom ? parent.offers[0] : parent;
   if (window.selectedVariant) {
     // If we actually have a selected variant, use it instead of the parent product
     const { sku: selectedSku } = window.selectedVariant;
     selectedVariant = parent.offers.find((variant) => variant.sku === selectedSku);
-  } else if (parent.offers?.[0]?.custom) {
-    // use first in stock variant if none selected
-    selectedVariant = parent.offers.find((variant) => isVariantAvailableForSale(variant));
   }
 
   // Only look at findLocally and findDealer from parent product
