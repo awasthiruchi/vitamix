@@ -40,7 +40,7 @@ export default function renderPricing(block, variant) {
     return null;
   }
 
-  pricingElement.remove();
+  if (!variant) pricingElement.remove();
 
   if (pricing.regular && pricing.regular > pricing.final) {
     const nowLabel = document.createElement('div');

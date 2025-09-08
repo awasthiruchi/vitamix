@@ -413,6 +413,9 @@ function buildAutoBlocks(main) {
     if (metaSku && !pdpBlock) {
       buildPDPBlock(main);
     }
+    if (metaSku || pdpBlock) {
+      document.body.classList.add('pdp-template');
+    }
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Auto Blocking failed', error);
