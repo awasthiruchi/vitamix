@@ -314,6 +314,10 @@ export default function decorate(block) {
     [window.selectedVariant] = variants;
   }
 
-  buyBox.dataset.sku = offers[0].sku;
-  buyBox.dataset.oos = checkOutOfStock(offers[0].sku);
+  buyBox.dataset.sku = window.selectedVariant?.sku || offers[0].sku;
+  buyBox.dataset.oos = checkOutOfStock(
+    window.selectedVariant
+      ? offers.find((offer) => offer.sku === window.selectedVariant.sku).sku
+      : offers[0].sku,
+  );
 }
