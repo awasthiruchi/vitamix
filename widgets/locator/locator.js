@@ -57,14 +57,13 @@ async function geoCode(address) {
   const r0 = results?.[0];
 
   const comps = r0?.address_components || [];
-  const findType = (t) => comps.find(c => Array.isArray(c.types) && c.types.includes(t));
-
+  const findType = (t) => comps.find((c) => Array.isArray(c.types) && c.types.includes(t));
   const countryComp = findType('country');
-  const admin1Comp  = findType('administrative_area_level_1');
+  const admin1Comp = findType('administrative_area_level_1');
   return {
     location: r0?.geometry?.location || null,
     country: countryComp ? {
-      short: countryComp.short_name,   
+      short: countryComp.short_name, 
       long: countryComp.long_name,
       type: 'country',
     } : null,
@@ -75,7 +74,6 @@ async function geoCode(address) {
     } : null,
   };
 }
-
 
 function findEventsResults(data, location) {
   // Household Events
@@ -107,15 +105,13 @@ function findCommResults(data, location, countryShort, regionShort) {
 
   // Local Representatives (country-based)
   const wantCountry = (countryShort || '').toUpperCase();
-  const wantRegion  = (regionShort || '').toUpperCase();
+  const wantRegion = (regionShort || '').toUpperCase();
 
    // Local Representatives (country + region match)
   const localRep = data.filter((item) => {
     if (item.TYPE !== 'LOCAL REP') return false;
-
     const itemCountry = String(item.COUNTRY || '').toUpperCase();
-    const itemRegion  = String(item.STATE_PROVINCE || item.STATE || item.PROVINCE || '').toUpperCase();
-
+    const itemRegion = String(item.STATE_PROVINCE || item.STATE || item.PROVINCE || '').toUpperCase();
     return itemCountry === wantCountry && itemRegion === wantRegion;
   });
 
@@ -216,12 +212,10 @@ function displayCommResults(results, location) {
     // address.textContent = addressQuery;
     // address.classList.add('locator-address');
     // li.append(address);
-   
     // Phone number
   if (result.PHONE_NUMBER) {
     const phoneWrapper = document.createElement('span');
     phoneWrapper.classList.add('locator-phone');
-
     const phoneLabel = document.createElement('strong');
     phoneLabel.textContent = 'Phone: ';
     phoneWrapper.append(phoneLabel);
