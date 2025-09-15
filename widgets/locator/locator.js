@@ -61,19 +61,18 @@ async function geoCode(address) {
 
   const countryComp = findType('country');
   const admin1Comp  = findType('administrative_area_level_1');
-
   return {
     location: r0?.geometry?.location || null,
     country: countryComp ? {
       short: countryComp.short_name,   
-      long:  countryComp.long_name,
-      type:  'country'
+      long: countryComp.long_name,
+      type: 'country',
     } : null,
     region: admin1Comp ? {
       short: admin1Comp.short_name,
-      long:  admin1Comp.long_name,
-      type:  'administrative_area_level_1'
-    } : null
+      long: admin1Comp.long_name,
+      type: 'administrative_area_level_1',
+    } : null,
   };
 }
 
