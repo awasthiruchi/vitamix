@@ -54,11 +54,29 @@ async function geoCode(address) {
   const resp = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=AIzaSyCPlws-m9FD9W0nP-WRR-5ldW2a4nh-t4E`);
   const json = await resp.json();
   const { results } = json;
+  const r0 = results?.[0];
+
+  const comps = r0?.address_components || [];
+  const findType = (t) => comps.find(c => Array.isArray(c.types) && c.types.includes(t));
+
+  const countryComp = findType('country');
+  const admin1Comp  = findType('administrative_area_level_1');
+
   return {
-    location: results[0]?.geometry?.location,
-    country: results[0]?.address_components?.find((component) => component.types.includes('country'))?.short_name,
+    location: r0?.geometry?.location || null,
+    country: countryComp ? {
+      short: countryComp.short_name,   
+      long:  countryComp.long_name,
+      type:  'country'
+    } : null,
+    region: admin1Comp ? {
+      short: admin1Comp.short_name,
+      long:  admin1Comp.long_name,
+      type:  'administrative_area_level_1'
+    } : null
   };
 }
+
 
 function findEventsResults(data, location) {
   // Household Events
@@ -78,7 +96,7 @@ function findEventsResults(data, location) {
   return { hhEvents, commEvents };
 }
 
-function findCommResults(data, location) {
+function findCommResults(data, location, countryShort, regionShort) {
   // Distributors
   const filteredDistributors = data.filter(
     (item) => item.TYPE === 'DEALER/DISTRIBUTOR' && haversineDistance(location.lat, location.lng, item.lat, item.lng) < MAX_DISTANCE,
@@ -88,14 +106,19 @@ function findCommResults(data, location) {
       - haversineDistance(location.lat, location.lng, b.lat, b.lng),
   );
 
-  // Local Representatives
-  const filteredLocalRep = data.filter(
-    (item) => item.TYPE === 'LOCAL REP' && haversineDistance(location.lat, location.lng, item.lat, item.lng) < MAX_DISTANCE,
-  );
-  const localRep = filteredLocalRep.sort(
-    (a, b) => haversineDistance(location.lat, location.lng, a.lat, a.lng)
-      - haversineDistance(location.lat, location.lng, b.lat, b.lng),
-  );
+  // Local Representatives (country-based)
+  const wantCountry = (countryShort || '').toUpperCase();
+  const wantRegion  = (regionShort || '').toUpperCase();
+
+   // Local Representatives (country + region match)
+  const localRep = data.filter((item) => {
+    if (item.TYPE !== 'LOCAL REP') return false;
+
+    const itemCountry = String(item.COUNTRY || '').toUpperCase();
+    const itemRegion  = String(item.STATE_PROVINCE || item.STATE || item.PROVINCE || '').toUpperCase();
+
+    return itemCountry === wantCountry && itemRegion === wantRegion;
+  });
 
   return { distributors, localRep };
 }
@@ -186,14 +209,53 @@ function displayCommResults(results, location) {
     distance.classList.add('locator-distance');
     li.append(distance);
 
-    const address = document.createElement('a');
-    const addressQuery = `${result.NAME} ${result.ADDRESS_1}, ${result.CITY}, ${result.STATE_PROVINCE} ${result.POSTAL_CODE}`;
-    address.href = `https://maps.google.com/?q=${encodeURIComponent(addressQuery)}`;
-    address.target = '_blank';
-    address.rel = 'noopener noreferrer';
-    address.textContent = addressQuery;
-    address.classList.add('locator-address');
-    li.append(address);
+    // const address = document.createElement('a');
+    // const addressQuery = `${result.NAME} ${result.ADDRESS_1}, ${result.CITY}, ${result.STATE_PROVINCE} ${result.POSTAL_CODE}`;
+    // address.href = `https://maps.google.com/?q=${encodeURIComponent(addressQuery)}`;
+    // address.target = '_blank';
+    // address.rel = 'noopener noreferrer';
+    // address.textContent = addressQuery;
+    // address.classList.add('locator-address');
+    // li.append(address);
+   
+    // Phone number
+  if (result.PHONE_NUMBER) {
+    const phoneWrapper = document.createElement('span');
+    phoneWrapper.classList.add('locator-phone');
+
+    const phoneLabel = document.createElement('strong');
+    phoneLabel.textContent = 'Phone: ';
+    phoneWrapper.append(phoneLabel);
+
+    const phoneLink = document.createElement('a');
+    phoneLink.href = `tel:${result.PHONE_NUMBER}`;
+    phoneLink.textContent = result.PHONE_NUMBER;
+    phoneWrapper.append(phoneLink);
+
+    li.append(phoneWrapper);
+  }
+
+  // Web address
+  if (result.WEB_ADDRESS) {
+    const webWrapper = document.createElement('span');
+    webWrapper.classList.add('locator-web');
+
+    const webLabel = document.createElement('strong');
+    webLabel.textContent = 'Website: ';
+    webWrapper.append(webLabel);
+
+    const webLink = document.createElement('a');
+    const webAddress = result.WEB_ADDRESS.startsWith('http')
+      ? result.WEB_ADDRESS
+      : `https://${result.WEB_ADDRESS}`;
+
+    webLink.href = webAddress;
+    webLink.target = '_blank';
+    webLink.textContent = result.WEB_ADDRESS_LINK_TEXT || result.WEB_ADDRESS;
+    webWrapper.append(webLink);
+
+    li.append(webWrapper);
+  }
 
     return li;
   };
@@ -486,11 +548,11 @@ export default function decorate(widget) {
     e.preventDefault();
     const formData = new FormData(form);
     const data = Object.fromEntries(formData);
-    const { location, country } = await geoCode(data.address);
+    const { location, country, region } = await geoCode(data.address);
 
     if (data.productType === 'HH') {
       if (location) {
-        const results = findHHResults(window.locatorData.HH, location, country);
+        const results = findHHResults(window.locatorData.HH, location, country?.short);
         displayHHResults(results, location);
       } else {
         displayHHResults({});
@@ -500,7 +562,7 @@ export default function decorate(widget) {
 
     if (data.productType === 'COMM') {
       if (location) {
-        const results = findCommResults(window.locatorData.COMM, location);
+        const results = findCommResults(window.locatorData.COMM, location, country?.short, region?.short);
         displayCommResults(results, location);
       } else {
         displayCommResults({});
