@@ -246,19 +246,17 @@ export function buildCarousel(container, pagination = true) {
             behavior: 'smooth',
           });
         }
-      } else { // Next button
-        if (current >= slides.length - visible) {
-          // Loop to the beginning
-          carousel.scrollTo({
-            left: 0,
-            behavior: 'smooth',
-          });
-        } else {
-          carousel.scrollBy({
-            left: slideWidth * visible,
-            behavior: 'smooth',
-          });
-        }
+      } else if (current >= slides.length - visible) {
+        // Loop to the beginning
+        carousel.scrollTo({
+          left: 0,
+          behavior: 'smooth',
+        });
+      } else {
+        carousel.scrollBy({
+          left: slideWidth * visible,
+          behavior: 'smooth',
+        });
       }
     });
     navEl.append(button);
