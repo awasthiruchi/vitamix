@@ -103,6 +103,8 @@ export default function renderAddToCart(block, parent) {
 
   // Only look at findLocally and findDealer from parent product
   const { findLocally, findDealer } = parent;
+  block.classList.remove('pdp-find-locally');
+  block.classList.remove('pdp-find-dealer');
 
   // Figure out if the selected variant is available for sale
   const isAvailableForSale = isVariantAvailableForSale(selectedVariant);
