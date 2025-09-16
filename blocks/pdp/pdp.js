@@ -245,7 +245,7 @@ function renderShare() {
   return shareContainer;
 }
 
-async function renderFreeGift(variants) {
+async function renderFreeGift(offers) {
   const fetchGifts = async () => {
     const resp = await fetch('/us/en_us/products/config/free-gifts.plain.html');
     if (!resp.ok) return null;
@@ -328,8 +328,7 @@ async function renderFreeGift(variants) {
     return today >= startDate && today <= endDate
       && price >= +gift.minPrice;
   });
-  const gift = findGift(gifts, variants[0].price.final);
-  console.log('gift', gift);
+  const gift = findGift(gifts, +offers[0].price);
   if (gift) {
     const freeGiftContainer = document.createElement('div');
     freeGiftContainer.classList.add('pdp-free-gift-container');
@@ -365,7 +364,7 @@ export default async function decorate(block) {
   const optionsContainer = renderOptions(block, variants, custom);
   const addToCartContainer = renderAddToCart(block, jsonLdData);
   const compareContainer = renderCompare(custom);
-  const freeGiftContainer = await renderFreeGift(variants);
+  const freeGiftContainer = await renderFreeGift(offers);
   const freeShippingContainer = renderFreeShipping(offers);
   const shareContainer = renderShare();
   buyBox.append(
