@@ -724,3 +724,45 @@ main .section > div.pdp-wrapper {
 .section.pdp-container {
   margin-top: var(--spacing-l);
 }
+
+.pdp-free-gift-container {
+  max-width: 32em;
+}
+
+.pdp-free-gift-heading {
+  font-size: var(--body-size-s);
+  font-weight: var(--weight-medium);
+  color: var(--color-text);
+}
+
+.pdp-free-gift-body {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-s);
+  position: relative;
+  border: 1.5px solid var(--color-deep-rust);
+  border-radius: 4px;
+  padding: var(--spacing-s);
+  padding-left: 1em;
+  margin-top: var(--spacing-s);
+}
+
+.pdp-free-gift-body img {
+  width: 3em;
+  height: 3em;
+  margin-right: var(--spacing-s);
+}
+
+.pdp-free-gift-body::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: -10px;
+  height: 20px;
+  width: 20px;
+  background-image: url('/blocks/pdp/check-mark-verify.avif');
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+}
