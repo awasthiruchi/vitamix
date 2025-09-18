@@ -267,7 +267,13 @@ main .section.banner.overlay::before {
   position: absolute;
   inset: 0;
   background-color: var(--color-white);
-  opacity: 0.35;
+  opacity: 0.2;
+  z-index: 1;
+}
+
+main .section.banner.overlay.dark::before {
+  background-color: var(--color-charcoal);
+  opacity: 0.6;
 }
 
 main > .section.banner > div {
