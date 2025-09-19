@@ -506,7 +506,7 @@
   display: flex;
   align-items: flex-end;
   position: relative;
-  min-height: 400px;
+  min-height: 260px;
 }
 
 .cards.overlay > ul > li::after {
