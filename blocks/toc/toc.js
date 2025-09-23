@@ -1,8 +1,10 @@
 export default function decorate(block) {
-  const h2s = document.querySelectorAll('h2');
+  const main = block.closest('main');
+  main.classList.add('toc-left');
+
+  // build table of contents
   const toc = document.createElement('ul');
-  toc.classList.add('toc');
-  block.appendChild(toc);
+  const h2s = main.querySelectorAll('.section:not(.toc-container) h2');
   h2s.forEach((h2) => {
     const li = document.createElement('li');
     const a = document.createElement('a');
@@ -11,14 +13,6 @@ export default function decorate(block) {
     li.appendChild(a);
     toc.appendChild(li);
   });
-  const main = block.closest('main');
-  const children = [...main.children];
-  const tocMainWrapper = document.createElement('div');
-  tocMainWrapper.classList.add('toc-main-wrapper');
-  children.forEach((child) => {
-    if (child.tagName === 'ASIDE') return;
-    tocMainWrapper.appendChild(child);
-  });
-  main.appendChild(tocMainWrapper);
-  main.classList.add('toc-left');
+
+  block.replaceChildren(toc);
 }
