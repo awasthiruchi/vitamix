@@ -510,6 +510,12 @@
   min-height: 260px;
 }
 
+@media (width >= 800px) {
+  .cards.overlay.tall > ul > li {
+    min-height: 420px;
+  }
+}
+
 .cards.overlay > ul > li::after {
   content: '';
   position: absolute;
