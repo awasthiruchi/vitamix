@@ -82,6 +82,20 @@ test.describe('PDP Integration Tests', () => {
         console.log('✓ Add to Cart function called with correct variables');
         await route.fulfill({
           status: 200,
+          body: JSON.stringify({
+            data: {
+              addProductsToCart: {
+                cart: {
+                  items: [
+                    {
+                      sku: 'Ascent X3',
+                      quantity: '1',
+                    },
+                  ],
+                },
+              },
+            },
+          }),
         });
       });
 
@@ -106,11 +120,77 @@ test.describe('PDP Integration Tests', () => {
       console.log('✓ Add to Cart button is functional');
     });
 
+    test.only('dialog should be shown if add to cart fails', async ({ page }) => {
+      await page.route('**/graphql', async (route) => {
+        const requestBody = route.request().postDataJSON();
+        expect(requestBody.variables).toEqual({
+          cartItems: [
+            {
+              sku: 'Ascent X3',
+              quantity: '1',
+              selected_options: [
+                'Y29uZmlndXJhYmxlLzkzLzUzNA==',
+                'Y3VzdG9tLW9wdGlvbi8zMDAyLzM5NDE=',
+              ],
+            },
+          ],
+        });
+
+        // Log the arguments that were passed to addToCart
+        console.log('✓ Add to Cart function called with correct variables');
+        await route.fulfill({
+          status: 200,
+          body: JSON.stringify({
+            data: {
+              addProductsToCart: {
+                cart: {
+                  id: 'oA7Idn8Om3ev2cAfUtBPfMypCtdnWz6F',
+                  items: [],
+                  prices: {
+                    subtotal_excluding_tax: {
+                      currency: 'USD',
+                      value: 0,
+                    },
+                  },
+                  total_quantity: 0,
+                },
+                user_errors: [
+                  {
+                    code: 'INSUFFICIENT_STOCK',
+                    message: 'The requested qty is not available',
+                  },
+                ],
+              },
+            },
+          }),
+        });
+      });
+
+      const productUrl = buildProductUrl(productPath, currentBranch);
+      await page.goto(productUrl);
+
+      // Wait for add to cart button
+      await waitForElement(page, '.quantity-container button');
+
+      const addToCartButton = page.locator('.quantity-container button');
+      await expect(addToCartButton).toContainText(/add to cart/i);
+
+      // Click the add to cart button
+      await addToCartButton.click();
+
+      await page.waitForTimeout(2000);
+
+      const element = page.locator('#atc-error');
+      await expect(element).toBeAttached();
+
+      console.log('✓ Error modal is shown on add to cart failure');
+    });
+
     test('add to cart button should work, with coupon, should use legacy atc', async ({ page }) => {
       await page.route('**/us/en_us/checkout/cart/add/**', async (route) => {
         // check that the correct uenc path segment exists
         const url = new URL(route.request().url());
-        expect(url.pathname).toContain('/us/en_us/checkout/cart/add/uenc/aHR0cHM6Ly9hdGMtdmFyaWFudC0tdml0YW1peC0tYWVtc2l0ZXMuYWVtLm5ldHdvcmsvdXMvZW5fdXMvcHJvZHVjdHMvYXNjZW50LXgz_Q09VUE9OPXRlc3QmbWFydGVjaD1vZmY=/product/3641/');
+        expect(url.pathname).toContain('/us/en_us/checkout/cart/add/uenc/aHR0cHM6Ly9hdGMtZXJyb3JzLS12aXRhbWl4LS1hZW1zaXRlcy5hZW0ubmV0d29yay91cy9lbl91cy9wcm9kdWN0cy9hc2NlbnQteDM=_Q09VUE9OPXRlc3QmbWFydGVjaD1vZmY=/product/3641/');
 
         const requestBody = route.request().postData();
         // requestBody is a multipart form data string
@@ -246,6 +326,20 @@ test.describe('PDP Integration Tests', () => {
         console.log('✓ Add to Cart function called with correct variables');
         await route.fulfill({
           status: 200,
+          body: JSON.stringify({
+            data: {
+              addProductsToCart: {
+                cart: {
+                  items: [
+                    {
+                      sku: 'VBND5200LB',
+                      quantity: '1',
+                    },
+                  ],
+                },
+              },
+            },
+          }),
         });
       });
 
@@ -274,7 +368,7 @@ test.describe('PDP Integration Tests', () => {
       await page.route('**/us/en_us/checkout/cart/add/**', async (route) => {
         // check that the correct uenc path segment exists
         const url = new URL(route.request().url());
-        expect(url.pathname).toEqual('/us/en_us/checkout/cart/add/uenc/aHR0cHM6Ly9hdGMtdmFyaWFudC0tdml0YW1peC0tYWVtc2l0ZXMuYWVtLm5ldHdvcmsvdXMvZW5fdXMvcHJvZHVjdHMvNTIwMC1sZWdhY3ktYnVuZGxl_bWFydGVjaD1vZmY=/product/3701/');
+        expect(url.pathname).toEqual('/us/en_us/checkout/cart/add/uenc/aHR0cHM6Ly9hdGMtZXJyb3JzLS12aXRhbWl4LS1hZW1zaXRlcy5hZW0ubmV0d29yay91cy9lbl91cy9wcm9kdWN0cy81MjAwLWxlZ2FjeS1idW5kbGU=_bWFydGVjaD1vZmY=/product/3701/');
 
         const requestBody = route.request().postData();
         // requestBody is a multipart form data string
@@ -393,6 +487,20 @@ test.describe('PDP Integration Tests', () => {
         console.log('✓ Add to Cart function called with correct variables');
         await route.fulfill({
           status: 200,
+          body: JSON.stringify({
+            data: {
+              addProductsToCart: {
+                cart: {
+                  items: [
+                    {
+                      sku: '056264',
+                      quantity: '1',
+                    },
+                  ],
+                },
+              },
+            },
+          }),
         });
       });
 
