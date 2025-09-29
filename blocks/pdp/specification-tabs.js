@@ -1,5 +1,7 @@
 import { createOptimizedPicture } from '../../scripts/aem.js';
 
+const NO_WARRANTY_PHRASE = 'this product does not include a warranty';
+
 /*
  * Creates the tab buttons for the specifications section.
  * @param {Array<{id: string, label: string}>} tabs - Array of tab objects with id and label.
@@ -223,7 +225,7 @@ export default function renderSpecs(specifications, custom, productName) {
   const standardWarranty = options?.find((option) => option.name.includes('Standard Warranty'));
   const tabs = [
     { id: 'specifications', label: 'Specifications', show: !!specifications },
-    { id: 'warranty', label: 'Warranty', show: !!custom.warranty },
+    { id: 'warranty', label: 'Warranty', show: !!custom.warranty && !custom.warranty.toLowerCase().includes(NO_WARRANTY_PHRASE) },
     { id: 'resources', label: 'Resources', show: true },
   ].filter((tab) => tab.show);
 
