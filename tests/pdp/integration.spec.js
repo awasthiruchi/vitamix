@@ -120,7 +120,7 @@ test.describe('PDP Integration Tests', () => {
       console.log('✓ Add to Cart button is functional');
     });
 
-    test.only('dialog should be shown if add to cart fails', async ({ page }) => {
+    test('dialog should be shown if add to cart fails', async ({ page }) => {
       await page.route('**/graphql', async (route) => {
         const requestBody = route.request().postDataJSON();
         expect(requestBody.variables).toEqual({
