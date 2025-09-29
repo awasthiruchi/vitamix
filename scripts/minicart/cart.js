@@ -8,7 +8,7 @@ import {
   updateMagentoCacheSections,
 } from '../storage/util.js';
 import { getCartFromLocalStorage } from './util.js';
-import { openModal } from '../scripts.js';
+import { getLocaleAndLanguage, openModal } from '../scripts.js';
 
 /* Queries */
 const cartQueryFragment = `fragment cartQuery on Cart {
@@ -399,6 +399,9 @@ async function addToCartLegacy(sku, options, quantity) {
   });
   if (!resp.ok) {
     console.error('Failed to add item to cart', resp);
+    // Generic error modal
+    const { locale, language } = await getLocaleAndLanguage();
+    await openModal(`/${locale}/${language}/products/modals/atc-error`);
     throw new Error('Failed to add item to cart');
   }
   return resp;
@@ -436,9 +439,7 @@ export async function addToCart(sku, options, quantity) {
 
       const { cart, user_errors: userErrors } = data.addProductsToCart;
       if (userErrors && userErrors.length > 0) {
-        const pathSegments = window.location.pathname.split('/').filter(Boolean);
-        const locale = pathSegments[0] || 'us'; // fallback to 'us' if not found
-        const language = pathSegments[1] || 'en_us'; // fallback to 'en_us' if not found
+        const { locale, language } = await getLocaleAndLanguage();
 
         console.error('User errors while adding item to cart', userErrors);
         const { code } = userErrors[0];
