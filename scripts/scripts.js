@@ -624,6 +624,15 @@ function decorateSectionAnchors(main) {
 }
 
 /**
+ * Opens a modal dialog.
+ * @param {string} href - The href of the modal to open.
+ */
+export async function openModal(href) {
+  const { openModal: openModalFn } = await import(`${window.hlx.codeBasePath}/blocks/modal/modal.js`);
+  openModalFn(href);
+}
+
+/**
  * Automatically loads and opens modal dialogs.
  * @param {Document|HTMLElement} doc - Document or container to attach the event listener to.
  */
@@ -632,8 +641,7 @@ function autolinkModals(doc) {
     const origin = e.target.closest('a[href]');
     if (origin && origin.href && origin.href.includes('/modals/')) {
       e.preventDefault();
-      const { openModal } = await import(`${window.hlx.codeBasePath}/blocks/modal/modal.js`);
-      openModal(origin.href);
+      await openModal(origin.href);
     }
   });
 }

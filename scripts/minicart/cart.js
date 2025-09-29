@@ -8,6 +8,7 @@ import {
   updateMagentoCacheSections,
 } from '../storage/util.js';
 import { getCartFromLocalStorage } from './util.js';
+import { openModal } from '../scripts.js';
 
 /* Queries */
 const cartQueryFragment = `fragment cartQuery on Cart {
@@ -158,7 +159,20 @@ export async function performMonolithGraphQLQuery(query, variables, GET = true, 
   }
 
   if (!response.ok) {
-    return null;
+    // Return a dummy response for error cases where graphql is not available
+    return {
+      data: {
+        addProductsToCart: {
+          cart: {},
+          user_errors: [
+            {
+              code: 'UNABLE_TO_ADD_TO_CART',
+              message: 'Unable to add item to cart.',
+            },
+          ],
+        },
+      },
+    };
   }
 
   return response.json();
@@ -422,7 +436,21 @@ export async function addToCart(sku, options, quantity) {
 
       const { cart, user_errors: userErrors } = data.addProductsToCart;
       if (userErrors && userErrors.length > 0) {
+        const pathSegments = window.location.pathname.split('/').filter(Boolean);
+        const locale = pathSegments[0] || 'us'; // fallback to 'us' if not found
+        const language = pathSegments[1] || 'en_us'; // fallback to 'en_us' if not found
+
         console.error('User errors while adding item to cart', userErrors);
+        const { code } = userErrors[0];
+        if (code === 'NOT_SALABLE') {
+          await openModal(`/${locale}/${language}/products/modals/atc-not-available`);
+        } else if (code === 'INSUFFICIENT_STOCK') {
+          await openModal(`/${locale}/${language}/products/modals/atc-out-of-stock`);
+        } else {
+          // Generic error modal
+          await openModal(`/${locale}/${language}/products/modals/atc-error`);
+        }
+        throw new Error('Failed to add item to cart');
       }
 
       cart.items = cart.items.filter((item) => item);
@@ -441,8 +469,6 @@ export async function addToCart(sku, options, quantity) {
       console.debug('Added items to cart', variables, cart);
     }
     await store.updateCart();
-  } catch (err) {
-    console.error('Could not add item to cart', err);
   } finally {
     done();
   }

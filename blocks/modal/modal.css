@@ -250,8 +250,9 @@ body.modal-open {
   }
 }
 
-/* add to comparsion list modal */
-.modal#compare dialog {
+/* add to comparsion list modal and add to car (atc) */
+.modal#compare dialog,
+.modal#atc-error dialog {
   max-width: 450px;
   background-color: var(--color-background);
   color: var(--color-gray-900);
@@ -261,30 +262,37 @@ body.modal-open {
   box-shadow: var(--shadow-default);
 }
 
-.modal#compare dialog::backdrop {
+.modal#compare dialog::backdrop,
+.modal#atc-error dialog::backdrop {
   background-color: var(--overlay-lighter);
 }
 
-.modal#compare dialog .close-button {
+.modal#compare dialog .close-button,
+.modal#atc-error dialog .close-button {
   background-color: var(--color-charcoal);
   border-radius: 50%;
   border: 12px solid var(--color-background);
 }
 
 .modal#compare .close-button .icon.icon-close::before,
-.modal#compare .close-button .icon.icon-close::after {
+.modal#compare .close-button .icon.icon-close::after,
+.modal#atc-error .close-button .icon.icon-close::before,
+.modal#atc-error .close-button .icon.icon-close::after {
   width: 16px;
 }
 
-.modal#compare dialog .product {
+.modal#compare dialog .product,
+.modal#atc-error dialog .product {
   font-size: var(--body-size-m);
 }
 
-.modal#compare dialog .button-wrapper {
+.modal#compare dialog .button-wrapper,
+.modal#atc-error dialog .button-wrapper {
   justify-content: center;
 }
 
-.modal#compare dialog .button {
+.modal#compare dialog .button,
+.modal#atc-error dialog .button {
   border: 0;
   padding: 0;
   background-color: transparent;
@@ -294,7 +302,8 @@ body.modal-open {
 }
 
 @media (width >= 900px) {
-  .modal#compare dialog .modal-content {
+  .modal#compare dialog .modal-content,
+  .modal#atc-error dialog .modal-content {
     margin-bottom: 44px;
   }
 }
