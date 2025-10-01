@@ -227,7 +227,7 @@
   order: unset;
 }
 
-.banner.aligned .img-wrapper::before {
+.banner.aligned:not(.no-overlay) .img-wrapper::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -260,12 +260,12 @@
     font-size: var(--font-size-800);
   }
 
-  .banner.aligned.left-text .img-wrapper::before {
+  .banner.aligned.left-text:not(.no-overlay) .img-wrapper::before {
     background: linear-gradient(to right, transparent, var(--color-charcoal));
     opacity: 0.8;
   }
 
-  .banner.aligned.right-text .img-wrapper::before {
+  .banner.aligned.right-text:not(.no-overlay) .img-wrapper::before {
     background: linear-gradient(to right, var(--color-charcoal), transparent);
     opacity: 0.8;
   }
