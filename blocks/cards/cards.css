@@ -507,7 +507,6 @@
   display: flex;
   align-items: flex-end;
   position: relative;
-  min-height: 260px;
 }
 
 @media (width >= 800px) {
@@ -573,8 +572,7 @@
   }
 
   .cards.overlay > ul > li .card-body {
-    padding: var(--spacing-200);
-    padding-bottom: var(--spacing-600);
+    padding: var(--spacing-200) var(--horizontal-spacing);
   }
 }
 
