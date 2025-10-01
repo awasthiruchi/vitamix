@@ -61,7 +61,7 @@ export default function renderPricing(block, variant) {
     const savingsAmount = pricing.regular - pricing.final;
     const saveText = document.createElement('span');
     saveText.className = 'pricing-save';
-    saveText.textContent = `Save $${savingsAmount.toFixed(2)} | `;
+    saveText.textContent = `Save $${savingsAmount.toFixed(2)} | Was `;
 
     const regularPrice = document.createElement('del');
     regularPrice.className = 'pricing-regular';
