@@ -266,8 +266,6 @@ main .section.banner.overlay::before {
   content: '';
   position: absolute;
   inset: 0;
-  background-color: var(--color-white);
-  opacity: 0.2;
   z-index: 1;
 }
 
