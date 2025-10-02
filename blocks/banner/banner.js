@@ -10,8 +10,8 @@ export default function decorate(block) {
     const y = Math.floor(r * 0.2126 + g * 0.7152 + b * 0.0722);
     const brightness = {
       dark: 80,
-      kindaDark: 160,
-      kindaLight: 200,
+      'kinda-dark': 160,
+      'kinda-light': 200,
       light: 256,
     };
     const brightnessKey = Object.keys(brightness).find((key) => y <= brightness[key]);
