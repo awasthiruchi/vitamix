@@ -507,12 +507,12 @@
   display: flex;
   align-items: flex-end;
   position: relative;
+  min-width: 0;
+  max-width: 100%;
 }
 
-@media (width >= 800px) {
-  .cards.overlay.tall > ul > li {
-    min-height: 420px;
-  }
+.cards.overlay.tall > ul > li {
+  aspect-ratio: 4 / 3;
 }
 
 .cards.overlay > ul > li::after {
