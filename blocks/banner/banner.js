@@ -1,7 +1,7 @@
 import { buildVideo } from '../../scripts/scripts.js';
 import ColorThief from './colorthief.js';
 
-export default function decorate(block) { 
+export default function decorate(block) {
   const colorThief = new ColorThief();
 
   const applyBrightness = (img) => {
@@ -15,8 +15,8 @@ export default function decorate(block) {
       light: 256,
     };
     const brightnessKey = Object.keys(brightness).find((key) => y <= brightness[key]);
-    console.log(brightnessKey);
-    console.log(`%c #${r.toString(16)}${g.toString(16)}${b.toString(16)}`, `background-color: #${r.toString(16)}${g.toString(16)}${b.toString(16)}; color: ${y > 160 ? 'black' : 'white'};`);
+    block.classList.add(brightnessKey);
+    block.style.setProperty('--overlay-color', `#${r.toString(16)}${g.toString(16)}${b.toString(16)}`);
   };
 
   [...block.querySelectorAll('div img, div svg')].forEach((img) => {
