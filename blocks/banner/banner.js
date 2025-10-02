@@ -1,8 +1,24 @@
 import { buildVideo } from '../../scripts/scripts.js';
+import ColorThief from './colorthief.js';
 
 export default function decorate(block) {
   [...block.querySelectorAll('div img, div svg')].forEach((img) => {
     const closestBlock = img.closest('.block');
+    const colorThief = new ColorThief();
+    img.addEventListener('load', () => {
+      const color = colorThief.getColor(img, 5, 10);
+      const [r, g, b] = color;
+      const y = Math.floor(r * 0.2126 + g * 0.7152 + b * 0.0722);
+      const brightness = {
+        dark: 80,
+        kindaDark: 160,
+        kindaLight: 200,
+        light: 256,
+      };
+      const brightnessKey = Object.keys(brightness).find((key) => y <= brightness[key]);
+      console.log(brightnessKey);
+      console.log(`%c #${r.toString(16)}${g.toString(16)}${b.toString(16)}`, `background-color: #${r.toString(16)}${g.toString(16)}${b.toString(16)}; color: ${y > 160 ? 'black' : 'white'};`);
+    });
     if (closestBlock !== block) return; // skip nested blocks
     const wrapper = img.closest('div');
     if (wrapper.children.length === 1) wrapper.className = 'img-wrapper';
