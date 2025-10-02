@@ -223,7 +223,7 @@ main .section.dark {
 }
 
 main .section.dark .eyebrow,
-main .section.dark a:any-link {
+main .section.dark a:any-link:not(.button) {
   color: var(--color-gray-500);
 }
 
