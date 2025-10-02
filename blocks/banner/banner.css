@@ -227,11 +227,11 @@
   order: unset;
 }
 
-.banner.aligned:not(.no-overlay) .img-wrapper::before {
+.banner.aligned .img-wrapper::before {
   content: '';
   position: absolute;
   inset: 0;
-  background-color: var(--overlay-charcoal);
+  background-color: transparent;
 }
 
 .banner.aligned .img-wrapper img {
@@ -260,14 +260,39 @@
     font-size: var(--font-size-800);
   }
 
-  .banner.aligned.left-text:not(.no-overlay) .img-wrapper::before {
-    background: linear-gradient(to right, transparent, var(--color-charcoal));
-    opacity: 0.8;
+  .banner.aligned.dark {
+    --overlay-opacity: 0;
   }
 
-  .banner.aligned.right-text:not(.no-overlay) .img-wrapper::before {
-    background: linear-gradient(to right, var(--color-charcoal), transparent);
-    opacity: 0.8;
+  .banner.aligned.kinda-dark {
+    --overlay-opacity: 0.8;
+  }
+
+  .banner.aligned.kinda-light {
+    --overlay-opacity: 0.2;
+  
+    color: var(--color-charcoal);
+  }
+
+  .banner.aligned.light {
+    --overlay-opacity: 0;
+    
+    color: var(--color-charcoal);
+  }
+
+  .banner.aligned.kinda-light h2,
+  .banner.aligned.light h2 {
+    color: var(--color-charcoal);
+  }
+
+  .banner.aligned.left-text .img-wrapper::before {
+    background: linear-gradient(to right, transparent, var(--overlay-color));
+    opacity: var(--overlay-opacity);
+  }
+
+  .banner.aligned.right-text .img-wrapper::before {
+    background: linear-gradient(to right, var(--overlay-color), transparent);
+    opacity: var(--overlay-opacity);
   }
 
   .banner.aligned .img-wrapper img {
