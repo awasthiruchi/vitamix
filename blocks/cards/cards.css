@@ -505,7 +505,7 @@
 
 .cards.overlay > ul > li {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   position: relative;
   min-width: 0;
   max-width: 100%;
@@ -519,12 +519,12 @@
   content: '';
   position: absolute;
   inset: 0;
-  background-color: var(--shadow-300);
+  background-color: var(--shadow-200);
   transition: background 0.3s;
 }
 
 .cards.overlay > ul > li.card-click:hover::after {
-  background-color: var(--shadow-400);
+  background-color: var(--shadow-300);
 }
 
 .cards.overlay > ul > li.card-click a::after {
