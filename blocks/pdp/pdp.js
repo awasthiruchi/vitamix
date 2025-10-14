@@ -131,9 +131,13 @@ function renderContent(detailsContainer) {
       const sections = [...fragment.querySelectorAll('main > div.section')];
       while (sections.length > 0) {
         const section = sections.shift();
-        if (section.querySelector('h3#features')) {
-          detailsContainer.innerHTML = '<h2>About</h2>';
-          detailsContainer.append(section);
+        const h3 = section.querySelector('h3')?.textContent.toLowerCase();
+        if (h3) {
+          // Only include features for now, ignore all other sections with an h3
+          if (h3.includes('features')) {
+            detailsContainer.innerHTML = '<h2>About</h2>';
+            detailsContainer.append(section);
+          }
         } else {
           contentContainer.append(section);
         }
