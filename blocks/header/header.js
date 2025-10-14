@@ -297,6 +297,9 @@ export default async function decorate(block) {
   const navMeta = getMetadata('nav');
   const navPath = navMeta ? new URL(navMeta, window.location).pathname : '/nav';
   const fragment = await loadFragment(navPath);
+  if (fragment.querySelector('.icon-logo-commercial')) {
+    block.closest('header').classList.add('header-commercial');
+  }
   rewriteLinks(fragment);
 
   // decorate nav DOM
