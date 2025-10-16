@@ -1,7 +1,5 @@
 import { createOptimizedPicture } from '../../scripts/aem.js';
 
-const NO_WARRANTY_PHRASE = 'this product does not include a warranty';
-
 /*
  * Creates the tab buttons for the specifications section.
  * @param {Array<{id: string, label: string}>} tabs - Array of tab objects with id and label.
