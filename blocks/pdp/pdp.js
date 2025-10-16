@@ -126,8 +126,9 @@ function renderContent(block) {
   const { custom } = jsonLdData;
 
   block.querySelectorAll(':scope > div')?.forEach((div) => {
-    // check if div has a class defined
-    if (div.classList.length === 0) {
+    // Temporary fix to remove divs that don't have a class
+    // or the specifications block in initial html
+    if (div.classList.length === 0 || div.classList.contains('specifications')) {
       div.remove();
     }
   });
