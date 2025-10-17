@@ -897,7 +897,14 @@ async function loadNavBanner(main) {
  * @param {Element} doc The container element
  */
 async function loadEager(doc) {
-  document.documentElement.lang = 'en';
+  const language = window.location.pathname.split('/')[2] || 'en';
+  document.documentElement.lang = language;
+
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('simulateDate')) {
+    window.simulateDate = params.get('simulateDate');
+  }
+
   decorateTemplateAndTheme();
 
   const main = doc.querySelector('main');
