@@ -421,12 +421,21 @@
   color: var(--color-white);
 }
 
+.banner.split.square > div {
+  align-items: center;
+}
+
 .banner.split.deep-rust > div {
   background-color: var(--color-deep-rust);
 }
 
 .banner.split.charcoal > div {
   background-color: var(--color-charcoal);
+}
+
+.banner.split.transparent > div {
+  background-color: transparent;
+  color: var(--color-charcoal);
 }
 
 .banner.split.text-center > div {
@@ -453,6 +462,11 @@
 .banner.split .img-wrapper {
   width: 100%;
   max-height: 50dvh;
+}
+
+.banner.split.square .img-wrapper {
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
 }
 
 .banner.split .img-wrapper img {
