@@ -3,40 +3,29 @@ import { fetchPlaceholders, readBlockConfig, toClassName } from '../../scripts/a
 export async function lookupProducts(config, facets = {}) {
   /* load index */
   if (!window.productIndex) {
-    const resp = await fetch('/drafts/uncled/blenders.json');
+    const resp = await fetch('/us/en_us/products/index.json');
     const json = await resp.json();
     const populateIndex = async (data) => {
-      for (let i = 0; i < data.length; i += 1) {
-        const row = data[i];
+      const topLevelProducts = data.filter((row) => !row.parentSku && row.title && row.price);
+      for (let i = 0; i < topLevelProducts.length; i += 1) {
+        const row = topLevelProducts[i];
+        const children = data.filter((child) => child.parentSku === row.sku);
+        const colors = children.map((child) => child.color);
         try {
-          const url = new URL(row.URL);
-          row.path = url.pathname.replace('/shop/blenders/', '/products/');
-          // eslint-disable-next-line no-await-in-loop
-          const productResp = await fetch(row.path);
-          // eslint-disable-next-line no-await-in-loop
-          const productHTML = await productResp.text();
-          const dom = new DOMParser().parseFromString(productHTML, 'text/html');
-          const jsonLD = dom.querySelector('script[type="application/ld+json"]');
-          const jsonLDData = JSON.parse(jsonLD.textContent);
-          row.title = jsonLDData.name;
-          row.price = jsonLDData.offers[0].price;
-          row.colors = jsonLDData.offers.map((offer) => (offer.options[0] ? offer.options[0].value : '')).join(',');
-          row.image = jsonLDData.offers[0].image
-            ? jsonLDData.offers[0].image[0] : jsonLDData.image[0];
-          row.description = jsonLDData.description;
-          row.series = jsonLDData.custom.collection;
+          row.path = `/us/en_us/products/${row.urlKey}`;
+          row.colors = colors.join(',');
           row.category = 'Blenders';
+          row.image = new URL(row.image, new URL(row.path, window.location.href)).toString();
         } catch (error) {
           // eslint-disable-next-line no-console
           console.error(error, row.path);
         }
       }
-      return data;
+      return topLevelProducts;
     };
-    const products = json.data;
-    json.data = await populateIndex(products);
+    const products = await populateIndex(json.data);
     const lookup = {};
-    json.data.forEach((row) => {
+    products.forEach((row) => {
       lookup[row.path] = row;
     });
     window.productIndex = { data: json.data, lookup };
