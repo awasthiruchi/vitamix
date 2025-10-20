@@ -38,13 +38,13 @@ function renderTitle(block, custom, reviewsId) {
 
 /**
  * Renders the details section of the PDP block.
- * @param {Element} block - The PDP block element
+ * @param {Element} features - The features element from the fragment
  * @returns {Element} The details container element
  */
-function renderDetails(block) {
+function renderDetails(features) {
   const detailsContainer = document.createElement('div');
   detailsContainer.classList.add('details');
-  detailsContainer.append(...block.children);
+  detailsContainer.append(...features.children);
   const h2 = document.createElement('h2');
   h2.textContent = 'About';
   detailsContainer.prepend(h2);
@@ -121,31 +121,53 @@ function renderCompare(custom) {
   return compareContainer;
 }
 
-function renderContent(detailsContainer) {
-  const contentContainer = document.createElement('div');
-  contentContainer.classList.add('pdp-content-fragment');
+function renderContent(block) {
+  const { jsonLdData } = window;
+  const { custom } = jsonLdData;
+
+  block.querySelectorAll(':scope > div')?.forEach((div) => {
+    // Temporary fix to remove divs that don't have a class
+    // or the specifications block in initial html
+    if (div.classList.length === 0 || div.classList.contains('specifications')) {
+      div.remove();
+    }
+  });
+
+  const { features } = window;
+  if (features) {
+    const detailsContainer = renderDetails(features);
+    block.append(detailsContainer);
+  }
+
+  const { specifications } = window;
+  if (specifications) {
+    const specsContainer = renderSpecs(specifications, custom, jsonLdData.name);
+    block.append(specsContainer);
+  }
+}
+
+async function fetchFragment(block) {
   const fragmentPath = window.location.pathname.replace('/products/', '/products/fragments/');
-  const insertFragment = async () => {
-    const fragment = await loadFragment(fragmentPath);
-    if (fragment) {
-      const sections = [...fragment.querySelectorAll('main > div.section')];
-      while (sections.length > 0) {
-        const section = sections.shift();
-        const h3 = section.querySelector('h3')?.textContent.toLowerCase();
-        if (h3) {
-          // Only include features for now, ignore all other sections with an h3
-          if (h3.includes('features')) {
-            detailsContainer.innerHTML = '<h2>About</h2>';
-            detailsContainer.append(section);
-          }
-        } else {
-          contentContainer.append(section);
+  const fragment = await loadFragment(fragmentPath);
+  if (fragment) {
+    const sections = [...fragment.querySelectorAll('main > div.section')];
+    while (sections.length > 0) {
+      const section = sections.shift();
+      const h3 = section.querySelector('h3')?.textContent.toLowerCase();
+      if (h3) {
+        // Only include features for now, ignore all other sections with an h3
+        if (h3.includes('features')) {
+          window.features = section;
+        } else if (h3.includes('specifications')) {
+          window.specifications = section;
+        } else if (h3.includes('warranty')) {
+          window.warranty = section;
         }
       }
     }
-  };
-  insertFragment();
-  return contentContainer;
+  }
+
+  renderContent(block);
 }
 
 function renderFreeShipping(offers) {
@@ -387,30 +409,17 @@ export default async function decorate(block) {
     shareContainer,
   );
 
-  const detailsContainer = renderDetails(block);
-  const specifications = detailsContainer.querySelector('.specifications');
-  const specsContainer = renderSpecs(specifications, custom, jsonLdData.name);
-  specifications.remove();
-
-  const contentContainer = renderContent(detailsContainer);
   const faqContainer = renderFAQ(block);
 
-  renderReviews(block, reviewsId);
+  fetchFragment(block);
 
-  /* remove buttons styling from details */
-  detailsContainer.querySelectorAll('.button').forEach((button) => {
-    button.classList.remove('button');
-    button.parentElement.classList.remove('button-wrapper');
-  });
+  renderReviews(block, reviewsId);
 
   block.append(
     alertContainer || '',
     titleContainer,
     galleryContainer,
     buyBox,
-    contentContainer,
-    detailsContainer,
-    specsContainer,
     faqContainer,
     relatedProductsContainer || '',
   );
