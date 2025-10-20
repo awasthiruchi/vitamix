@@ -126,6 +126,10 @@
   color: var(--color-text);
 }
 
+[data-oos="true"] .options .warranty {
+  display: none;
+}
+
 .add-to-cart {
   display: flex;
   flex-direction: column;
@@ -224,6 +228,10 @@ a.button.pdp-find-locally-button {
   font-family: var(--body-font-family);
   font-size: var(--heading-size-xs);
   font-weight: var(--weight-medium);
+}
+
+.details h3 {
+  font-size: var(--heading-size-s);
 }
 
 .details p, .details li {
@@ -382,10 +390,22 @@ a.button.pdp-find-locally-button {
   .pdp {
     padding-top: var(--spacing-xl);
     grid-template-columns: 2fr 3fr;
-    grid-template-rows: fit-content(30px) auto auto auto auto auto;
+    grid-template-rows: fit-content(30px) min-content 1fr auto auto auto auto auto;
     /* stylelint-disable-next-line declaration-block-no-redundant-longhand-properties */
     grid-template-areas:
       "alert gallery"
+      "title gallery"
+      "buy-box gallery"
+      "content content"
+      "details specs"
+      "faq faq"
+      "related related"
+      "reviews reviews"
+  }
+
+  .pdp[data-alert="false"] {
+    grid-template-rows: min-content 1fr auto auto auto auto auto;
+    grid-template-areas:
       "title gallery"
       "buy-box gallery"
       "content content"
@@ -550,16 +570,13 @@ a.button.pdp-find-locally-button {
   color: var(--color-white);
   font-weight: var(--weight-medium);
   text-align: center;
+  padding: var(--spacing-80) 0;
 }
 
 .pdp-alert.pdp-promo-alert {
   background-color: var(--color-xanadu);
-}
-
-.pdp-alert.pdp-promo-alert p {
   color: var(--color-white);
 }
-
 
 .pdp-related-products-container {
   grid-area: related;
@@ -610,7 +627,7 @@ a.button.pdp-find-locally-button {
   object-fit: contain;
 }
 
-.pdp-warrenty-option {
+.pdp-warranty-option {
   display: flex;
   align-items: center;
   gap: var(--spacing-s);
@@ -620,7 +637,7 @@ a.button.pdp-find-locally-button {
   color: var(--color-text);
 }
 
-.pdp-warrenty-option input {
+.pdp-warranty-option input {
   height: 24px;
   width: 24px;
   margin: 0;
@@ -664,4 +681,46 @@ main .section > div.pdp-wrapper {
 
 .section.pdp-container {
   margin-top: var(--spacing-l);
+}
+
+.pdp-free-gift-container {
+  max-width: 32em;
+}
+
+.pdp-free-gift-heading {
+  font-size: var(--body-size-s);
+  font-weight: var(--weight-medium);
+  color: var(--color-text);
+}
+
+.pdp-free-gift-body {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-s);
+  position: relative;
+  border: 1.5px solid var(--color-deep-rust);
+  border-radius: 4px;
+  padding: var(--spacing-s);
+  padding-left: 1em;
+  margin-top: var(--spacing-s);
+}
+
+.pdp-free-gift-body img {
+  width: 3em;
+  height: 3em;
+  margin-right: var(--spacing-s);
+}
+
+.pdp-free-gift-body::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: -10px;
+  height: 20px;
+  width: 20px;
+  background-image: url('/blocks/pdp/free-gift-icon.png');
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
 }
