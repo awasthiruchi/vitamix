@@ -366,7 +366,7 @@ main .plp-product-card p {
     position: relative;
   }
   
-  .plp-color-swatch-oos.pdp-color-inner::after {
+  .plp-color-swatch-oos.plp-color-inner::after {
     content: '';
     position: absolute;
     top: 0;

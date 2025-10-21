@@ -19,23 +19,25 @@ export async function lookupProducts(config, facets = {}) {
     });
 
     const populateIndex = async (data) => {
-      const topLevelProducts = data.filter((row) => !row.parentSku && row.title && row.price);
+      const topLevelProducts = data
+        .filter((row) => !row.parentSku && row.title && row.price && (row.availability === 'InStock'));
+      const products = [];
       for (let i = 0; i < topLevelProducts.length; i += 1) {
         const row = topLevelProducts[i];
         const variants = row.variantSkus ? row.variantSkus.split(',').map((e) => skuIndex[e.trim()]) : [];
         const colors = variants.map((child) => child.color);
-        try {
+        const availability = variants.map((child) => child.availability).join(',');
+        if (availability.includes('InStock')) {
+          row.availability = availability;
           row.path = `/us/en_us/products/${row.urlKey}`;
           row.colors = colors.join(',');
           row.category = catalogProducts[row.path] ? catalogProducts[row.path].Categories : '';
           const heroImage = variants[0] && variants[0].image ? variants[0].image : row.image;
           row.image = new URL(heroImage, new URL(row.path, window.location.href)).toString();
-        } catch (error) {
-          // eslint-disable-next-line no-console
-          console.error(error, row.path);
         }
+        products.push(row);
       }
-      return topLevelProducts;
+      return products;
     };
     const products = await populateIndex(json.data);
     const lookup = {};
@@ -99,6 +101,7 @@ export async function lookupProducts(config, facets = {}) {
         }
       }
     });
+    if (matchedAll) console.log(row);
     return (matchedAll);
   });
   return results;
@@ -126,7 +129,8 @@ const createProductCard = (product, ph) => {
 
   const colors = document.createElement('div');
   colors.className = 'plp-colors';
-  product.colors.split(',').forEach((color) => {
+  const availability = product.availability.split(',');
+  product.colors.split(',').forEach((color, index) => {
     const colorSwatch = document.createElement('div');
     colorSwatch.className = 'plp-color-swatch';
     const colorInner = document.createElement('div');
@@ -134,6 +138,9 @@ const createProductCard = (product, ph) => {
     colorInner.style.backgroundColor = `var(--color-${toClassName(color)})`;
     colorSwatch.appendChild(colorInner);
     colors.appendChild(colorSwatch);
+    if (availability[index] !== 'InStock') {
+      colorInner.classList.add('plp-color-swatch-oos');
+    }
   });
 
   const viewDetails = document.createElement('div');
@@ -336,12 +343,11 @@ export default async function decorate(block) {
       name: (a, b) => a.title.localeCompare(b.title),
       'price-asc': (a, b) => getPrice(a.price) - getPrice(b.price),
       'price-desc': (a, b) => getPrice(b.price) - getPrice(a.price),
+      featured: (a, b) => getPrice(b.price) - getPrice(a.price),
     };
     const results = await lookupProducts(filterConfig, facets);
     const sortBy = document.getElementById('plp-sortby') ? document.getElementById('plp-sortby').dataset.sort : 'featured';
-    if (sortBy !== 'featured') {
-      results.sort(sorts[sortBy]);
-    }
+    results.sort(sorts[sortBy]);
     block.querySelector('#plp-results-count').textContent = results.length;
     displayResults(results, null);
     displayFacets(facets, filterConfig);
