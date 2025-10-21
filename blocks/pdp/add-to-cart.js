@@ -201,7 +201,7 @@ export default function renderAddToCart(block, parent) {
     }
 
     // add any required bundle options
-    if (parent.custom?.requiredBundleOptions) {
+    if (parent.custom && parent.custom.requiredBundleOptions) {
       selectedOptions.push(...parent.custom.requiredBundleOptions);
     }
 
