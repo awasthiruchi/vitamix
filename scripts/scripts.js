@@ -535,6 +535,10 @@ function decorateImages(main) {
  * @param {HTMLElement} main - Main container element
  */
 function decorateEyebrows(main) {
+  // Disable auto eyebrows if the page is a PDP
+  const metaSku = document.querySelector('meta[name="sku"]');
+  if (metaSku) return;
+
   main.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((h) => {
     const beforeH = h.previousElementSibling;
     if (beforeH && beforeH.tagName === 'P') {
@@ -544,7 +548,6 @@ function decorateEyebrows(main) {
       // ignore p tags with images or links
       const disqualifiers = beforeH.querySelector('img, a[href]');
       if (disqualifiers) return;
-
       beforeH.classList.add('eyebrow');
       h.dataset.eyebrow = beforeH.textContent.trim();
     }
