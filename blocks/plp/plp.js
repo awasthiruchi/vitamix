@@ -5,6 +5,15 @@ export async function lookupProducts(config, facets = {}) {
   if (!window.productIndex) {
     const resp = await fetch('/us/en_us/products/index.json');
     const json = await resp.json();
+
+    const catalog = await fetch('/us/en_us/products/config/catalog.json');
+    const catalogData = await catalog.json();
+    const catalogProducts = {};
+    catalogData.data.forEach((row) => {
+      const path = new URL(row.URL).pathname;
+      catalogProducts[path] = row;
+    });
+
     const populateIndex = async (data) => {
       const topLevelProducts = data.filter((row) => !row.parentSku && row.title && row.price);
       for (let i = 0; i < topLevelProducts.length; i += 1) {
@@ -14,7 +23,7 @@ export async function lookupProducts(config, facets = {}) {
         try {
           row.path = `/us/en_us/products/${row.urlKey}`;
           row.colors = colors.join(',');
-          row.category = 'Blenders';
+          row.category = catalogProducts[row.path] ? catalogProducts[row.path].Categories : '';
           row.image = new URL(row.image, new URL(row.path, window.location.href)).toString();
         } catch (error) {
           // eslint-disable-next-line no-console
