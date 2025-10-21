@@ -5,6 +5,10 @@ export async function lookupProducts(config, facets = {}) {
   if (!window.productIndex) {
     const resp = await fetch('/us/en_us/products/index.json');
     const json = await resp.json();
+    const skuIndex = {};
+    json.data.forEach((row) => {
+      skuIndex[row.sku] = row;
+    });
 
     const catalog = await fetch('/us/en_us/products/config/catalog.json');
     const catalogData = await catalog.json();
@@ -18,13 +22,14 @@ export async function lookupProducts(config, facets = {}) {
       const topLevelProducts = data.filter((row) => !row.parentSku && row.title && row.price);
       for (let i = 0; i < topLevelProducts.length; i += 1) {
         const row = topLevelProducts[i];
-        const children = data.filter((child) => child.parentSku === row.sku);
-        const colors = children.map((child) => child.color);
+        const variants = row.variantSkus ? row.variantSkus.split(',').map((e) => skuIndex[e.trim()]) : [];
+        const colors = variants.map((child) => child.color);
         try {
           row.path = `/us/en_us/products/${row.urlKey}`;
           row.colors = colors.join(',');
           row.category = catalogProducts[row.path] ? catalogProducts[row.path].Categories : '';
-          row.image = new URL(row.image, new URL(row.path, window.location.href)).toString();
+          const heroImage = variants[0] && variants[0].image ? variants[0].image : row.image;
+          row.image = new URL(heroImage, new URL(row.path, window.location.href)).toString();
         } catch (error) {
           // eslint-disable-next-line no-console
           console.error(error, row.path);
