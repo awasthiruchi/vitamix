@@ -2,7 +2,7 @@ import { loadScript } from './aem.js';
 
 if (localStorage.getItem('newsletter-popped-up') !== 'true') {
   localStorage.setItem('newsletter-popped-up', 'true');
-  const newsletterLink = document.querySelector('a[href="/us/en_us/nav/modals/sign-up"]');
+  const newsletterLink = document.querySelector('a[href*="/modals/sign-up"]');
   if (newsletterLink) {
     setTimeout(() => {
       newsletterLink.click();
