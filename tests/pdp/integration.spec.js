@@ -594,7 +594,7 @@ test.describe('PDP Integration Tests', () => {
           await hamburgerMenu.click();
         }
 
-        const signupButton = page.locator('header a[href$="/modals/sign-up"]');
+        const signupButton = page.locator('header a[href*="/modals/sign-up"]');
         await signupButton.click();
 
         const modalForm = page.locator('dialog form.footer-sign-up');
