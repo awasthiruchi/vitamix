@@ -38,8 +38,7 @@ export function onOptionChange(block, variants, color) {
   selectedOptionLabel.textContent = `Color: ${variantColor}`;
 
   // check if bundle (should skip variant images)
-  const bundle = getMetadata('type') === 'bundle';
-  let variantImages = bundle ? [] : variant.images || [];
+  let variantImages = variant.images || [];
   variantImages = [...variantImages].map((v, i) => {
     const clone = v.cloneNode(true);
     clone.dataset.source = i ? 'variant' : 'lcp';
