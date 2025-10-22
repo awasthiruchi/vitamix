@@ -1,6 +1,6 @@
 import { buildSlide, buildThumbnails } from './gallery.js';
 import { rebuildIndices, checkOutOfStock } from '../../scripts/scripts.js';
-import { toClassName, getMetadata } from '../../scripts/aem.js';
+import { toClassName } from '../../scripts/aem.js';
 import renderPricing from './pricing.js';
 import renderAddToCart from './add-to-cart.js';
 
