@@ -317,6 +317,9 @@ test.describe('PDP Integration Tests', () => {
               selected_options: [
                 'YnVuZGxlLzQzLzIyMy8x',
                 'Y3VzdG9tLW9wdGlvbi8zMDIzLzM5NjI=',
+                'YnVuZGxlLzQxLzIxMi8x',
+                'YnVuZGxlLzQxLzIxNS8x',
+                'YnVuZGxlLzQxLzIyMS8x',
               ],
             },
           ],
