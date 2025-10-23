@@ -1,10 +1,20 @@
 .hotspot {
   position: relative;
+  overflow-x: auto;
 }
 
 .hotspot svg {
-  width: 100%;
-  height: auto;
+  width: auto;
+  height: calc(100dvh - (2 * var(--horizontal-spacing)));
+  max-height: 720px;
+}
+
+@media (width >= 700px) {
+  .hotspot svg {
+    width: 100%;
+    height: auto;
+    max-height: unset;
+  }
 }
 
 .hotspot button {
@@ -13,13 +23,20 @@
   justify-content: center;
   position: absolute;
   transform: translate(-50%, -50%);
-  width: 44px;
-  height: 44px;
+  width: 64px;
+  height: 64px;
   border: 0;
   border-radius: 50%;
   padding: 0;
   background-color: #fff5;
   transition: transform 0.4s;
+}
+
+@media (width >= 700px) {
+  .hotspot button {
+    width: 44px;
+    height: 44px;
+  }
 }
 
 .hotspot button[aria-expanded="true"] {
@@ -58,7 +75,10 @@
 }
 
 .hotspot [popover] {
-  max-width: calc(160px + (var(--spacing-100) * 2));
+  position: absolute;
+  transform: translate(-50%, calc(-100% - 22px));
+  width: calc(160px + (var(--spacing-100) * 2));
+  margin: 0;
   border: 0;
   border-radius: var(--rounding-m);
   padding: var(--spacing-100);
@@ -85,10 +105,17 @@
 
 .hotspot i.glyph {
   position: relative;
-  width: 22px;
-  height: 22px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   background-color: var(--color-white);
+}
+
+@media (width >= 700px) {
+  .hotspot i.glyph {
+    width: 22px;
+    height: 22px;
+  }
 }
 
 .hotspot i.glyph::before,
@@ -98,7 +125,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 1em;
+  width: 60%;
   height: 3px;
   border-radius: var(--rounding-s);
   background-color: var(--color-gray-800);

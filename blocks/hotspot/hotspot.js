@@ -1,4 +1,4 @@
-import { toClassName } from '../../scripts/aem.js';
+import { toClassName, createOptimizedPicture } from '../../scripts/aem.js';
 
 /**
  * Sets multiple attributes on an element.
@@ -42,14 +42,14 @@ function configureHotspots(rows) {
 }
 
 /**
- * Positions hotspot buttons based on the current size of the block.
+ * Positions hotspot buttons based on the current size of the SVG.
  * @param {HTMLElement} block - Block element
- * @param {DOMRect} rect - Bounding rectangle of the block
  */
-function positionHotspots(block, rect) {
+function positionHotspots(block) {
   const svg = block.querySelector('svg');
-  const svgWidth = svg.getAttribute('width');
-  const svgHeight = svg.getAttribute('height');
+  const svgWidth = parseInt(svg.getAttribute('width'), 10);
+  const svgHeight = parseInt(svg.getAttribute('height'), 10);
+  const rect = svg.getBoundingClientRect();
   // calculate scale based on rendered vs. original size
   const scaleX = rect.width / svgWidth;
   const scaleY = rect.height / svgHeight;
@@ -86,6 +86,20 @@ function buildHotspots(block, config) {
 }
 
 /**
+ * Positions a popover element relative to its associated button.
+ * @param {HTMLElement} popover - Popover element
+ * @param {HTMLElement} button - Button element
+ */
+function positionPopover(popover, button) {
+  const rect = button.getBoundingClientRect();
+  const cx = rect.left + (rect.width / 2);
+  const top = Math.round(rect.top + window.scrollY);
+  const left = Math.round(cx + window.scrollX);
+  popover.style.top = `${top}px`;
+  popover.style.left = `${left}px`;
+}
+
+/**
  * Creates popover elements for each hotspot and adds them to block.
  * @param {HTMLElement} block - Block element
  * @param {Array<Object>} config - Array of hotspot config objects
@@ -105,6 +119,7 @@ function buildPopovers(block, config) {
     const button = block.querySelector(`[popovertarget="${c.id}"]`);
     popover.addEventListener('toggle', (e) => {
       button.setAttribute('aria-expanded', e.newState === 'open');
+      if (e.newState === 'open') positionPopover(popover, button);
     });
   });
 }
@@ -124,8 +139,9 @@ export default function decorate(block) {
       viewBox: `0 0 ${width} ${height}`,
     });
     const image = document.createElementNS(SVG_NS, 'image');
+    const picture = createOptimizedPicture(img.src, '', false, [{ width: '2000' }]);
     setAttributes(image, {
-      href: img.src,
+      href: picture.querySelector('img').src,
       x: 0,
       y: 0,
       width,
@@ -146,7 +162,12 @@ export default function decorate(block) {
           block.dataset.hotspots = true;
           buildPopovers(block, config);
         }
-        positionHotspots(block, rect);
+        positionHotspots(block);
+        const openPopover = block.querySelector('[popover]:not([hidden])');
+        if (openPopover) {
+          const button = block.querySelector(`[popovertarget="${openPopover.id}"]`);
+          positionPopover(openPopover, button);
+        }
       }
     });
     resize.observe(block);
