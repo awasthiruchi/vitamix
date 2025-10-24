@@ -51,6 +51,8 @@ export async function lookupProducts(config, facets = {}) {
           row.path = `/us/en_us/products/${row.urlKey}`;
           row.colors = colors.join(',');
           row.category = catalogProducts[row.path] ? catalogProducts[row.path].Categories : '';
+          row.collection = catalogProducts[row.path] ? catalogProducts[row.path].Collections : '';
+          row.productType = catalogProducts[row.path] ? catalogProducts[row.path]['Product Type'] : '';
           const heroImage = variants[0] && variants[0].image ? variants[0].image : row.image;
           row.image = new URL(heroImage, new URL(row.path, window.location.href)).toString();
         }
@@ -446,7 +448,7 @@ function buildFiltering(block, ph, config) {
   const getPrice = (string) => +string;
 
   const runSearch = async (filterConfig = config) => {
-    const facets = { colors: {}, series: {} };
+    const facets = { series: {}, collection: {}, colors: {}, productType: {} };
     const sorts = {
       name: (a, b) => a.title.localeCompare(b.title),
       'price-asc': (a, b) => getPrice(a.price) - getPrice(b.price),
