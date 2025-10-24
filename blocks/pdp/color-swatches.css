@@ -1,7 +1,6 @@
 /* product swatches colors */
 .pdp .pdp-color-swatch,
-.plp .plp-color-swatch,
-.carousel .plp-color-swatch {
+.plp .plp-color-swatch {
   --color-matte-navy: #00263e;
   --color-black: #000;
   --color-red: #c03;
