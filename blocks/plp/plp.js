@@ -448,7 +448,9 @@ function buildFiltering(block, ph, config) {
   const getPrice = (string) => +string;
 
   const runSearch = async (filterConfig = config) => {
-    const facets = { series: {}, collection: {}, colors: {}, productType: {} };
+    const facets = {
+      series: {}, collection: {}, colors: {}, productType: {},
+    };
     const sorts = {
       name: (a, b) => a.title.localeCompare(b.title),
       'price-asc': (a, b) => getPrice(a.price) - getPrice(b.price),
