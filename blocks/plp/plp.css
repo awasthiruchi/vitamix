@@ -409,3 +409,24 @@ main .plp-product-card p {
 .plp-view-details a.button {
   width: 100%;
 }
+
+/* carousel styling */
+.plp.carousel h3 a {
+  text-decoration: none;
+}
+
+.plp.carousel li {
+  cursor: pointer;
+}
+
+.plp.carousel p.slide-body-price {
+  color: unset;
+}
+
+.plp.carousel .eyebrow {
+  color: var(--color-charcoal);
+}
+
+.plp.carousel .eyebrow + p {
+  margin-top: 0;
+}

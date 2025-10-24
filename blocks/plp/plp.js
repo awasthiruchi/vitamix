@@ -1,17 +1,36 @@
-import { fetchPlaceholders, readBlockConfig, toClassName } from '../../scripts/aem.js';
+import {
+  fetchPlaceholders,
+  readBlockConfig,
+  toClassName,
+  toCamelCase,
+  buildBlock,
+  decorateBlock,
+  loadBlock,
+} from '../../scripts/aem.js';
 
+/**
+ * Fetches and filters products from the product index.
+ * @param {Array<string>|Object} config - An array of product paths or a config object
+ * @param {Object} facets - Optional facets object to calculate counts for filtering options
+ * @returns {Promise<Array<Object>>} Array of filtered product objects
+ */
 export async function lookupProducts(config, facets = {}) {
-  /* load index */
   if (!window.productIndex) {
+    // fetch the main product index
     const resp = await fetch('/us/en_us/products/index.json');
     const json = await resp.json();
+
+    // build a lookup map of SKU > product data
     const skuIndex = {};
     json.data.forEach((row) => {
       skuIndex[row.sku] = row;
     });
 
+    // fetch the catalog config
     const catalog = await fetch('/us/en_us/products/config/catalog.json');
     const catalogData = await catalog.json();
+
+    // build a lookup map of product path > catalog data for category information
     const catalogProducts = {};
     catalogData.data.forEach((row) => {
       const path = new URL(row.URL).pathname;
@@ -40,6 +59,8 @@ export async function lookupProducts(config, facets = {}) {
       return products;
     };
     const products = await populateIndex(json.data);
+
+    // build a path-based lookup for direct product access
     const lookup = {};
     products.forEach((row) => {
       lookup[row.path] = row;
@@ -47,13 +68,14 @@ export async function lookupProducts(config, facets = {}) {
     window.productIndex = { data: json.data, lookup };
   }
 
-  /* simple array lookup */
+  // simple array lookup
   if (Array.isArray(config)) {
     const pathnames = config;
+    // filter out any paths to products that don't exist
     return (pathnames.map((path) => window.productIndex.lookup[path]).filter((e) => e));
   }
 
-  /* setup config */
+  // setup filtering config
   const facetKeys = Object.keys(facets);
   const keys = Object.keys(config);
   const tokens = {};
@@ -61,7 +83,7 @@ export async function lookupProducts(config, facets = {}) {
     tokens[key] = config[key].split(',').map((t) => t.trim());
   });
 
-  /* filter */
+  // filter products based on config
   const results = window.productIndex.data.filter((row) => {
     const filterMatches = {};
     let matchedAll = keys.every((key) => {
@@ -78,11 +100,11 @@ export async function lookupProducts(config, facets = {}) {
       return matched;
     });
 
+    // only include actual products (not variants or categories)
     const isProduct = () => !!row.price;
-
     if (!isProduct()) matchedAll = false;
 
-    /* facets */
+    // calculate facet counts
     facetKeys.forEach((facetKey) => {
       let includeInFacet = true;
       Object.keys(filterMatches).forEach((filterKey) => {
@@ -101,32 +123,60 @@ export async function lookupProducts(config, facets = {}) {
         }
       }
     });
+
+    // eslint-disable-next-line no-console
     if (matchedAll) console.log(row);
     return (matchedAll);
   });
   return results;
 }
 
-// Simple product card creation function to replace carousel dependency
-const createProductCard = (product, ph) => {
-  const card = document.createElement('div');
-  card.className = 'plp-product-card';
-
+/**
+ * Creates a product image element with lazy loading.
+ * @param {Object} product - Product data object
+ * @returns {HTMLImageElement} Product image element
+ */
+function createProductImage(product) {
   const image = document.createElement('img');
   image.src = product.image || product.images?.[0]?.url || '';
   image.alt = product.title || product.name || '';
   image.loading = 'lazy';
+  return image;
+}
 
-  const title = document.createElement('h4');
+/**
+ * Creates a product title heading with a link to the product page.
+ * @param {Object} product - Product data object
+ * @param {string} h - HTML heading tag to use (default: 'h4')
+ * @returns {HTMLHeadingElement} Product title element
+ */
+function createProductTitle(product, h = 'h4') {
+  const title = document.createElement(h);
   const link = document.createElement('a');
   link.href = product.path || product.url || '#';
   link.textContent = product.title || product.name || '';
   title.appendChild(link);
+  return title;
+}
 
+/**
+ * Creates a product price display element.
+ * @param {Object} product - Product data object
+ * @returns {HTMLParagraphElement} Product price element
+ */
+function createProductPrice(product) {
   const price = document.createElement('p');
   price.className = 'plp-price';
   price.textContent = product.price ? `$${product.price}` : '';
+  return price;
+}
 
+/**
+ * Creates color swatches showing available colors and their availability status.
+ * @param {Object} product - Product data object with colors and availability
+ * @returns {HTMLDivElement} Container element with color swatches
+ */
+function createProductColors(product) {
   const colors = document.createElement('div');
   colors.className = 'plp-colors';
   const availability = product.availability.split(',');
@@ -138,50 +188,101 @@ const createProductCard = (product, ph) => {
     colorInner.style.backgroundColor = `var(--color-${toClassName(color)})`;
     colorSwatch.appendChild(colorInner);
     colors.appendChild(colorSwatch);
+    // mark out-of-stock colors
     if (availability[index] !== 'InStock') {
       colorInner.classList.add('plp-color-swatch-oos');
     }
   });
+  return colors;
+}
 
-  const viewDetails = document.createElement('div');
-  viewDetails.classList.add('plp-view-details', 'button-container');
-  viewDetails.innerHTML = `<a href="${product.path}" class="button emphasis">${ph.viewDetails}</a>`;
+/**
+ * Creates a button element for product actions.
+ * @param {Object} product - Product data object
+ * @param {Object} ph - Placeholder object with localized text strings
+ * @param {string} label - Button label text used for CSS class and placeholder lookup
+ * @param {string} btnClass - Additional CSS class for the button (optional)
+ * @returns {HTMLParagraphElement} Button container element
+ */
+function createProductButton(product, ph, label, btnClass) {
+  const button = document.createElement('p');
+  button.classList.add(`plp-${toClassName(label)}`, 'button-container');
+  button.innerHTML = `<a href="${product.path}" class="button ${btnClass}">${ph[toCamelCase(label)]}</a>`;
+  return button;
+}
 
-  const compareDiv = document.createElement('div');
-  compareDiv.classList.add('plp-compare', 'button-container');
-  compareDiv.innerHTML = `<a href="${product.path}" class="button">${ph.compare}</a>`;
+/**
+ * Creates a product card DOM element for display in the product listing.
+ * @param {Object} product - Product data object with title, price, colors, etc.
+ * @param {Object} ph - Placeholder object with localized text strings
+ * @returns {HTMLElement} Product card element
+ */
+function createProductCard(product, ph) {
+  const card = document.createElement('div');
+  card.className = 'plp-product-card';
 
-  card.appendChild(image);
-  card.appendChild(colors);
-  card.appendChild(title);
-  card.appendChild(price);
-  card.appendChild(viewDetails);
-  card.appendChild(compareDiv);
+  const image = createProductImage(product);
+  const title = createProductTitle(product);
+  const price = createProductPrice(product);
+  const colors = createProductColors(product);
+  const viewDetails = createProductButton(product, ph, 'View Details', 'emphasis');
+  const compare = createProductButton(product, ph, 'Compare');
+
+  card.append(image, title, price, colors, viewDetails, compare);
   card.addEventListener('click', () => {
     window.location.href = product.path;
   });
 
   return card;
-};
+}
 
-export default async function decorate(block) {
-  const ph = await fetchPlaceholders('/us/en_us');
+/**
+ * Creates a product slide for display in a carousel view.
+ * @param {Object} product - Product data object with title, price, colors, etc.
+ * @param {Object} ph - Placeholder object with localized text strings
+ * @returns {Array<HTMLElement>} Array containing image and slide body elements
+ */
+function createProductSlide(product, ph) {
+  // product image
+  const image = createProductImage(product);
 
-  const addEventListeners = (elements, event, callback) => {
-    elements.forEach((e) => {
-      e.addEventListener(event, callback);
-    });
-  };
+  // product title as a link to PDP
+  const slideBody = document.createElement('div');
+  const title = createProductTitle(product, 'h3');
+  slideBody.appendChild(title);
 
-  const config = readBlockConfig(block);
+  // color options
+  const colors = createProductColors(product);
+  slideBody.appendChild(colors);
 
-  block.innerHTML = `<div class="plp-controls"><input id="fulltext" placeholder="${ph.typeToSearch}">
+  // feature highlight
+  // recipe programs
+
+  // starting at price
+  if (product.price) {
+    const startingAt = document.createElement('p');
+    startingAt.className = 'eyebrow';
+    startingAt.textContent = ph.startingAt || 'Starting at';
+
+    const price = createProductPrice(product);
+    slideBody.append(startingAt, price);
+  }
+
+  // "Show Now" button
+  const shopNow = createProductButton(product, ph, 'Shop Now');
+  slideBody.appendChild(shopNow);
+
+  return [image, slideBody];
+}
+
+function buildFiltering(block, ph, config) {
+  block.innerHTML = `<div class="plp-controls">
+      <input id="fulltext" placeholder="${ph.typeToSearch}">
       <p class="plp-results-count"><span id="plp-results-count"></span> ${ph.results}</p>
       <button class="plp-filter-button secondary">${ph.filter}</button>
       <button class="plp-sort-button secondary">${ph.sort}</button>
     </div>
-    <div class="plp-facets">
-    </div>
+    <div class="plp-facets"></div>
     <div class="plp-sortby">
       <p>${ph.sortBy} <span data-sort="featured" id="plp-sortby">${ph.featured}</span></p>
       <ul>
@@ -191,15 +292,19 @@ export default async function decorate(block) {
         <li data-sort="name">${ph.productName}</li>
       </ul>
     </div>
-  </div>
-  <div class="plp-results">
-  </div>`;
+    <div class="plp-results"></div>`;
 
   const resultsElement = block.querySelector('.plp-results');
   const facetsElement = block.querySelector('.plp-facets');
   block.querySelector('.plp-filter-button').addEventListener('click', () => {
     block.querySelector('.plp-facets').classList.toggle('visible');
   });
+
+  const addEventListeners = (elements, event, callback) => {
+    elements.forEach((e) => {
+      e.addEventListener(event, callback);
+    });
+  };
 
   addEventListeners([
     block.querySelector('.plp-sort-button'),
@@ -232,7 +337,7 @@ export default async function decorate(block) {
         const content = title.textContent;
         const offset = content.toLowerCase().indexOf(fulltext.toLowerCase());
         if (offset >= 0) {
-          title.innerHTML = `${content.substr(0, offset)}<span class="highlight">${content.substr(offset, fulltext.length)}</span>${content.substr(offset + fulltext.length)}`;
+          title.innerHTML = `${content.substring(0, offset)}<span class="highlight">${content.substring(offset, fulltext.length)}</span>${content.substring(offset + fulltext.length)}`;
         }
       });
     }
@@ -262,14 +367,17 @@ export default async function decorate(block) {
 
   const displayFacets = (facets, filters) => {
     const selected = getSelectedFilters().map((check) => check.value);
-    facetsElement.innerHTML = `<div><div class="plp-filters"><h2>${ph.filters}</h2>
-    <div class="plp-filters-selected"></div>
-    <p><button class="plp-filters-clear secondary">${ph.clearAll}</button></p>
-    <div class="plp-filters-facetlist"></div>
-    </div>
-    <div class="plp-apply-filters">
-      <button>See Results</button>
-    </div></div>`;
+    facetsElement.innerHTML = `<div>
+        <div class="plp-filters">
+          <h2>${ph.filters}</h2>
+          <div class="plp-filters-selected"></div>
+          <p><button class="plp-filters-clear secondary">${ph.clearAll}</button></p>
+          <div class="plp-filters-facetlist"></div>
+        </div>
+        <div class="plp-apply-filters">
+          <button>See Results</button>
+        </div>
+      </div>`;
 
     addEventListeners([
       facetsElement.querySelector('.plp-apply-filters button'),
@@ -302,7 +410,7 @@ export default async function decorate(block) {
       runSearch(filterConfig);
     });
 
-    /* list facets */
+    // build facet filter lists
     const facetsList = block.querySelector('.plp-filters-facetlist');
     const facetKeys = Object.keys(facets);
     facetKeys.forEach((facetKey) => {
@@ -363,4 +471,38 @@ export default async function decorate(block) {
   }
 
   runSearch(config);
+}
+
+/**
+ * Builds a product carousel from a block containing product links.
+ * @param {HTMLElement} block - Block element
+ * @param {Object} ph - Placeholder object with localized text strings
+ * @returns {Promise<void>}
+ */
+async function buildProductCarousel(block, ph) {
+  const links = block.querySelectorAll('a[href]');
+  const urls = [...links].map((a) => new URL(a.href).pathname);
+  const products = await lookupProducts(urls);
+
+  const elems = products.map((product) => createProductSlide(product, ph));
+
+  const carousel = buildBlock('carousel', elems);
+  carousel.classList.add(...block.classList);
+  block.replaceWith(carousel);
+  decorateBlock(carousel);
+  await loadBlock(carousel);
+  [...carousel.querySelectorAll('li')].forEach((li) => {
+    li.addEventListener('click', () => {
+      li.querySelector('a[href]').click();
+    });
+  });
+}
+
+export default async function decorate(block) {
+  const ph = await fetchPlaceholders('/us/en_us');
+  const config = readBlockConfig(block);
+  const isCarousel = block.classList.contains('carousel');
+
+  if (isCarousel) await buildProductCarousel(block, ph);
+  else buildFiltering(block, ph, config);
 }
