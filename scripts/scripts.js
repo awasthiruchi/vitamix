@@ -329,10 +329,64 @@ function parseVariants(sections) {
   });
 }
 
+function parseVariantsNext(sections) {
+  return sections.map((div) => {
+    const name = div.querySelector('h2')?.textContent.trim();
+
+    const metadata = {};
+    const options = {};
+
+    options.uid = div.dataset.uid;
+    options.color = div.dataset.color;
+    metadata.sku = div.dataset.sku;
+
+    const imagesHTML = div.querySelectorAll('picture');
+
+    const priceHTML = div.querySelector('p:nth-of-type(1)');
+    const price = extractPricing(priceHTML);
+
+    return {
+      ...metadata,
+      name,
+      options,
+      price,
+      images: imagesHTML,
+    };
+  });
+}
+
 // eslint-disable-next-line no-unused-vars
 export function checkOutOfStock(sku) {
   const { availability } = window.jsonLdData.offers.find((offer) => offer.sku === sku);
   return availability === 'https://schema.org/OutOfStock';
+}
+
+/**
+ * Checks if the current pipeline is the Next pipeline.
+ * @returns {boolean} True if the current pipeline is the Next pipeline, false otherwise.
+ */
+export function isNextPipeline() {
+  const pipelineMeta = document.head.querySelector('meta[name="pipeline"]')?.content;
+  return pipelineMeta === 'next';
+}
+
+/**
+ * Parses the PDP content sections from the initial HTML and stores them in the window object.
+ * @param {Array<Element>} sections - The sections to parse.
+ */
+function parsePDPContentSections(sections) {
+  sections.forEach((section) => {
+    const h3 = section.querySelector('h3')?.textContent.toLowerCase();
+    if (h3) {
+      if (h3.includes('features')) {
+        window.features = section;
+      } else if (h3.includes('specifications')) {
+        window.specifications = section;
+      } else if (h3.includes('warranty')) {
+        window.warranty = section;
+      }
+    }
+  });
 }
 
 /**
@@ -343,9 +397,18 @@ function buildPDPBlock(main) {
   const section = document.createElement('div');
   const type = document.head.querySelector('meta[name="type"]')?.content;
 
+  const nextPipeline = isNextPipeline();
   const isValidType = ['simple', 'configurable', 'bundle'].includes(type);
   if (isValidType) {
-    const lcpPicture = main.querySelector('div:nth-child(2) picture') || main.querySelector('picture:first-of-type');
+    // Find LCP picture element based on pipeline structure
+    // In both cases we try and pull the first picture from the first image in a variant section
+    // If it's a simple product, we pull the first picture on the page
+    let lcpPicture;
+    if (nextPipeline) {
+      lcpPicture = main.querySelector('div.section picture') || main.querySelector('picture:first-of-type');
+    } else {
+      lcpPicture = main.querySelector('div:nth-child(2) picture') || main.querySelector('picture:first-of-type');
+    }
     const lcpImage = lcpPicture?.querySelector('img');
     if (lcpImage) {
       lcpImage.loading = 'eager';
@@ -366,8 +429,20 @@ function buildPDPBlock(main) {
     section.append(buildBlock('pdp', { elems: [...lcp.children] }));
   }
 
-  const variantSections = Array.from(main.querySelectorAll(':scope > div'));
-  window.variants = parseVariants(variantSections);
+  // Select variant sections based on pipeline type
+  const selector = nextPipeline
+    ? ':scope > div.section'
+    : ':scope > div';
+  const variantSections = Array.from(main.querySelectorAll(selector));
+
+  // Parse variants using the appropriate parser
+  window.variants = nextPipeline
+    ? parseVariantsNext(variantSections)
+    : parseVariants(variantSections);
+
+  if (nextPipeline) {
+    parsePDPContentSections(Array.from(main.querySelectorAll(':scope > div')));
+  }
 
   // Get the json-ld from the head and parse it
   const jsonLd = document.head.querySelector('script[type="application/ld+json"]');

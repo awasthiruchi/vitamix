@@ -6,7 +6,7 @@ import renderPricing, { extractPricing } from './pricing.js';
 // eslint-disable-next-line import/no-cycle
 import { renderOptions, onOptionChange } from './options.js';
 import { loadFragment } from '../fragment/fragment.js';
-import { checkOutOfStock } from '../../scripts/scripts.js';
+import { checkOutOfStock, isNextPipeline } from '../../scripts/scripts.js';
 import { openModal } from '../modal/modal.js';
 
 /**
@@ -411,7 +411,13 @@ export default async function decorate(block) {
 
   const faqContainer = renderFAQ(block);
 
-  fetchFragment(block);
+  if (isNextPipeline()) {
+    // Content is already in the initial HTML
+    renderContent(block);
+  } else {
+    // Fetch and render the fragment for legacy pipeline
+    fetchFragment(block);
+  }
 
   renderReviews(block, reviewsId);
 
