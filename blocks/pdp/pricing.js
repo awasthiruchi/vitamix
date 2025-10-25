@@ -46,7 +46,7 @@ export default function renderPricing(block, variant) {
   // If the variant is not null, check if the item condition is refurbished
   // If the variant is null, check if the location href includes 'reconditioned'
   // If both are false, item is not reconditioned
-  const isReconditioned = variant != null ? variant.itemCondition === 'RefurbishedCondition' : window.location.href.includes('reconditioned') || false;
+  const isReconditioned = variant && variant.itemCondition ? variant.itemCondition.includes('RefurbishedCondition') : window.location.href.includes('reconditioned') || false;
 
   if (pricing.regular && pricing.regular > pricing.final) {
     const nowLabel = document.createElement('div');
