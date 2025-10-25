@@ -345,6 +345,13 @@ function parseVariantsNext(sections) {
     const priceHTML = div.querySelector('p:nth-of-type(1)');
     const price = extractPricing(priceHTML);
 
+    const ldVariant = window.jsonLdData.offers.find((offer) => offer.sku === metadata.sku);
+    if (ldVariant) {
+      metadata.itemCondition = ldVariant.itemCondition;
+      metadata.availability = ldVariant.availability;
+      metadata.custom = ldVariant.custom;
+    }
+
     return {
       ...metadata,
       name,
@@ -429,6 +436,10 @@ function buildPDPBlock(main) {
     section.append(buildBlock('pdp', { elems: [...lcp.children] }));
   }
 
+  // Get the json-ld from the head and parse it
+  const jsonLd = document.head.querySelector('script[type="application/ld+json"]');
+  window.jsonLdData = jsonLd ? JSON.parse(jsonLd.textContent) : null;
+
   // Select variant sections based on pipeline type
   const selector = nextPipeline
     ? ':scope > div.section'
@@ -443,10 +454,6 @@ function buildPDPBlock(main) {
   if (nextPipeline) {
     parsePDPContentSections(Array.from(main.querySelectorAll(':scope > div')));
   }
-
-  // Get the json-ld from the head and parse it
-  const jsonLd = document.head.querySelector('script[type="application/ld+json"]');
-  window.jsonLdData = jsonLd ? JSON.parse(jsonLd.textContent) : null;
 
   const navMeta = document.head.querySelector('meta[name="nav"]');
   if (!navMeta) {
