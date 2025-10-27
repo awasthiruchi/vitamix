@@ -1032,7 +1032,7 @@ async function loadLazy(doc) {
   swapIcons(main);
   autolinkModals(document);
 
-  const syncSku = async ({ detail: payload }) => {
+  const syncSku = async () => {
     const { openSyncModal } = await import(`${window.hlx.codeBasePath}/tools/sidekick/sync/sync.js`);
     await openSyncModal();
   };
