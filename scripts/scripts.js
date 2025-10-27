@@ -1031,6 +1031,14 @@ async function loadLazy(doc) {
   loadFonts();
   swapIcons(main);
   autolinkModals(document);
+
+  const sk = document.querySelector('aem-sidekick');
+  if (sk) {
+    sk.addEventListener('custom:sync', async () => {
+      const { openSyncModal } = await import(`${window.hlx.codeBasePath}/tools/sidekick/sync/sync.js`);
+      await openSyncModal();
+    });
+  }
 }
 
 /**
