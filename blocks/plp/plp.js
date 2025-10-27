@@ -126,8 +126,6 @@ export async function lookupProducts(config, facets = {}) {
       }
     });
 
-    // eslint-disable-next-line no-console
-    if (matchedAll) console.log(row);
     return (matchedAll);
   });
   return results;
@@ -339,7 +337,7 @@ function buildFiltering(block, ph, config) {
         const content = title.textContent;
         const offset = content.toLowerCase().indexOf(fulltext.toLowerCase());
         if (offset >= 0) {
-          title.innerHTML = `${content.substring(0, offset)}<span class="highlight">${content.substring(offset, fulltext.length)}</span>${content.substring(offset + fulltext.length)}`;
+          title.innerHTML = `${content.substring(0, offset)}<span class="highlight">${content.substring(offset, offset + fulltext.length)}</span>${content.substring(offset + fulltext.length)}`;
         }
       });
     }
