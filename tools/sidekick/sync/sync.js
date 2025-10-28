@@ -11,7 +11,7 @@ const SYNC_WORKER_URL = 'https://vitamix-catalog-sync.adobeaem.workers.dev/';
  */
 export async function createSyncModal() {
   await loadCSS(`${window.hlx.codeBasePath}/blocks/modal/modal.css`);
-  await loadCSS(`${window.hlx.codeBasePath}/tools/sidekick/sync/sync.css`);
+  await loadCSS('https://main--vitamix--aemsites.aem.page//tools/sidekick/sync/sync.css');
 
   const dialog = document.createElement('dialog');
   const dialogContent = document.createElement('div');

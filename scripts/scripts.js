@@ -1033,7 +1033,8 @@ async function loadLazy(doc) {
   autolinkModals(document);
 
   const syncSku = async () => {
-    const { openSyncModal } = await import(`${window.hlx.codeBasePath}/tools/sidekick/sync/sync.js`);
+    // eslint-disable-next-line import/no-unresolved
+    const { openSyncModal } = await import('https://main--vitamix--aemsites.aem.page/tools/sidekick/sync/sync.js');
     await openSyncModal();
   };
 
