@@ -1031,6 +1031,23 @@ async function loadLazy(doc) {
   loadFonts();
   swapIcons(main);
   autolinkModals(document);
+
+  const syncSku = async () => {
+    const { openSyncModal } = await import(`${window.hlx.codeBasePath}/tools/sidekick/sync/sync.js`);
+    await openSyncModal();
+  };
+
+  const sk = document.querySelector('aem-sidekick');
+  if (sk) {
+    sk.addEventListener('custom:sync', syncSku);
+  } else {
+    // wait for sidekick to be loaded
+    document.addEventListener('sidekick-ready', () => {
+    // sidekick now loaded
+      document.querySelector('aem-sidekick')
+        .addEventListener('custom:sync', syncSku);
+    }, { once: true });
+  }
 }
 
 /**
