@@ -163,7 +163,7 @@ export default function decorate(block) {
           buildPopovers(block, config);
         }
         positionHotspots(block);
-        const openPopover = block.querySelector('[popover]:not([hidden])');
+        const openPopover = block.querySelector('[popover]:popover-open');
         if (openPopover) {
           const button = block.querySelector(`[popovertarget="${openPopover.id}"]`);
           positionPopover(openPopover, button);
