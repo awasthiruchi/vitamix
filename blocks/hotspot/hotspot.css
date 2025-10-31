@@ -191,7 +191,7 @@
   user-select: none;
 }
 
-.hotspot[data-editing="true"] button.hs[data-unplaced]::after {
+.hotspot[data-editing="true"] button.hs::after {
   content: none;
   animation: none;
 }

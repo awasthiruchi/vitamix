@@ -75,7 +75,11 @@ function positionHotspots(block) {
  */
 function stageInvalidHotspots(block) {
   const svg = block.querySelector('svg');
+  const svgWidth = parseInt(svg.getAttribute('width'), 10);
+  const svgHeight = parseInt(svg.getAttribute('height'), 10);
   const rect = svg.getBoundingClientRect();
+  const scaleX = rect.width / svgWidth;
+  const scaleY = rect.height / svgHeight;
 
   // define safe frame boundaries to keep hotspots visible and accessible (in rendered pixels)
   const SAFE = {
@@ -124,10 +128,14 @@ function stageInvalidHotspots(block) {
       btn.style.left = `${left}px`;
       btn.setAttribute('data-unplaced', true);
       btn.title = btn.getAttribute('aria-controls').split('-').join(' ').trim();
-    } else if (x < SAFE.left || x > SAFE.right || y < SAFE.top || y > SAFE.bottom) {
+    } else {
+      const pxX = x * scaleX;
+      const pxY = y * scaleY;
       // mark buttons that are outside the safe frame
-      btn.setAttribute('data-unplaced', 'true');
-      btn.title = `${(btn.getAttribute('aria-controls').split('-').join(' ')).trim()} hotspot`;
+      if (pxX < SAFE.left || pxX > SAFE.right || pxY < SAFE.top || pxY > SAFE.bottom) {
+        btn.setAttribute('data-unplaced', 'true');
+        btn.title = `${(btn.getAttribute('aria-controls').split('-').join(' ')).trim()} hotspot`;
+      }
     }
   });
 }
