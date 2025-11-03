@@ -107,21 +107,15 @@ pintrk('load', '2621075961855'); pintrk('page');
 
 // LinkedIn Insight Tag
 try {
-  const _linkedin_partner_id = "2976369";
-  window._linkedin_data_partner_ids = window._linkedin_data_partner_ids || [];
-  window._linkedin_data_partner_ids.push(_linkedin_partner_id);
-
-  (function(d){
-    var s = d.createElement('script');
-    s.type = 'text/javascript';
-    s.async = true;
-    s.src = 'https://snap.licdn.com/li.lms-analytics/insight.min.js';
-    var x = d.getElementsByTagName('script')[0];
-    x.parentNode.insertBefore(s, x);
-  })(document);
-} catch (e) {
-  console.error('LinkedIn Insight Tag failed to load', e);
+  const lpids = '_linkedin_data_partner_ids';
+  window[lpids] = window[lpids] || [];
+  window[lpids].push('2976369');
+  loadScript('https://snap.licdn.com/li.lms-analytics/insight.min.js');
+} catch (error) {
+  /* eslint-disable-next-line no-console */
+  console.error('LinkedIn Insight Tag failed to load', error);
 }
+
 // End of LinkedIn Insight Tag
 
 /* eslint-disable */
