@@ -103,6 +103,8 @@ r.parentNode.insertBefore(t,r)}}
 pintrk('load', '2621075961855'); pintrk('page');
 // End of Pinterest Tag
 
+/* eslint-enable */
+
 // LinkedIn Insight Tag
 try {
   const _linkedin_partner_id = "2976369";
@@ -121,6 +123,8 @@ try {
   console.error('LinkedIn Insight Tag failed to load', e);
 }
 // End of LinkedIn Insight Tag
+
+/* eslint-disable */
 
 
 // TV Scientific Pixel Code
