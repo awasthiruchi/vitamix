@@ -2,7 +2,7 @@ import { loadScript } from './aem.js';
 
 if (localStorage.getItem('newsletter-popped-up') !== 'true') {
   localStorage.setItem('newsletter-popped-up', 'true');
-  const newsletterLink = document.querySelector('a[href="/us/en_us/nav/modals/sign-up"]');
+  const newsletterLink = document.querySelector('a[href*="/modals/sign-up"]');
   if (newsletterLink) {
     setTimeout(() => {
       newsletterLink.click();
@@ -26,8 +26,11 @@ currentEnvironment.dataset.deploymentEnv = 'prod';
 currentEnvironment.dataset.templatePath = '/conf/vitamix/settings/wcm/templates/default-page';
 document.body.appendChild(currentEnvironment);
 
-// temporarily disabled until css is fixed
-// loadScript('https://www.vitamix.com/etc.clientlibs/vitamix/clientlibs/clientlib-chatbot.lc-5aa4591c22ce9007a60fafc1f19aa690-lc.min.js');
+const chatbot = document.createElement('div');
+chatbot.id = 'app';
+document.body.appendChild(chatbot);
+
+loadScript('https://www.vitamix.com/etc.clientlibs/vitamix/clientlibs/clientlib-chatbot.lc-d95b877a5e0c2ce39cd26f0aa190faef-lc.min.js');
 loadScript('https://www.vitamix.com/etc.clientlibs/core/wcm/components/commons/site/clientlibs/container.lc-0a6aff292f5cc42142779cde92054524-lc.min.js');
 
 await loadScript('https://www.vitamix.com/etc.clientlibs/vitamix/clientlibs/clientlib-library.lc-259cf15444c5fe1f89e5c54df7b6e1e9-lc.min.js');
