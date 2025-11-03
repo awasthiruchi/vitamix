@@ -105,7 +105,7 @@ pintrk('load', '2621075961855'); pintrk('page');
 
 // LinkedIn Insight Tag
 try {
-  const _linkedin_partner_id = "2976369"; /
+  const _linkedin_partner_id = "2976369";
   window._linkedin_data_partner_ids = window._linkedin_data_partner_ids || [];
   window._linkedin_data_partner_ids.push(_linkedin_partner_id);
 
