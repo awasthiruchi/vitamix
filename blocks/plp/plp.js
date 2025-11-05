@@ -237,26 +237,51 @@ function createProductCard(product, ph) {
 }
 
 /**
- * Creates a product slide for display in a carousel view.
- * @param {Object} product - Product data object with title, price, colors, etc.
+ * Styles product content for display in a carousel view.
+ * @param {Object} content - Product content
  * @param {Object} ph - Placeholder object with localized text strings
- * @returns {Array<HTMLElement>} Array containing image and slide body elements
  */
-function createProductSlide(product, ph) {
+async function styleRowAsSlide(content, ph) {
+  const [image, body] = content.children;
+  const link = body.querySelector('a[href]');
+  const { pathname } = new URL(link.href);
+  const [product] = await lookupProducts([pathname]);
+
   // product image
-  const image = createProductImage(product);
+  let img = image.querySelector('picture');
+  if (!img) {
+    img = createProductImage(product);
+    image.replaceChildren(img);
+  }
 
   // product title as a link to PDP
-  const slideBody = document.createElement('div');
-  const title = createProductTitle(product, 'h3');
-  slideBody.appendChild(title);
+  let title = body.querySelector('h3');
+  if (!title) {
+    title = createProductTitle(product, 'h3');
+    body.prepend(title);
+  }
+
+  // authored content
+  const ps = body.querySelectorAll('p');
+  ps.forEach((p) => {
+    const a = p.querySelector('a[href]');
+    if (a) p.remove();
+    else {
+      const [brow, ...text] = p.textContent.split(':').map((t) => t.trim());
+      const eyebrow = document.createElement('p');
+      eyebrow.className = 'eyebrow';
+      eyebrow.textContent = brow;
+      p.textContent = text;
+      p.parentNode.insertBefore(eyebrow, p);
+    }
+  });
 
   // color options
   const colors = createProductColors(product);
-  slideBody.appendChild(colors);
-
-  // feature highlight
-  // recipe programs
+  const colorOptions = document.createElement('p');
+  colorOptions.className = 'eyebrow';
+  colorOptions.textContent = ph.colorOptions || 'Color options';
+  body.append(colorOptions, colors);
 
   // starting at price
   if (product.price) {
@@ -265,14 +290,32 @@ function createProductSlide(product, ph) {
     startingAt.textContent = ph.startingAt || 'Starting at';
 
     const price = createProductPrice(product);
-    slideBody.append(startingAt, price);
+    body.append(startingAt, price);
   }
 
-  // "Show Now" button
+  // "Shop Now" button
   const shopNow = createProductButton(product, ph, 'Shop Now');
-  slideBody.appendChild(shopNow);
+  body.appendChild(shopNow);
+}
 
-  return [image, slideBody];
+/**
+ * Builds a product carousel from a block containing product links.
+ * @param {HTMLElement} block - Block element
+ * @param {Object} ph - Placeholder object with localized text strings
+ * @returns {Promise<void>}
+ */
+async function buildProductCarousel(block, ph) {
+  const rows = [...block.children];
+  rows.forEach(async (row) => {
+    await styleRowAsSlide(row, ph);
+  });
+
+  const elems = [...block.children].map((c) => [...c.children]);
+  const carousel = buildBlock('carousel', elems);
+  carousel.classList.add(...block.classList);
+  block.replaceWith(carousel);
+  decorateBlock(carousel);
+  await loadBlock(carousel);
 }
 
 function buildFiltering(block, ph, config) {
@@ -473,31 +516,6 @@ function buildFiltering(block, ph, config) {
   }
 
   runSearch(config);
-}
-
-/**
- * Builds a product carousel from a block containing product links.
- * @param {HTMLElement} block - Block element
- * @param {Object} ph - Placeholder object with localized text strings
- * @returns {Promise<void>}
- */
-async function buildProductCarousel(block, ph) {
-  const links = block.querySelectorAll('a[href]');
-  const urls = [...links].map((a) => new URL(a.href).pathname);
-  const products = await lookupProducts(urls);
-
-  const elems = products.map((product) => createProductSlide(product, ph));
-
-  const carousel = buildBlock('carousel', elems);
-  carousel.classList.add(...block.classList);
-  block.replaceWith(carousel);
-  decorateBlock(carousel);
-  await loadBlock(carousel);
-  [...carousel.querySelectorAll('li')].forEach((li) => {
-    li.addEventListener('click', () => {
-      li.querySelector('a[href]').click();
-    });
-  });
 }
 
 export default async function decorate(block) {
