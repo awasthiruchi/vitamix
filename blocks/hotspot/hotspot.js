@@ -218,14 +218,15 @@ function copyCoords(tooltip) {
 }
 
 /**
- * Checks if editing mode should be enabled based on the current hostname.
- * @returns {boolean} `true` if editing enabled, ``false`` otherwise
+ * Checks whether hotspot editing mode should be enabled.
+ * @returns {boolean} `true` if editing enabled, `false` otherwise
  */
 function editingEnabled() {
   // only enable editing on non-production domains
-  const editable = ['localhost', '.page', '.live', '.network'];
-  const { hostname } = new URL(window.location.href);
-  return editable.some((e) => hostname.endsWith(e));
+  const editable = ['.page', '.live', '.network'];
+  const { hostname, searchParams } = new URL(window.location.href);
+  if (hostname === 'localhost') return true;
+  return editable.some((e) => hostname.endsWith(e)) && searchParams.get('edit') === 'hotspot';
 }
 
 /**
