@@ -27,7 +27,7 @@ currentEnvironment.dataset.templatePath = '/conf/vitamix/settings/wcm/templates/
 document.body.appendChild(currentEnvironment);
 
 const chatbot = document.createElement('div');
-chatbot.id = 'app';
+chatbot.id = 'chatbot-container';
 document.body.appendChild(chatbot);
 
 loadScript('https://www.vitamix.com/etc.clientlibs/vitamix/clientlibs/clientlib-chatbot.lc-d95b877a5e0c2ce39cd26f0aa190faef-lc.min.js');
