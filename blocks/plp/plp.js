@@ -365,7 +365,6 @@ function buildFiltering(block, ph, config) {
     const sortBy = document.getElementById('plp-sortby');
     sortBy.textContent = selected.textContent;
     sortBy.dataset.sort = selected.dataset.sort;
-    document.getElementById('plp-sortby').textContent = selected.textContent;
     block.querySelector('.plp-sortby ul').classList.remove('visible');
     // eslint-disable-next-line no-use-before-define
     runSearch(createFilterConfig());
