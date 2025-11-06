@@ -52,7 +52,7 @@ export async function lookupProducts(config, facets = {}) {
         const availability = variants.map((child) => child.availability).join(',');
         if (availability.includes('InStock')) {
           row.availability = availability;
-          row.path = `/us/en_us/products/${row.urlKey}`;
+          row.path = `/${locale}/${language}/products/${row.urlKey}`;
           row.colors = colors.join(',');
           row.category = catalogProducts[row.path] ? catalogProducts[row.path].Categories : '';
           row.collection = catalogProducts[row.path] ? catalogProducts[row.path].Collections : '';
