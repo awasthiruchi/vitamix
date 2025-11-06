@@ -8,6 +8,8 @@ import {
   loadBlock,
 } from '../../scripts/aem.js';
 
+import { getLocaleAndLanguage } from '../../scripts/scripts.js';
+
 /**
  * Fetches and filters products from the product index.
  * @param {Array<string>|Object} config - An array of product paths or a config object
@@ -15,9 +17,11 @@ import {
  * @returns {Promise<Array<Object>>} Array of filtered product objects
  */
 export async function lookupProducts(config, facets = {}) {
+  const { locale, language } = await getLocaleAndLanguage();
+
   if (!window.productIndex) {
     // fetch the main product index
-    const resp = await fetch('/us/en_us/products/index.json');
+    const resp = await fetch(`/${locale}/${language}/products/index.json`);
     const json = await resp.json();
 
     // build a lookup map of SKU > product data
@@ -27,7 +31,7 @@ export async function lookupProducts(config, facets = {}) {
     });
 
     // fetch the catalog config
-    const catalog = await fetch('/us/en_us/products/config/catalog.json');
+    const catalog = await fetch(`/${locale}/${language}/products/config/catalog.json`);
     const catalogData = await catalog.json();
 
     // build a lookup map of product path > catalog data for category information
