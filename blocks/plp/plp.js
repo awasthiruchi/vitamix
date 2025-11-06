@@ -179,20 +179,22 @@ function createProductPrice(product) {
 function createProductColors(product) {
   const colors = document.createElement('div');
   colors.className = 'plp-colors';
-  const availability = product.availability.split(',');
-  product.colors.split(',').forEach((color, index) => {
-    const colorSwatch = document.createElement('div');
-    colorSwatch.className = 'plp-color-swatch';
-    const colorInner = document.createElement('div');
-    colorInner.className = 'plp-color-inner';
-    colorInner.style.backgroundColor = `var(--color-${toClassName(color)})`;
-    colorSwatch.appendChild(colorInner);
-    colors.appendChild(colorSwatch);
-    // mark out-of-stock colors
-    if (availability[index] !== 'InStock') {
-      colorInner.classList.add('plp-color-swatch-oos');
-    }
-  });
+  if (product.availability && product.colors) {
+    const availability = product.availability.split(',');
+    product.colors.split(',').forEach((color, i) => {
+      const colorSwatch = document.createElement('div');
+      colorSwatch.className = 'plp-color-swatch';
+      const colorInner = document.createElement('div');
+      colorInner.className = 'plp-color-inner';
+      colorInner.style.backgroundColor = `var(--color-${toClassName(color)})`;
+      colorSwatch.appendChild(colorInner);
+      colors.appendChild(colorSwatch);
+      // mark out-of-stock colors
+      if (availability[i] !== 'InStock') {
+        colorInner.classList.add('plp-color-swatch-oos');
+      }
+    });
+  }
   return colors;
 }
 
