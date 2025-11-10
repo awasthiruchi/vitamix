@@ -411,9 +411,7 @@ async function styleRowAsSlide(content, ph) {
  */
 async function buildProductCarousel(block, ph) {
   const rows = [...block.children];
-  rows.forEach(async (row) => {
-    await styleRowAsSlide(row, ph);
-  });
+  await Promise.all(rows.map((row) => styleRowAsSlide(row, ph)));
 
   const elems = [...block.children].map((c) => [...c.children]);
   const carousel = buildBlock('carousel', elems);
