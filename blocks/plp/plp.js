@@ -57,6 +57,7 @@ function parseData(data, locale, language) {
         break;
     }
   });
+  if (parsed.collections) parsed.collection = parsed.collections; // hacky
   return parsed;
 }
 
@@ -98,6 +99,9 @@ export async function lookupProducts(config, facets = {}) {
         // add variant to parent's variants array
         parent.variants = parent.variants || [];
         parent.variants.push(variant);
+        // add variant color to parent's colors array
+        parent.colors = parent.colors || [];
+        parent.colors.push(variant.color);
       } else {
         // variant references a parent SKU that doesn't exist in the index
         orphanedProducts.push(variant);
@@ -154,7 +158,6 @@ export async function lookupProducts(config, facets = {}) {
   filterKeys.forEach((key) => {
     tokens[key] = config[key].split(',').map((t) => t.trim());
   });
-
   // filter products based on all configured criteria (must match ALL filters)
   const results = window.productIndex.parents.filter((product) => {
     // track which individual filters matched for this product
@@ -577,7 +580,7 @@ function buildFiltering(block, ph, config) {
       const div = document.createElement('div');
       div.className = 'plp-facet';
       const h3 = document.createElement('h3');
-      h3.innerHTML = ph[facetKey];
+      h3.textContent = ph[facetKey];
       div.append(h3);
       const facetValues = Object.keys(facets[facetKey]).sort((a, b) => a.localeCompare(b));
       facetValues.forEach((facetValue) => {
