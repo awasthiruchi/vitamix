@@ -1,4 +1,5 @@
 import { toClassName, createOptimizedPicture } from '../../scripts/aem.js';
+import { applyImgColor } from '../../scripts/scripts.js';
 
 /**
  * Sets multiple attributes on an element.
@@ -353,11 +354,16 @@ function enableEditing(block) {
 
 export default function decorate(block) {
   const SVG_NS = 'http://www.w3.org/2000/svg';
-  const config = configureHotspots([...block.children]);
-  const img = block.querySelector('img[src]');
+
+  const hotspots = [...block.children];
+  const bg = hotspots.shift();
+  const [imgWrapper, caption] = bg.children;
+
+  const config = configureHotspots(hotspots);
 
   // wrap image in svg to enable absolute positioning of hotspots
-  if (img) {
+  if (imgWrapper) {
+    const img = imgWrapper.querySelector('img[src]');
     const { width, height } = img;
     const svg = document.createElementNS(SVG_NS, 'svg');
     setAttributes(svg, {
@@ -377,7 +383,14 @@ export default function decorate(block) {
       height,
     });
     svg.appendChild(image);
-    block.replaceChildren(svg);
+
+    if (caption && caption.textContent.trim()) {
+      applyImgColor(block);
+      caption.classList.add('caption');
+      block.replaceChildren(svg, caption);
+    } else {
+      block.replaceChildren(svg);
+    }
   }
 
   // build and position hotspots

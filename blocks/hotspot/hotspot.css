@@ -3,28 +3,41 @@
   overflow: auto hidden;
 }
 
-.hotspot svg {
-  width: auto;
-  height: calc(100dvh - (2 * var(--horizontal-spacing)));
-  max-height: 720px;
+.hotspot .caption {
+  padding: var(--horizontal-spacing);
+  background-color: var(--image-color);
+  text-align: center;
 }
 
-@media (width >= 700px) {
-  .hotspot svg {
-    width: 100%;
-    height: auto;
-    max-height: unset;
-  }
+.hotspot .caption .eyebrow {
+  color: inherit;
+}
+
+.hotspot.image-darkest .caption,
+.hotspot.image-dark .caption {
+  color: var(--color-white);
+}
+
+.hotspot.image-light .caption,
+  .hotspot.image-lightest .caption {
+  color: var(--color-charcoal);
+}
+
+.hotspot svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: unset;
 }
 
 .hotspot button.hs {
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
   position: absolute;
   transform: translate(-50%, -50%);
-  width: 64px;
-  height: 64px;
+  width: 44px;
+  height: 44px;
   border: 0;
   border-radius: 50%;
   padding: 0;
@@ -34,8 +47,7 @@
 
 @media (width >= 700px) {
   .hotspot button.hs {
-    width: 44px;
-    height: 44px;
+    display: flex;
   }
 }
 
