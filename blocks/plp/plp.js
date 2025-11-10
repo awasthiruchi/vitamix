@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import {
   fetchPlaceholders,
   readBlockConfig,
@@ -11,10 +12,59 @@ import {
 import { getLocaleAndLanguage } from '../../scripts/scripts.js';
 
 /**
+ * Constructs a localized product URL path.
+ * @param {string} locale - Locale code
+ * @param {string} language - Language code
+ * @param {string} path - Product-specific path or URL key
+ * @returns {string} Fully constructed product URL path
+ */
+function buildProductsUrl(locale, language, path) {
+  return `/${locale}/${language}/products/${path}`;
+}
+
+/**
+ * Parses raw product data from index and transforms values.
+ * @param {Object} data - Raw product data object from the product index
+ * @param {string} locale - Locale code
+ * @param {string} language - Language code
+ * @returns {Object} Parsed product object with transformed values
+ */
+function parseData(data, locale, language) {
+  const parsed = {};
+  Object.entries(data).forEach(([key, value]) => {
+    switch (key) {
+      case 'image':
+        // convert relative image paths to full localized URLs
+        parsed[key] = value.startsWith('./') ? buildProductsUrl(locale, language, value.substring(2)) : value;
+        break;
+      case 'price':
+      case 'regularPrice':
+        // convert price strings to numeric values
+        parsed[key] = parseFloat(value, 10);
+        break;
+      case 'categories':
+      case 'categoriesUrlKey':
+      case 'collections':
+      case 'productType':
+      case 'series':
+      case 'variantSkus':
+      case 'visibility':
+        // split comma-separated values into trimmed arrays
+        parsed[key] = value ? value.split(',').map((s) => s.trim()) : [];
+        break;
+      default:
+        parsed[key] = value.trim();
+        break;
+    }
+  });
+  return parsed;
+}
+
+/**
  * Fetches and filters products from the product index.
- * @param {Array<string>|Object} config - An array of product paths or a config object
- * @param {Object} facets - Optional facets object to calculate counts for filtering options
- * @returns {Promise<Array<Object>>} Array of filtered product objects
+ * @param {Array<string>|Object} config - Array of product URL paths or object with filter criteria
+ * @param {Object} facets - Optional object to populate with facet counts for UI filters.
+ * @returns {Promise<Array<Object>>} Array of filtered parent product objects (with nested variants)
  */
 export async function lookupProducts(config, facets = {}) {
   const { locale, language } = await getLocaleAndLanguage();
@@ -22,107 +72,137 @@ export async function lookupProducts(config, facets = {}) {
   if (!window.productIndex) {
     // fetch the main product index
     const resp = await fetch(`/${locale}/${language}/products/index.json`);
-    const json = await resp.json();
+    const { data } = await resp.json();
 
-    // build a lookup map of SKU > product data
-    const skuIndex = {};
-    json.data.forEach((row) => {
-      skuIndex[row.sku] = row;
-    });
+    // separate products into parents (standalone products) and variants (color/style options)
+    const parentProductsBySKU = {};
+    const variants = [];
+    const orphanedProducts = [];
 
-    // fetch the catalog config
-    const catalog = await fetch(`/${locale}/${language}/products/config/catalog.json`);
-    const catalogData = await catalog.json();
-
-    // build a lookup map of product path > catalog data for category information
-    const catalogProducts = {};
-    catalogData.data.forEach((row) => {
-      const path = new URL(row.URL).pathname;
-      catalogProducts[path] = row;
-    });
-
-    const populateIndex = async (data) => {
-      const topLevelProducts = data
-        .filter((row) => !row.parentSku && row.title && row.price && (row.availability === 'InStock'));
-      const products = [];
-      for (let i = 0; i < topLevelProducts.length; i += 1) {
-        const row = topLevelProducts[i];
-        const variants = row.variantSkus ? row.variantSkus.split(',').map((e) => skuIndex[e.trim()]) : [];
-        const colors = variants.map((child) => child.color);
-        const availability = variants.map((child) => child.availability).join(',');
-        if (availability.includes('InStock')) {
-          row.availability = availability;
-          row.path = `/${locale}/${language}/products/${row.urlKey}`;
-          row.colors = colors.join(',');
-          row.category = catalogProducts[row.path] ? catalogProducts[row.path].Categories : '';
-          row.collection = catalogProducts[row.path] ? catalogProducts[row.path].Collections : '';
-          row.productType = catalogProducts[row.path] ? catalogProducts[row.path]['Product Type'] : '';
-          const heroImage = variants[0] && variants[0].image ? variants[0].image : row.image;
-          row.image = new URL(heroImage, new URL(row.path, window.location.href)).toString();
-        }
-        products.push(row);
+    // categorize all products as either parents or variants
+    data.forEach((d) => {
+      const product = parseData(d, locale, language);
+      if (product.sku && !product.parentSku) {
+        // products without a parentSku are standalone parent products
+        parentProductsBySKU[product.sku] = product;
+      } else {
+        // products with a parentSku are variants
+        variants.push(product);
       }
-      return products;
-    };
-    const products = await populateIndex(json.data);
-
-    // build a path-based lookup for direct product access
-    const lookup = {};
-    products.forEach((row) => {
-      lookup[row.path] = row;
     });
-    window.productIndex = { data: json.data, lookup };
+
+    // attach variants to their parent products
+    variants.forEach((variant) => {
+      const parent = parentProductsBySKU[variant.parentSku];
+      if (parent) {
+        // add variant to parent's variants array
+        parent.variants = parent.variants || [];
+        parent.variants.push(variant);
+      } else {
+        // variant references a parent SKU that doesn't exist in the index
+        orphanedProducts.push(variant);
+        // eslint-disable-next-line no-console
+        console.warn(variant.sku, 'has no parent product');
+      }
+    });
+
+    // build a URL-based lookup table
+    const urlLookup = {};
+
+    Object.values(parentProductsBySKU).forEach((product) => {
+      if (product.urlKey) {
+        const url = buildProductsUrl(locale, language, product.urlKey);
+        urlLookup[url] = product;
+        product.url = url;
+      } else {
+        // product is missing a URL key and won't be accessible via URL
+        // eslint-disable-next-line no-console
+        console.warn(product.sku, 'has no URL key');
+      }
+    });
+
+    window.productIndex = {
+      data, // raw product data
+      lookup: urlLookup, // URL-based product lookup
+      parents: Object.values(parentProductsBySKU), // all parent products with variants
+    };
   }
 
-  // simple array lookup
+  // simple array lookup: return products by their URL paths
   if (Array.isArray(config)) {
     const pathnames = config;
-    // filter out any paths to products that don't exist
+    // filter out any paths that don't exist in the index
     return (pathnames.map((path) => window.productIndex.lookup[path]).filter((e) => e));
   }
 
-  // setup filtering config
+  // filtering mode: filter products by multiple criteria and calculate facet counts
+
+  // extract all facet keys from the facets object for dynamic filter UI
   const facetKeys = Object.keys(facets);
-  const keys = Object.keys(config);
+
+  // extract all filter criteria keys from the config object
+  const filterKeys = Object.keys(config);
+
+  // map singular filter names to their plural product property names
+  const cleanKeys = {
+    category: 'categories',
+    collection: 'collections',
+  };
+
+  // parse comma-separated filter values into trimmed token arrays for matching
   const tokens = {};
-  keys.forEach((key) => {
+  filterKeys.forEach((key) => {
     tokens[key] = config[key].split(',').map((t) => t.trim());
   });
 
-  // filter products based on config
-  const results = window.productIndex.data.filter((row) => {
+  // filter products based on all configured criteria (must match ALL filters)
+  const results = window.productIndex.parents.filter((product) => {
+    // track which individual filters matched for this product
     const filterMatches = {};
-    let matchedAll = keys.every((key) => {
+
+    // check if this product matches ALL the filter criteria
+    const matchedAll = filterKeys.every((filterKey) => {
+      // map the filter key to the actual product property name (e.g., category -> categories)
+      const key = cleanKeys[filterKey] || filterKey;
       let matched = false;
-      if (row[key]) {
-        const rowValues = row[key].split(',').map((t) => t.trim());
-        matched = tokens[key].some((t) => rowValues.includes(t));
+
+      // array-based filter matching (categories, productType, etc.)
+      if (product[key]) {
+        // product matches if ANY of its values match ANY of the filter tokens
+        matched = tokens[filterKey].some((t) => product[key].includes(t));
       }
+
+      // special case: full-text search on product title
       if (key === 'fulltext') {
-        const fulltext = row.title.toLowerCase();
+        const fulltext = product.title.toLowerCase();
         matched = fulltext.includes(config.fulltext.toLowerCase());
       }
-      filterMatches[key] = matched;
+
+      // store whether this specific filter matched for facet counting
+      filterMatches[filterKey] = matched;
+
       return matched;
     });
 
-    // only include actual products (not variants or categories)
-    const isProduct = () => !!row.price;
-    if (!isProduct()) matchedAll = false;
-
-    // calculate facet counts
+    // calculate facet counts for the filter UI (e.g., "Red (5)", "Blue (3)")
     facetKeys.forEach((facetKey) => {
+      // intelligent facet counting: include products that match ALL OTHER filters
       let includeInFacet = true;
       Object.keys(filterMatches).forEach((filterKey) => {
+        // exclude this product from facet count if any OTHER filter didn't match
         if (filterKey !== facetKey && !filterMatches[filterKey]) includeInFacet = false;
       });
+
+      // if this product qualifies for inclusion in the facet counts
       if (includeInFacet) {
-        if (row[facetKey]) {
-          const rowValues = row[facetKey].split(',').map((t) => t.trim());
-          rowValues.forEach((val) => {
+        // check if the product has any values for this facet field
+        if (product[facetKey]) {
+          product[facetKey].forEach((val) => {
             if (facets[facetKey][val]) {
+              // increment existing count
               facets[facetKey][val] += 1;
             } else {
+              // initialize count for a new facet value
               facets[facetKey][val] = 1;
             }
           });
@@ -136,16 +216,30 @@ export async function lookupProducts(config, facets = {}) {
 }
 
 /**
+ * Checks if a product has any variants.
+ * @param {Object} product - Product data object
+ * @returns {boolean} `true` if the product has at least one variant
+ */
+function hasVariants(product) {
+  return product.variants && product.variants.length > 0;
+}
+
+/**
  * Creates a product image element with lazy loading.
  * @param {Object} product - Product data object
  * @returns {HTMLImageElement} Product image element
  */
 function createProductImage(product) {
-  const image = document.createElement('img');
-  image.src = product.image || product.images?.[0]?.url || '';
-  image.alt = product.title || product.name || '';
-  image.loading = 'lazy';
-  return image;
+  const img = document.createElement('img');
+  img.loading = 'lazy';
+  if (hasVariants(product)) {
+    const variant = product.variants[0];
+    img.src = variant.image;
+    img.alt = variant.title;
+  }
+  if (!img.src) img.src = product.image || '';
+  if (!img.alt) img.alt = product.title || '';
+  return img;
 }
 
 /**
@@ -157,8 +251,8 @@ function createProductImage(product) {
 function createProductTitle(product, h = 'h4') {
   const title = document.createElement(h);
   const link = document.createElement('a');
-  link.href = product.path || product.url || '#';
-  link.textContent = product.title || product.name || '';
+  link.href = product.url || '#';
+  link.textContent = product.title || '';
   title.appendChild(link);
   return title;
 }
@@ -183,19 +277,21 @@ function createProductPrice(product) {
 function createProductColors(product) {
   const colors = document.createElement('div');
   colors.className = 'plp-colors';
-  if (product.availability && product.colors) {
-    const availability = product.availability.split(',');
-    product.colors.split(',').forEach((color, i) => {
-      const colorSwatch = document.createElement('div');
-      colorSwatch.className = 'plp-color-swatch';
-      const colorInner = document.createElement('div');
-      colorInner.className = 'plp-color-inner';
-      colorInner.style.backgroundColor = `var(--color-${toClassName(color)})`;
-      colorSwatch.appendChild(colorInner);
-      colors.appendChild(colorSwatch);
-      // mark out-of-stock colors
-      if (availability[i] !== 'InStock') {
-        colorInner.classList.add('plp-color-swatch-oos');
+  if (hasVariants(product)) {
+    product.variants.forEach((variant) => {
+      const { color, availability } = variant;
+      if (color) {
+        const colorSwatch = document.createElement('div');
+        colorSwatch.className = 'plp-color-swatch';
+        const colorInner = document.createElement('div');
+        colorInner.className = 'plp-color-inner';
+        colorInner.style.backgroundColor = `var(--color-${toClassName(color)})`;
+        colorSwatch.appendChild(colorInner);
+        colors.appendChild(colorSwatch);
+        // mark out-of-stock colors
+        if (availability !== 'InStock') {
+          colorInner.classList.add('plp-color-swatch-oos');
+        }
       }
     });
   }
@@ -213,7 +309,7 @@ function createProductColors(product) {
 function createProductButton(product, ph, label, btnClass) {
   const button = document.createElement('p');
   button.classList.add(`plp-${toClassName(label)}`, 'button-container');
-  button.innerHTML = `<a href="${product.path}" class="button ${btnClass}">${ph[toCamelCase(label)]}</a>`;
+  button.innerHTML = `<a href="${product.url}" class="button ${btnClass}">${ph[toCamelCase(label)]}</a>`;
   return button;
 }
 
@@ -236,16 +332,17 @@ function createProductCard(product, ph) {
 
   card.append(image, title, price, colors, viewDetails, compare);
   card.addEventListener('click', () => {
-    window.location.href = product.path;
+    viewDetails.querySelector('a').click();
   });
 
   return card;
 }
 
 /**
- * Styles product content for display in a carousel view.
- * @param {Object} content - Product content
+ * Transforms a row of authored content into a styled carousel slide with product data.
+ * @param {HTMLElement} content - Row element containing image and body content
  * @param {Object} ph - Placeholder object with localized text strings
+ * @returns {Promise<void>}
  */
 async function styleRowAsSlide(content, ph) {
   const [image, body] = content.children;
@@ -253,7 +350,7 @@ async function styleRowAsSlide(content, ph) {
   const { pathname } = new URL(link.href);
   const [product] = await lookupProducts([pathname]);
 
-  // product image
+  // replace or add product image with lazy loading
   let img = image.querySelector('picture');
   if (!img) {
     img = createProductImage(product);
@@ -273,6 +370,7 @@ async function styleRowAsSlide(content, ph) {
     const a = p.querySelector('a[href]');
     if (a) p.remove();
     else {
+      // split "Label: Description" format into separate eyebrow and description elements
       const [brow, ...text] = p.textContent.split(':').map((t) => t.trim());
       const eyebrow = document.createElement('p');
       eyebrow.className = 'eyebrow';
@@ -306,7 +404,8 @@ async function styleRowAsSlide(content, ph) {
 
 /**
  * Builds a product carousel from a block containing product links.
- * @param {HTMLElement} block - Block element
+ * Transforms each row into a styled slide and wraps them in a carousel block.
+ * @param {HTMLElement} block - PLP block element with product rows
  * @param {Object} ph - Placeholder object with localized text strings
  * @returns {Promise<void>}
  */
@@ -324,6 +423,13 @@ async function buildProductCarousel(block, ph) {
   await loadBlock(carousel);
 }
 
+/**
+ * Builds complete product listing page with filtering, sorting, and search functionality.
+ * @param {HTMLElement} block - PLP block element to transform into a product listing
+ * @param {Object} ph - Placeholder object with localized text strings for UI labels
+ * @param {Object} config - Initial filter configuration from block config
+ * @returns {void}
+ */
 function buildFiltering(block, ph, config) {
   block.innerHTML = `<div class="plp-controls">
       <input id="fulltext" placeholder="${ph.typeToSearch}">
@@ -349,6 +455,7 @@ function buildFiltering(block, ph, config) {
     block.querySelector('.plp-facets').classList.toggle('visible');
   });
 
+  // utility function to add the same event listener to multiple elements
   const addEventListeners = (elements, event, callback) => {
     elements.forEach((e) => {
       e.addEventListener(event, callback);
@@ -378,6 +485,7 @@ function buildFiltering(block, ph, config) {
     selectSort(event.target);
   });
 
+  // highlights search terms in product titles by wrapping matches in a span.
   const highlightResults = (res) => {
     const fulltext = document.getElementById('fulltext').value;
     if (fulltext) {
@@ -391,6 +499,7 @@ function buildFiltering(block, ph, config) {
     }
   };
 
+  // renders product cards to the results area and highlights search terms
   const displayResults = async (results) => {
     resultsElement.innerHTML = '';
     results.forEach((product) => {
@@ -399,8 +508,10 @@ function buildFiltering(block, ph, config) {
     highlightResults(resultsElement);
   };
 
+  // gets all currently selected filter checkboxes
   const getSelectedFilters = () => [...block.querySelectorAll('input[type="checkbox"]:checked')];
 
+  // creates a filter configuration object from selected filters and search input
   const createFilterConfig = () => {
     const filterConfig = { ...config };
     getSelectedFilters().forEach((checked) => {
@@ -413,6 +524,7 @@ function buildFiltering(block, ph, config) {
     return (filterConfig);
   };
 
+  // renders the filter facets UI with checkboxes, selected filter tags, and counts
   const displayFacets = (facets, filters) => {
     const selected = getSelectedFilters().map((check) => check.value);
     facetsElement.innerHTML = `<div>
@@ -491,8 +603,10 @@ function buildFiltering(block, ph, config) {
     });
   };
 
+  // converts a price string to a numeric value for sorting
   const getPrice = (string) => +string;
 
+  // main search function that filters, sorts, and displays products
   const runSearch = async (filterConfig = config) => {
     const facets = {
       series: {}, collection: {}, colors: {}, productType: {},
