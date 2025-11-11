@@ -237,6 +237,7 @@ function editingEnabled() {
  * @param {HTMLElement} block - Block element
  */
 function enableEditing(block) {
+  const svgWrapper = block.querySelector('.svg-wrapper');
   stageInvalidHotspots(block);
 
   // create live coordinates tooltip
@@ -247,7 +248,7 @@ function enableEditing(block) {
     tabIndex: -1,
     'aria-hidden': true,
   });
-  block.prepend(tooltip);
+  svgWrapper.prepend(tooltip);
   tooltip.addEventListener('click', () => {
     copyCoords(tooltip);
   });
