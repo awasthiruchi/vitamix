@@ -147,6 +147,7 @@ function stageInvalidHotspots(block) {
  * @param {Array<Object>} config - Array of hotspot config objects
  */
 function buildHotspots(block, config) {
+  const svgWrapper = block.querySelector('.svg-wrapper');
   config.forEach((c) => {
     const button = document.createElement('button');
     setAttributes(button, {
@@ -159,7 +160,7 @@ function buildHotspots(block, config) {
       'aria-label': `Toggle ${c.title} hotspot`,
     });
     button.innerHTML = '<i class="glyph glyph-plus"></i>';
-    block.append(button);
+    svgWrapper.append(button);
   });
 }
 
@@ -188,13 +189,14 @@ function positionPopover(popover, button) {
  * @param {Array<Object>} config - Array of hotspot config objects
  */
 function buildPopovers(block, config) {
+  const svgWrapper = block.querySelector('.svg-wrapper');
   config.forEach((c) => {
     const popover = document.createElement('div');
     setAttributes(popover, {
       id: c.id,
       popover: 'auto',
     });
-    block.append(popover);
+    svgWrapper.append(popover);
     // populate content dynamically on first toggle
     popover.addEventListener('toggle', () => {
       popover.innerHTML = c.popover;
@@ -371,6 +373,9 @@ export default function decorate(block) {
       height,
       viewBox: `0 0 ${width} ${height}`,
     });
+    const svgWrapper = document.createElement('div');
+    svgWrapper.className = 'svg-wrapper';
+    svgWrapper.append(svg);
 
     // create optimized image element within SVG
     const image = document.createElementNS(SVG_NS, 'image');
@@ -387,14 +392,14 @@ export default function decorate(block) {
     if (caption && caption.textContent.trim()) {
       applyImgColor(block);
       caption.classList.add('caption');
-      block.replaceChildren(svg, caption);
+      block.replaceChildren(caption, svgWrapper);
     } else {
-      block.replaceChildren(svg);
+      block.replaceChildren(svgWrapper);
     }
   }
 
   // build and position hotspots
-  if (config.length > 0) {
+  if (imgWrapper && config.length > 0) {
     const resize = new ResizeObserver(() => {
       const rect = block.getBoundingClientRect();
 

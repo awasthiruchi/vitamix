@@ -1,5 +1,4 @@
 .hotspot {
-  position: relative;
   overflow: auto hidden;
 }
 
@@ -19,8 +18,14 @@
 }
 
 .hotspot.image-light .caption,
-  .hotspot.image-lightest .caption {
+.hotspot.image-lightest .caption {
   color: var(--color-charcoal);
+}
+
+.hotspot .svg-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
 }
 
 .hotspot svg {
