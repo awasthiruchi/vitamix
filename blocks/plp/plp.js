@@ -372,15 +372,6 @@ async function styleRowAsSlide(content, ph) {
   ps.forEach((p) => {
     const a = p.querySelector('a[href]');
     if (a) p.remove();
-    else {
-      // split "Label: Description" format into separate eyebrow and description elements
-      const [brow, ...text] = p.textContent.split(':').map((t) => t.trim());
-      const eyebrow = document.createElement('p');
-      eyebrow.className = 'eyebrow';
-      eyebrow.textContent = brow;
-      p.textContent = text;
-      p.parentNode.insertBefore(eyebrow, p);
-    }
   });
 
   // color options
