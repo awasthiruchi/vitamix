@@ -419,6 +419,10 @@ main .plp-product-card p {
   justify-content: center;
 }
 
+.plp.carousel[data-slides] ul {
+  justify-content: unset;
+}
+
 .plp.carousel li {
   cursor: pointer;
 }
