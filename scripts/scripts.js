@@ -792,6 +792,32 @@ function getTextColor(hex) {
   return luminance > 128 ? 'dark' : 'light';
 }
 
+export function applyImgColor(block) {
+  const img = block.querySelector('img[src]');
+  if (img) {
+    import('./colorthief.js').then(({ default: ColorThief }) => {
+      const colorThief = new ColorThief();
+      const thumbnail = createOptimizedPicture(img.src, '', '', [{ width: 100 }]).querySelector('source').srcset;
+      const thumbnailImg = new Image();
+      thumbnailImg.src = thumbnail;
+      thumbnailImg.onload = () => {
+        const color = colorThief.getColor(thumbnailImg, 5, 10);
+        const [r, g, b] = color;
+        const y = Math.floor(r * 0.2126 + g * 0.7152 + b * 0.0722);
+        const brightness = {
+          darkest: 80,
+          dark: 160,
+          light: 200,
+          lightest: 256,
+        };
+        const brightnessKey = Object.keys(brightness).find((key) => y <= brightness[key]);
+        block.classList.add(`image-${brightnessKey}`);
+        block.style.setProperty('--image-color', `#${r.toString(16)}${g.toString(16)}${b.toString(16)}`);
+      };
+    });
+  }
+}
+
 /**
  * Parses alert banner rows from a block element and returns an array of banner objects.
  * @param {HTMLElement} block - The DOM element containing alert banner rows as children.

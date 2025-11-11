@@ -1,4 +1,5 @@
 import { toClassName, createOptimizedPicture } from '../../scripts/aem.js';
+import { applyImgColor } from '../../scripts/scripts.js';
 
 /**
  * Sets multiple attributes on an element.
@@ -146,6 +147,7 @@ function stageInvalidHotspots(block) {
  * @param {Array<Object>} config - Array of hotspot config objects
  */
 function buildHotspots(block, config) {
+  const svgWrapper = block.querySelector('.svg-wrapper');
   config.forEach((c) => {
     const button = document.createElement('button');
     setAttributes(button, {
@@ -158,7 +160,7 @@ function buildHotspots(block, config) {
       'aria-label': `Toggle ${c.title} hotspot`,
     });
     button.innerHTML = '<i class="glyph glyph-plus"></i>';
-    block.append(button);
+    svgWrapper.append(button);
   });
 }
 
@@ -187,13 +189,14 @@ function positionPopover(popover, button) {
  * @param {Array<Object>} config - Array of hotspot config objects
  */
 function buildPopovers(block, config) {
+  const svgWrapper = block.querySelector('.svg-wrapper');
   config.forEach((c) => {
     const popover = document.createElement('div');
     setAttributes(popover, {
       id: c.id,
       popover: 'auto',
     });
-    block.append(popover);
+    svgWrapper.append(popover);
     // populate content dynamically on first toggle
     popover.addEventListener('toggle', () => {
       popover.innerHTML = c.popover;
@@ -353,11 +356,16 @@ function enableEditing(block) {
 
 export default function decorate(block) {
   const SVG_NS = 'http://www.w3.org/2000/svg';
-  const config = configureHotspots([...block.children]);
-  const img = block.querySelector('img[src]');
+
+  const hotspots = [...block.children];
+  const bg = hotspots.shift();
+  const [imgWrapper, caption] = bg.children;
+
+  const config = configureHotspots(hotspots);
 
   // wrap image in svg to enable absolute positioning of hotspots
-  if (img) {
+  if (imgWrapper) {
+    const img = imgWrapper.querySelector('img[src]');
     const { width, height } = img;
     const svg = document.createElementNS(SVG_NS, 'svg');
     setAttributes(svg, {
@@ -365,6 +373,9 @@ export default function decorate(block) {
       height,
       viewBox: `0 0 ${width} ${height}`,
     });
+    const svgWrapper = document.createElement('div');
+    svgWrapper.className = 'svg-wrapper';
+    svgWrapper.append(svg);
 
     // create optimized image element within SVG
     const image = document.createElementNS(SVG_NS, 'image');
@@ -377,11 +388,18 @@ export default function decorate(block) {
       height,
     });
     svg.appendChild(image);
-    block.replaceChildren(svg);
+
+    if (caption && caption.textContent.trim()) {
+      applyImgColor(block);
+      caption.classList.add('caption');
+      block.replaceChildren(caption, svgWrapper);
+    } else {
+      block.replaceChildren(svgWrapper);
+    }
   }
 
   // build and position hotspots
-  if (config.length > 0) {
+  if (imgWrapper && config.length > 0) {
     const resize = new ResizeObserver(() => {
       const rect = block.getBoundingClientRect();
 
