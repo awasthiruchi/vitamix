@@ -72,7 +72,7 @@ export async function lookupProducts(config, facets = {}) {
 
   if (!window.productIndex) {
     // fetch the main product index
-    const resp = await fetch(`/${locale}/${language}/products/index.json`);
+    const resp = await fetch(`/${locale}/${language}/products/index.json?include=all`);
     const { data } = await resp.json();
 
     // separate products into parents (standalone products) and variants (color/style options)
@@ -83,6 +83,7 @@ export async function lookupProducts(config, facets = {}) {
     // categorize all products as either parents or variants
     data.forEach((d) => {
       const product = parseData(d, locale, language);
+
       if (product.sku && !product.parentSku) {
         // products without a parentSku are standalone parent products
         parentProductsBySKU[product.sku] = product;
@@ -237,8 +238,9 @@ function createProductImage(product) {
   img.loading = 'lazy';
   if (hasVariants(product)) {
     const variant = product.variants[0];
-    img.src = variant.image;
-    img.alt = variant.title;
+    const { image, title } = variant;
+    if (image) img.src = image;
+    if (title) img.alt = title;
   }
   if (!img.src) img.src = product.image || '';
   if (!img.alt) img.alt = product.title || '';
