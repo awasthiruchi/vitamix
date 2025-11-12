@@ -292,7 +292,7 @@
   top: var(--spacing-xs);
   right: var(--spacing-xs);
   padding: var(--spacing-s);
-  z-index: 1;
+  z-index: 2;
 }
 
 .hotspot .tooltip {
