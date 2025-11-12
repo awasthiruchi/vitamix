@@ -1,11 +1,29 @@
-.hotspot {
-  overflow: auto hidden;
-}
-
 .hotspot .caption {
   padding: var(--horizontal-spacing);
   background-color: var(--image-color);
   text-align: center;
+}
+
+.hotspot button.expand {
+  position: absolute;
+  top: 1ch;
+  left: 1ch;
+  border: 0;
+  background-color: var(--image-color);
+  text-transform: none;
+  transition: background-color 0.2s;
+}
+
+.hotspot button.expand:disabled {
+  width: max-content;
+  background-color: var(--image-color);
+  cursor: default;
+}
+
+@media (width >= 700px) {
+  .hotspot button.expand {
+    display: none;
+  }
 }
 
 .hotspot .caption .eyebrow {
@@ -13,46 +31,126 @@
 }
 
 .hotspot.image-darkest .caption,
-.hotspot.image-dark .caption {
+.hotspot.image-dark .caption,
+.hotspot.image-darkest button.expand,
+.hotspot.image-dark button.expand {
   color: var(--color-white);
 }
 
 .hotspot.image-light .caption,
-.hotspot.image-lightest .caption {
+.hotspot.image-lightest .caption,
+.hotspot.image-lightest button.expand,
+.hotspot.image-light button.expand {
   color: var(--color-charcoal);
 }
 
+@media (width >= 700px) {
+  .hotspot .caption {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1;
+    width: 100%;
+    max-width: calc(var(--site-width) / 2);
+  }
+
+  .hotspot.image-darkest .caption,
+  .hotspot.image-lightest .caption {
+    background-color: transparent;
+  }
+}
+
+.hotspot.image-darkest button.expand:disabled,
+.hotspot.image-lightest button.expand:disabled {
+  background-color: transparent;
+}
+
 .hotspot .svg-wrapper {
+  display: block;
   position: relative;
   width: 100%;
   height: 100%;
+  overflow: auto;
 }
 
 .hotspot svg {
   display: block;
   width: 100%;
   height: auto;
-  max-height: unset;
+  transition: height 1s;
+}
+
+.hotspot svg img {
+  width: 100%;
+  height: auto;
+}
+
+.hotspot[data-explore] svg {
+  width: auto;
+  height: calc(100dvh - var(--header-height));
+  max-height: 720px;
+}
+
+@media (width >= 700px) {
+  .hotspot svg,
+  .hotspot[data-explore] svg {
+    width: 100%;
+    height: auto;
+    max-height: unset;
+  }
+
+  .hotspot .svg-wrapper {
+    overflow: hidden;
+  }
+
+  .hotspot .svg-wrapper svg {
+    width: 200%;
+    transform: translateX(-25%);
+    transform-origin: center bottom;
+  }
+}
+
+@media (width >= 1000px) {
+  .hotspot .svg-wrapper svg {
+    width: 150%;
+    transform: translateX(-16.667%);
+  }
+}
+
+@media (width >= 1400px) {
+  .hotspot .svg-wrapper svg {
+    width: 100%;
+    transform: translateX(0);
+  }
 }
 
 .hotspot button.hs {
-  display: none;
+  display: flex;
   align-items: center;
   justify-content: center;
   position: absolute;
   transform: translate(-50%, -50%);
-  width: 44px;
-  height: 44px;
+  width: 33px;
+  height: 33px;
   border: 0;
   border-radius: 50%;
   padding: 0;
   background-color: #fff5;
   transition: transform 0.4s;
+  cursor: default;
+}
+
+.hotspot[data-explore] button.hs {
+  width: 44px;
+  height: 44px;
+  cursor: context-menu;
 }
 
 @media (width >= 700px) {
   .hotspot button.hs {
-    display: flex;
+    width: 44px;
+    height: 44px;
+    cursor: context-menu;
   }
 }
 
@@ -60,11 +158,17 @@
   transform: translate(-50%, -50%) rotate(135deg);
 }
 
-.hotspot button.hs:hover {
+.hotspot[data-explore] button.hs:hover {
   background-color: #fffb;
 }
 
-.hotspot button.hs::after {
+@media (width >= 700px) {
+  .hotspot button.hs:hover {
+    background-color: #fffb;
+  }
+}
+
+.hotspot[data-explore] button.hs::after {
   content: '';
   position: absolute;
   inset: 0;
@@ -72,6 +176,18 @@
   background-color: var(--color-white);
   z-index: -1;
   animation: pulse 2.5s linear infinite;
+}
+
+@media (width >= 700px) {
+  .hotspot button.hs::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background-color: var(--color-white);
+    z-index: -1;
+    animation: pulse 2.5s linear infinite;
+  }
 }
 
 @keyframes pulse {
@@ -122,10 +238,15 @@
 
 .hotspot i.glyph {
   position: relative;
-  width: 32px;
-  height: 32px;
+  width: 11px;
+  height: 11px;
   border-radius: 50%;
   background-color: var(--color-white);
+}
+
+.hotspot[data-explore] i.glyph {
+  width: 22px;
+  height: 22px;
 }
 
 @media (width >= 700px) {
@@ -137,7 +258,6 @@
 
 .hotspot i.glyph::before,
 .hotspot i.glyph::after {
-  content: '';
   position: absolute;
   top: 50%;
   left: 50%;
@@ -150,6 +270,18 @@
 
 .hotspot i.glyph::before {
   transform: translate(-50%, -50%) rotate(90deg);
+}
+
+.hotspot[data-explore] i.glyph::before,
+.hotspot[data-explore] i.glyph::after {
+  content: '';
+}
+
+@media (width >= 700px) {
+  .hotspot i.glyph::before,
+  .hotspot i.glyph::after {
+    content: '';
+  }
 }
 
 /* EDITING MODE */
@@ -203,6 +335,7 @@
   display: unset;
 }
 
+/* stylelint-disable-next-line no-descending-specificity */
 .hotspot[data-editing="true"] button.hs {
   cursor: grab;
   user-select: none;
