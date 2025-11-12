@@ -47,16 +47,18 @@
 @media (width >= 700px) {
   .hotspot .caption {
     position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
     z-index: 1;
     width: 100%;
-    max-width: calc(var(--site-width) / 2);
   }
 
   .hotspot.image-darkest .caption,
   .hotspot.image-lightest .caption {
     background-color: transparent;
+  }
+
+  .hotspot.image-dark .caption,
+  .hotspot.image-light .caption {
+    background: linear-gradient(to bottom, var(--image-color) 50%, transparent);
   }
 }
 
