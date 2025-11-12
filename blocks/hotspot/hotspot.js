@@ -459,7 +459,7 @@ export default function decorate(block) {
         // update hotspot positions on every resize
         positionHotspots(block);
 
-        if (block.dataset.explore === 'true') {
+        if (block.dataset.explore === 'true' && window.matchMedia('(min-width: 700px)').matches) {
           const wrapper = block.querySelector('.svg-wrapper');
           wrapper.scrollTo({ left: 0, behavior: 'smooth' });
         }
