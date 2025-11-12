@@ -416,11 +416,7 @@ main .plp-product-card p {
 }
 
 .plp.carousel ul {
-  justify-content: center;
-}
-
-.plp.carousel[data-slides] ul {
-  justify-content: unset;
+  justify-content: safe center;
 }
 
 .plp.carousel li {
