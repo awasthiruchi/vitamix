@@ -1,5 +1,5 @@
-import { toClassName, createOptimizedPicture } from '../../scripts/aem.js';
-import { applyImgColor } from '../../scripts/scripts.js';
+import { toClassName, createOptimizedPicture, fetchPlaceholders } from '../../scripts/aem.js';
+import { applyImgColor, getLocaleAndLanguage } from '../../scripts/scripts.js';
 
 /**
  * Sets multiple attributes on an element.
@@ -364,11 +364,12 @@ function enableEditing(block) {
  * Activates the hotspot "explore" mode.
  * @param {HTMLElement} block - Block element
  * @param {HTMLButtonElement} button - Expand button
+ * @param {Object} ph - Placeholders object
  */
-function toggleExplore(block, button) {
+function toggleExplore(block, button, ph) {
   block.dataset.explore = true;
   button.disabled = true;
-  button.textContent = 'Swipe to Explore';
+  button.textContent = ph.swipeToExplore || 'Swipe to Explore';
   const svgWrapper = block.querySelector('.svg-wrapper');
   svgWrapper.scrollTo({
     left: (svgWrapper.scrollWidth / 2) - (svgWrapper.clientWidth / 2),
@@ -383,16 +384,19 @@ function toggleExplore(block, button) {
  * Builds and prepends the "Click to Explore" button for mobile
  * @param {HTMLElement} block - Block element
  */
-function buildExpand(block) {
+async function buildExpand(block) {
+  const { locale, language } = await getLocaleAndLanguage();
+  const ph = await fetchPlaceholders(`/${locale}/${language}`);
+
   const svgWrapper = block.querySelector('.svg-wrapper');
   const button = document.createElement('button');
   setAttributes(button, {
     type: 'button',
     class: 'button expand',
   });
-  button.textContent = 'Click to Explore';
+  button.textContent = ph.clickToExplore || 'Click to Explore';
   button.addEventListener('click', () => {
-    toggleExplore(block, button);
+    toggleExplore(block, button, ph);
   });
   svgWrapper.prepend(button);
 }
