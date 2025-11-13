@@ -1,5 +1,5 @@
-import { toClassName, createOptimizedPicture } from '../../scripts/aem.js';
-import { applyImgColor } from '../../scripts/scripts.js';
+import { toClassName, createOptimizedPicture, fetchPlaceholders } from '../../scripts/aem.js';
+import { applyImgColor, getLocaleAndLanguage } from '../../scripts/scripts.js';
 
 /**
  * Sets multiple attributes on an element.
@@ -49,12 +49,17 @@ function configureHotspots(rows) {
  * @param {HTMLElement} block - Block element
  */
 function positionHotspots(block) {
-  const svg = block.querySelector('svg');
+  const wrapper = block.querySelector('.svg-wrapper');
+  const svg = wrapper.querySelector('svg');
   const svgWidth = parseInt(svg.getAttribute('width'), 10);
   const svgHeight = parseInt(svg.getAttribute('height'), 10);
 
   // get current rendered size
   const rect = svg.getBoundingClientRect();
+  const wrapperW = wrapper.clientWidth; // visible width
+  const isScaled = window.matchMedia('(min-width: 700px)').matches;
+  const offsetX = isScaled ? Math.max(0, (rect.width - wrapperW) / 2) : 0;
+
   // calculate scale based on rendered vs. original size
   const scaleX = rect.width / svgWidth;
   const scaleY = rect.height / svgHeight;
@@ -63,8 +68,8 @@ function positionHotspots(block) {
     const [x, y] = [b.dataset.x, b.dataset.y].map((coord) => parseInt(coord, 10));
 
     // convert to current rendered pixels
-    const top = parseInt(y * scaleY, 10);
-    const left = parseInt(x * scaleX, 10);
+    const left = Math.round(x * scaleX - offsetX); // subtract crop
+    const top = Math.round(y * scaleY); // no vertical crop
     b.style.top = `${top}px`;
     b.style.left = `${left}px`;
   });
@@ -355,6 +360,47 @@ function enableEditing(block) {
   });
 }
 
+/**
+ * Activates the hotspot "explore" mode.
+ * @param {HTMLElement} block - Block element
+ * @param {HTMLButtonElement} button - Expand button
+ * @param {Object} ph - Placeholders object
+ */
+function toggleExplore(block, button, ph) {
+  block.dataset.explore = true;
+  button.disabled = true;
+  button.textContent = ph.swipeToExplore || 'Swipe to Explore';
+  const svgWrapper = block.querySelector('.svg-wrapper');
+  svgWrapper.scrollTo({
+    left: (svgWrapper.scrollWidth / 2) - (svgWrapper.clientWidth / 2),
+    behavior: 'smooth',
+  });
+  svgWrapper.addEventListener('scroll', () => {
+    button.style.left = `calc(1ch + ${svgWrapper.scrollLeft}px)`;
+  });
+}
+
+/**
+ * Builds and prepends the "Click to Explore" button for mobile
+ * @param {HTMLElement} block - Block element
+ */
+async function buildExpand(block) {
+  const { locale, language } = await getLocaleAndLanguage();
+  const ph = await fetchPlaceholders(`/${locale}/${language}`);
+
+  const svgWrapper = block.querySelector('.svg-wrapper');
+  const button = document.createElement('button');
+  setAttributes(button, {
+    type: 'button',
+    class: 'button expand',
+  });
+  button.textContent = ph.clickToExplore || 'Click to Explore';
+  button.addEventListener('click', () => {
+    toggleExplore(block, button, ph);
+  });
+  svgWrapper.prepend(button);
+}
+
 export default function decorate(block) {
   const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -410,11 +456,17 @@ export default function decorate(block) {
           buildHotspots(block, config);
           block.dataset.hotspots = true;
           buildPopovers(block, config);
+          buildExpand(block);
           if (editingEnabled()) enableEditing(block);
         }
 
         // update hotspot positions on every resize
         positionHotspots(block);
+
+        if (block.dataset.explore === 'true' && window.matchMedia('(min-width: 700px)').matches) {
+          const wrapper = block.querySelector('.svg-wrapper');
+          wrapper.scrollTo({ left: 0, behavior: 'smooth' });
+        }
 
         // reposition any open popover to stay aligned with its button
         const openPopover = block.querySelector('[popover]:popover-open');
