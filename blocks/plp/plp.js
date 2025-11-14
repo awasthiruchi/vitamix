@@ -363,7 +363,7 @@ async function styleRowAsSlide(content, ph) {
   }
 
   // product title as a link to PDP
-  let title = body.querySelector('h3');
+  let title = body.querySelector('h2, h3, h4, h5, h6');
   if (!title) {
     title = createProductTitle(product, 'h3');
     body.prepend(title);
@@ -378,10 +378,12 @@ async function styleRowAsSlide(content, ph) {
 
   // color options
   const colors = createProductColors(product);
-  const colorOptions = document.createElement('p');
-  colorOptions.className = 'eyebrow';
-  colorOptions.textContent = ph.colorOptions || 'Color options';
-  body.append(colorOptions, colors);
+  if (colors && colors.children.length > 0) {
+    const colorOptions = document.createElement('p');
+    colorOptions.className = 'eyebrow';
+    colorOptions.textContent = ph.colorOptions || 'Color options';
+    body.append(colorOptions, colors);
+  }
 
   // starting at price
   if (product.price) {
@@ -390,6 +392,16 @@ async function styleRowAsSlide(content, ph) {
     startingAt.textContent = ph.startingAt || 'Starting at';
 
     const price = createProductPrice(product);
+    if (product.regularPrice && product.regularPrice > product.price) {
+      const savings = (product.regularPrice - product.price).toFixed(2);
+      const saleInfo = document.createElement('span');
+      saleInfo.textContent = `| ${ph.save || 'Save'} $${savings}`;
+      const regularPrice = document.createElement('del');
+      regularPrice.textContent = `$${product.regularPrice}`;
+      saleInfo.prepend(regularPrice);
+      price.append(saleInfo);
+    }
+
     body.append(startingAt, price);
   }
 

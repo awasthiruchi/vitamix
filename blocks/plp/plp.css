@@ -427,6 +427,15 @@ main .plp-product-card p {
   color: unset;
 }
 
+.plp.carousel p.slide-body-price span {
+  margin-left: 1ch;
+  color: var(--color-gray-900);
+}
+
+.plp.carousel p.slide-body-price del {
+  margin-right: 0.5ch;
+}
+
 .plp.carousel .eyebrow {
   color: var(--color-charcoal);
 }
