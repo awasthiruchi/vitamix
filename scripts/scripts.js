@@ -797,7 +797,7 @@ export function applyImgColor(block) {
   if (img) {
     import('./colorthief.js').then(({ default: ColorThief }) => {
       const colorThief = new ColorThief();
-      const thumbnail = createOptimizedPicture(img.src, '', '', [{ width: 100 }]).querySelector('source').srcset;
+      const thumbnail = createOptimizedPicture(img.src, '', '', [{ width: 200 }]).querySelector('source').srcset;
       const thumbnailImg = new Image();
       thumbnailImg.src = thumbnail;
       thumbnailImg.onload = () => {
