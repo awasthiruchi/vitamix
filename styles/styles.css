@@ -809,6 +809,6 @@ body.hide-consent-banner-for-us #CybotCookiebotDialog {
   display: none !important;
 }
 /* hide cookiebot about nav */
-#CybotCookiebotDialogNav ul li:nth-child(4) {
+#CybotCookiebotDialogNav ul li:has(#CybotCookiebotDialogNavAbout) {
   display: none !important;
 }
