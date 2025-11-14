@@ -808,7 +808,7 @@ body.fragment-preview::before {
 body.hide-consent-banner-for-us #CybotCookiebotDialog {
   display: none !important;
 }
-/* hide cookiebot about nav */
+/* stylelint-disable-next-line */
 #CybotCookiebotDialogNav ul li:has(#CybotCookiebotDialogNavAbout) {
   display: none !important;
 }
