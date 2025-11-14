@@ -1,4 +1,6 @@
 .*
+!.well-known/
+!.well-known/**
 *.md
 karma.config.js
 LICENSE
@@ -6,4 +8,3 @@ package.json
 package-lock.json
 test/*
 ue/models/*
-!.well-known/**
