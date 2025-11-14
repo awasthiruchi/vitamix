@@ -810,5 +810,5 @@ body.hide-consent-banner-for-us #CybotCookiebotDialog {
 }
 /* stylelint-disable-next-line */
 #CybotCookiebotDialogNav ul li:has(#CybotCookiebotDialogNavAbout) {
-  display: none !important;
+  display: none;
 }
