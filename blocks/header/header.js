@@ -175,8 +175,8 @@ function sanitizeNavList(ul) {
  * @param {HTMLElement} nav - Navigation container element
  */
 function enforceSubmenuState(nav) {
-  const submenuProducts = nav.querySelector('#submenu-products');
-  const toggleProducts = nav.querySelector('[aria-controls="submenu-products"]');
+  const submenuProducts = nav.querySelector('#submenu-products') || nav.querySelector('#submenu-produits');
+  const toggleProducts = nav.querySelector('[aria-controls="submenu-products"]') || nav.querySelector('[aria-controls="submenu-produits"]');
 
   if (!submenuProducts || !toggleProducts) return;
 
