@@ -300,11 +300,11 @@ async function renderFreeGift(offers) {
 
       // Helper function to parse individual date strings with time and timezone
       const parseDateWithTime = (dateStr) => {
-        // Handle formats like "9/12/2025 9am EDT" or "9/19/2025 3pm EDT"
-        const timeMatch = dateStr.match(/^(\d{1,2}\/\d{1,2}\/\d{4})\s+(\d{1,2})(am|pm)\s+([A-Z]{3,4})$/);
+        // Handle formats like "9/12/2025 9am EDT", "9/19/2025 3pm EDT", or "9/12/2025 9:30am EDT"
+        const timeMatch = dateStr.match(/^(\d{1,2}\/\d{1,2}\/\d{4})\s+(\d{1,2})(?::(\d{2}))?(am|pm)\s+([A-Z]{3,4})$/);
 
         if (timeMatch) {
-          const [, datePart, hour, ampm, timezone] = timeMatch;
+          const [, datePart, hour, minutes, ampm, timezone] = timeMatch;
 
           // Parse the date part (M/D/YYYY)
           const [month, day, year] = datePart.split('/').map((num) => parseInt(num, 10));
@@ -316,6 +316,9 @@ async function renderFreeGift(offers) {
           } else if (ampm.toLowerCase() === 'am' && hour24 === 12) {
             hour24 = 0;
           }
+
+          // Parse minutes (default to 0 if not provided)
+          const minute = minutes ? parseInt(minutes, 10) : 0;
 
           // Handle timezone offset (simplified - you might want to use a proper timezone library)
           // For now, we'll assume EDT is UTC-4 (Eastern Daylight Time)
@@ -337,7 +340,7 @@ async function renderFreeGift(offers) {
           const utcHour = hour24 - offsetHours;
 
           // Create UTC date object directly
-          const utcDate = new Date(Date.UTC(year, month - 1, day, utcHour, 0, 0));
+          const utcDate = new Date(Date.UTC(year, month - 1, day, utcHour, minute, 0));
 
           return utcDate;
         }
