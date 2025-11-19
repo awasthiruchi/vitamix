@@ -179,7 +179,7 @@
   max-width: 250px;
   padding: 8px 16px;
   font-weight: var(--weight-light);
-  background-color: var(--color-charcoal);
+  background-color: red;
   color: var(--color-white);
   border: none;
   border-radius: 4px;
