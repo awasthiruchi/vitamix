@@ -120,6 +120,28 @@ try {
 
 /* eslint-disable */
 
+// Big Happy Tag add 11-17-25 end 12-28-25
+try {
+  const adentifiAccountId = 26653;
+  const pageUrl = encodeURIComponent(window.location.href);
+  const uqNum = Math.random() * 10000000000000;
+
+  const pixelUrl =
+    'https://px.adentifi.com/Pixels?a_id=' + adentifiAccountId +
+    ';p_url=' + pageUrl +
+    ';uq=' + uqNum;
+
+  const img = document.createElement('img');
+  img.src = pixelUrl;
+  img.height = 1;
+  img.width = 1;
+  img.style.display = 'none';
+
+  document.body.appendChild(img);
+} catch (error) {
+  console.error('Adentifi pixel failed to load', error);
+}
+// End of Big Happy Tag
 
 // TV Scientific Pixel Code
 try {
